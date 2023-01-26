@@ -10,6 +10,7 @@
 	<description>i集大校园 服务端</description>
 	<modules>
 		<module>common</module>
+		<module>gateway-service</module>
 	</modules>
 
 	<packaging>pom</packaging>
