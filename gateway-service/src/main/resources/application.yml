@@ -15,6 +15,9 @@ spring:
               - POST
               - PUT
               - DELETE
-    nacos:
-      discovery:
-        server-addr: localhost:8848
+      routes:
+        # 资源服务
+        - id: resource-server
+          uri: lb://resource-server
+          predicates:
+            - Path=/resource/**
