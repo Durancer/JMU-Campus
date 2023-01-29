@@ -58,7 +58,7 @@ i集大校园软件服务端
 ├─resource-service：资源服务
 ├─user-service：用户服务
 ├─chat-service：聊天服务
-├─blink-service：动态服务
+├─item-service：贴子服务
 ├─pay-service：支付服务
 └─uniapp：前端uniapp(将另建仓库)
 ```
@@ -66,7 +66,7 @@ i集大校园软件服务端
 
 项目各内容将首发再 **github** , gitee会同步代码，但不会同步 **issue** 和 **pr**
 
-**github**地址：https://github.com/Durancer/JMU-Campus
+**github**地址：https://github.com/Durancer/JMU-Campus <br>
 **gitee**地址：https://gitee.com/Durancer/JMU-Campus
 
-对项目感兴趣欢迎 star 项目👌
+对项目感兴趣欢迎 star 项目🌹
