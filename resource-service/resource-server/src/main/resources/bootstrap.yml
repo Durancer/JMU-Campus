@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: resource-server
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        shared-configs:
+          - data-id: resource-server.yaml
+            refresh: true
