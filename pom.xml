@@ -12,6 +12,7 @@
 		<module>common</module>
 		<module>gateway-service</module>
 		<module>user-service</module>
+		<module>resource-service</module>
 	</modules>
 
 	<packaging>pom</packaging>
