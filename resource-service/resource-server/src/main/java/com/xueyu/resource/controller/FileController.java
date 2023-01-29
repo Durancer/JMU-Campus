@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 上传文件相关接口
@@ -32,10 +34,26 @@ public class FileController {
 	 * @return 图片链接
 	 */
 	@PostMapping("/image")
-	public RestResult<String> uploadBlogImage(MultipartFile file) throws MinioException, IOException {
+	public RestResult<Map<String,String>> uploadBlogImage(MultipartFile file) throws MinioException, IOException {
 		log.debug("uploadFile, fileName->{}", file.getOriginalFilename());
 		String imageName = minioService.upload(file, "image");
-		return RestResult.ok(imageName);
+		Map<String, String> restMap = new HashMap<>();
+		restMap.put("fileName",imageName);
+		return RestResult.ok(restMap);
+	}
+
+	/**
+	 * 根据文件名删除文件
+	 *
+	 * @param fileName 文件名
+	 * @return 删除结果
+	 * @throws MinioException
+	 */
+	@PostMapping("/delete")
+	public RestResult<?> deleteFile(String fileName) throws MinioException{
+		log.debug("deleteFile, fileName->{}", fileName);
+		minioService.removeFile(fileName, "image");
+		return RestResult.ok();
 	}
 
 }

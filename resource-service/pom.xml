@@ -13,6 +13,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>resource-serve</module>
+		<module>resource-client</module>
 	</modules>
 
 
