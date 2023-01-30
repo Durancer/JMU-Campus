@@ -12,7 +12,7 @@
 	<artifactId>resource-service</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>resource-serve</module>
+		<module>resource-server</module>
 		<module>resource-client</module>
 	</modules>
 

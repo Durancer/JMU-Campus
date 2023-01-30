@@ -9,13 +9,19 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>user-serve</artifactId>
+	<artifactId>user-server</artifactId>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-web</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.xueyu</groupId>
+			<artifactId>common-data</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
