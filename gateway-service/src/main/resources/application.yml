@@ -21,3 +21,7 @@ spring:
           uri: lb://resource-server
           predicates:
             - Path=/resource/**
+        - id: user-server
+          uri: lb://user-server
+          predicates:
+            - Path=/user/**

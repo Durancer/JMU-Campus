@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * JWT 生成工具类
@@ -17,7 +18,7 @@ import java.util.Date;
 public class JwtUtil {
 
 	/**
-	 * 有效期默认为 1个小时
+	 * 有效期默认为 1
 	 */
 	public static final Long JWT_TTL = 3600000L;
 
@@ -35,7 +36,6 @@ public class JwtUtil {
 	 * @return jwt
 	 */
 	public static String createJwt(String id, String subject, Long ttlMillis) {
-
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		long nowMillis = System.currentTimeMillis();
 		Date now = new Date(nowMillis);
@@ -58,6 +58,10 @@ public class JwtUtil {
 				// 设置过期时间
 				.setExpiration(expDate);
 		return builder.compact();
+	}
+
+	public static String createJwt() {
+		return createJwt(UUID.randomUUID().toString(), "xueyukeji", null);
 	}
 
 	/**
