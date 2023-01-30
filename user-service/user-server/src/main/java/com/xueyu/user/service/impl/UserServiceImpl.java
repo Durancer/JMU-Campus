@@ -24,7 +24,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	public Boolean registerUser(User user) {
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getPhone, user.getPhone()).or().eq(User::getUsername, user.getUsername());
-		User check = userMapper.selectById(wrapper);
+		User check = userMapper.selectOne(wrapper);
 		if (check != null) {
 			return false;
 		}
@@ -39,7 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
-		boolean checkpw = BCrypt.checkpw(check.getPassword(), user.getPassword());
+		boolean checkpw = BCrypt.checkpw(user.getPassword(), check.getPassword());
 		if (!checkpw) {
 			return null;
 		}
