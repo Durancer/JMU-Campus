@@ -30,7 +30,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 		ServerHttpResponse response = exchange.getResponse();
 		// 进行请求路径判度，放行不需要认证的接口
 		String path = request.getURI().getPath();
-		if (path.contains("user/login")) {
+		if (path.contains("user/register")) {
 			return chain.filter(exchange);
 		}
 		// 拿到jwt的值

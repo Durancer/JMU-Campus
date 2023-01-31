@@ -12,7 +12,7 @@
 	<artifactId>user-service</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>user-serve</module>
+		<module>user-server</module>
 	</modules>
 
 

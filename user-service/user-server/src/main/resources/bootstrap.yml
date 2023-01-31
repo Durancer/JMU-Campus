@@ -1,6 +1,14 @@
 spring:
   application:
-    name: @artifactId@
+    name: user-server
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
+      config:
+        shared-configs:
+          - data-id: public-mybatis-plus.yaml
+            refresh: true
+          - data-id: user-server.yaml
+            refresh: true
+          - data-id: public-security.yaml
+            refresh: true
