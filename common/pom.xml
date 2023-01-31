@@ -15,6 +15,7 @@
 		<module>common-core</module>
 		<module>common-data</module>
 		<module>common-web</module>
+		<module>common-amqp</module>
 	</modules>
 
 
