@@ -1,5 +1,7 @@
 package com.xueyu.post.pojo.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +16,13 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@TableName("post")
 public class Post {
 
 	/**
 	 * 自增id
 	 */
+	@TableId
 	Integer id;
 
 	/**
@@ -31,11 +34,6 @@ public class Post {
 	 * 发布文本内容
 	 */
 	String content;
-
-	/**
-	 * 附带图片
-	 */
-	String images;
 
 	/**
 	 * 帖子创建时间

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: post-server
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        shared-configs:
+          - data-id: public-mybatis-plus.yaml
+            refresh: true
+          - data-id: post-server.yaml
+            refresh: true
