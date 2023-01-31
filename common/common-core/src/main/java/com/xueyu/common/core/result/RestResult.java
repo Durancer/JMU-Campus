@@ -78,7 +78,7 @@ public class RestResult<T> implements Serializable {
 	}
 
 	public static <T> RestResult<T> ok(T data, String message) {
-		return new RestResult<>(200, message, data, false);
+		return new RestResult<>(200, message, data, true);
 	}
 
 	public static <T> RestResult<T> fail() {
