@@ -13,6 +13,7 @@
 		<module>gateway-service</module>
 		<module>user-service</module>
 		<module>resource-service</module>
+		<module>post-service</module>
 	</modules>
 
 	<packaging>pom</packaging>
