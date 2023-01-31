@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 /**
  * @author durance
  */
@@ -40,5 +42,10 @@ public class User {
 	 * 电话
 	 */
 	String phone;
+
+	/**
+	 * 创建时间
+	 */
+	Timestamp createTime;
 
 }

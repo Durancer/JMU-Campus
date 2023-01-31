@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(MybatisPlusPageConfig.class)
-public @interface EnableMybatisPlusPage {
+public @interface EnableMybatisPlusIPage {
 
 }

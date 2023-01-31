@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 
 /**
  * @author durance
@@ -25,9 +26,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getPhone, user.getPhone()).or().eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
+		// 不为null说明已经创建改用户
 		if (check != null) {
 			return false;
 		}
+		Timestamp time = new Timestamp(System.currentTimeMillis());
+		user.setCreateTime(time);
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
 		userMapper.insert(user);
