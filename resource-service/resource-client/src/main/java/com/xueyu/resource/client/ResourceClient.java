@@ -16,7 +16,7 @@ import java.util.Map;
 public interface ResourceClient {
 
 	/**
-	 * 上传文件接口
+	 * 上传图片接口
 	 *
 	 * @param file 图片
 	 * @return 图片链接
