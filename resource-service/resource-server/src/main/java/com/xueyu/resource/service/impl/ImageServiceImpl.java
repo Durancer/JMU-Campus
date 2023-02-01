@@ -1,6 +1,6 @@
 package com.xueyu.resource.service.impl;
 
-import com.xueyu.resource.service.MinioService;
+import com.xueyu.resource.service.ImageService;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * @author 阿杆
  */
 @Component
-public class MinioServiceImpl implements MinioService {
+public class ImageServiceImpl implements ImageService {
 
 	@Resource
 	private MinioClient minioClient;
@@ -151,8 +151,7 @@ public class MinioServiceImpl implements MinioService {
 	public String createFileName(String fileName) {
 		int idx = fileName.lastIndexOf(".");
 		String extention = fileName.substring(idx);
-		String newFileName = UUID.randomUUID().toString().replace("-", "") + extention;
-		return newFileName;
+		return UUID.randomUUID().toString().replace("-", "") + extention;
 	}
 
 }

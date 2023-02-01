@@ -15,7 +15,7 @@ import java.util.Map;
 public class ResourceClientResolver implements ResourceClient {
 
 	@Override
-	public RestResult<Map<String, String>> uploadFile(MultipartFile file) {
+	public RestResult<Map<String, String>> uploadImageFile(MultipartFile file) {
 		log.error("Resource 服务异常：uploadFile 请求失败");
 		return new RestResult<>(503, "fail");
 	}

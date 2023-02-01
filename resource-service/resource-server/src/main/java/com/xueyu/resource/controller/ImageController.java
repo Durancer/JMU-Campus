@@ -1,7 +1,8 @@
 package com.xueyu.resource.controller;
 
 import com.xueyu.common.core.result.RestResult;
-import com.xueyu.resource.service.MinioService;
+import com.xueyu.resource.service.ImageService;
+import com.xueyu.resource.util.FileCheckUtil;
 import io.minio.errors.MinioException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 上传文件相关接口
@@ -22,10 +24,10 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/resource")
-public class FileController {
+public class ImageController {
 
 	@Autowired
-	MinioService minioService;
+	ImageService imageService;
 
 	/**
 	 * 上传图片
@@ -34,11 +36,15 @@ public class FileController {
 	 * @return 图片链接
 	 */
 	@PostMapping("/image")
-	public RestResult<Map<String,String>> uploadBlogImage(MultipartFile file) throws MinioException, IOException {
+	public RestResult<Map<String, String>> uploadImageFile(MultipartFile file) throws MinioException, IOException {
 		log.debug("uploadFile, fileName->{}", file.getOriginalFilename());
-		String imageName = minioService.upload(file, "image");
-		Map<String, String> restMap = new HashMap<>();
-		restMap.put("fileName",imageName);
+		// 判断图片后缀是否符合规范
+		if (!FileCheckUtil.checkImageSuffix(Objects.requireNonNull(file.getOriginalFilename()))) {
+			return RestResult.fail("不支持的图片格式");
+		}
+		String imageName = imageService.upload(file, "image");
+		Map<String, String> restMap = new HashMap<>(1);
+		restMap.put("fileName", imageName);
 		return RestResult.ok(restMap);
 	}
 
@@ -50,9 +56,9 @@ public class FileController {
 	 * @throws MinioException
 	 */
 	@PostMapping("/delete")
-	public RestResult<?> deleteFile(String fileName) throws MinioException{
+	public RestResult<?> deleteFile(String fileName) throws MinioException {
 		log.debug("deleteFile, fileName->{}", fileName);
-		minioService.removeFile(fileName, "image");
+		imageService.removeFile(fileName, "image");
 		return RestResult.ok();
 	}
 

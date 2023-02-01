@@ -22,7 +22,7 @@ public interface ResourceClient {
 	 * @return 图片链接
 	 */
 	@PostMapping(value = "/resource/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	RestResult<Map<String, String>> uploadFile(@RequestPart MultipartFile file);
+	RestResult<Map<String, String>> uploadImageFile(@RequestPart MultipartFile file);
 
 	/**
 	 * 删除文件接口
