@@ -16,13 +16,13 @@ import java.util.Map;
 public interface ResourceClient {
 
 	/**
-	 * 上传文件接口
+	 * 上传图片接口
 	 *
 	 * @param file 图片
 	 * @return 图片链接
 	 */
 	@PostMapping(value = "/resource/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	RestResult<Map<String, String>> uploadFile(@RequestPart MultipartFile file);
+	RestResult<Map<String, String>> uploadImageFile(@RequestPart MultipartFile file);
 
 	/**
 	 * 删除文件接口

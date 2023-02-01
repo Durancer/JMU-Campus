@@ -1,4 +1,4 @@
-package com.xueyu.user.pojo.domain;
+package com.xueyu.post.pojo.domain;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -6,46 +6,36 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-
 /**
+ * 帖子数据统计实体
+ *
  * @author durance
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User {
+@TableName("post_general")
+public class PostGeneral {
 
 	/**
-	 * 自增id
+	 * 帖子id
 	 */
 	@TableId
-	Integer id;
+	Integer postId;
 
 	/**
-	 * 用户名
+	 * 阅读量
 	 */
-	String username;
+	Integer viewNum;
 
 	/**
-	 * 名称
+	 * 点赞数量
 	 */
-	String nickname;
+	Integer likeNum;
 
 	/**
-	 * 密码
+	 * 评论数量
 	 */
-	String password;
-
-	/**
-	 * 电话
-	 */
-	String phone;
-
-	/**
-	 * 创建时间
-	 */
-	Timestamp createTime;
+	Integer commentNum;
 
 }

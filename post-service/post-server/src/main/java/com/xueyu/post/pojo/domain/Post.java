@@ -1,4 +1,4 @@
-package com.xueyu.user.pojo.domain;
+package com.xueyu.post.pojo.domain;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 /**
+ * 帖子实体类
+ *
  * @author durance
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User {
+@TableName("post")
+public class Post {
 
 	/**
 	 * 自增id
@@ -24,28 +26,23 @@ public class User {
 	Integer id;
 
 	/**
-	 * 用户名
+	 * 用户id
 	 */
-	String username;
+	Integer userId;
 
 	/**
-	 * 名称
+	 * 发布文本内容
 	 */
-	String nickname;
+	String content;
 
 	/**
-	 * 密码
-	 */
-	String password;
-
-	/**
-	 * 电话
-	 */
-	String phone;
-
-	/**
-	 * 创建时间
+	 * 帖子创建时间
 	 */
 	Timestamp createTime;
+
+	/**
+	 * 帖子状态 0为审核中 | 1为公开
+	 */
+	Integer status;
 
 }

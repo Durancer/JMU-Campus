@@ -58,7 +58,7 @@ i集大校园软件服务端
 ├─resource-service：资源服务
 ├─user-service：用户服务
 ├─chat-service：聊天服务
-├─item-service：贴子服务
+├─post-service：帖子服务
 ├─pay-service：支付服务
 └─uniapp：前端uniapp(将另建仓库)
 ```

@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * @author durance
  */
-public interface MinioService {
+public interface ImageService {
 
 	/**
 	 * 判断bucket是否存在
