@@ -10,3 +10,5 @@ spring:
             refresh: true
           - data-id: post-server.yaml
             refresh: true
+          - data-id: default-rabbitmq.yaml
+            refresh: true
