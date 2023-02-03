@@ -28,7 +28,7 @@ i集大校园软件服务端
 |   SpringBoot   |     MVC框架      |      https://spring.io/projects/spring-boot       |
 |  SpringCloud   |    微服务框架    |     https://spring.io/projects/spring-cloud/      |
 |    Gateway     |   网关服务框架   |  https://spring.io/projects/spring-cloud-gateway  |
-|   OpenFegin      |     RPC框架      | https://spring.io/projects/spring-cloud-openfeign |
+|   OpenFegin    |     RPC框架      | https://spring.io/projects/spring-cloud-openfeign |
 |     Nacos      |  注册、配置中心  |              https://nacos.io/zh-cn/              |
 |  MyBatis-Plus  |    数据库框架    |             https://mp.baomidou.com/              |
 |     MySQL      |      数据库      |              https://www.mysql.com/               |
@@ -61,8 +61,12 @@ i集大校园软件服务端
 ├─post-service：帖子服务
 ├─pay-service：支付服务
 └─uniapp：前端uniapp(将另建仓库)
+
+通用部分
+├─ -server 服务后端
+├─ -sdk 服务软件开发包
+├─ -client 服务客户端
 ```
-目前项目完成公共模块、网关、资源服务基础编写，还有待完善。进行功能模块编写
 
 项目各内容将首发再 **github** , gitee会同步代码，但不会同步 **issue** 和 **pr**
 
