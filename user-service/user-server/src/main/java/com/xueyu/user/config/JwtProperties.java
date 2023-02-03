@@ -2,12 +2,12 @@ package com.xueyu.user.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author durance
  */
-@Component
+@Configuration
 @Data
 @ConfigurationProperties(prefix = "security.jwt")
 public class JwtProperties {
@@ -15,16 +15,16 @@ public class JwtProperties {
 	/**
 	 * jwt密钥
 	 */
-	String key;
+	public static String key;
 
 	/**
 	 * 签发者
 	 */
-	String issuer;
+	public static String issuer;
 
 	/**
-	 * 过期时间，单位：秒
+	 * 过期时间，单位：豪秒
 	 */
-	Long expiration;
+	public static Long expiration;
 
 }

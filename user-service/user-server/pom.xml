@@ -31,6 +31,18 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.xueyu</groupId>
+			<artifactId>post-sdk</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.xueyu</groupId>
+			<artifactId>resource-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!--鉴权-->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

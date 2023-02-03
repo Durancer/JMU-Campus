@@ -2,8 +2,10 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.user.mapper.UserGeneralMapper;
 import com.xueyu.user.mapper.UserMapper;
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.domain.UserGeneral;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.util.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -21,6 +23,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	@Resource
 	UserMapper userMapper;
 
+	@Resource
+	UserGeneralMapper userGeneralMapper;
+
 	@Override
 	public Boolean registerUser(User user) {
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -35,6 +40,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
 		userMapper.insert(user);
+		// 创建数据统计表行数据
+		UserGeneral userGeneral = new UserGeneral();
+		userGeneral.setUserId(user.getId());
+		userGeneralMapper.insert(userGeneral);
 		return true;
 	}
 

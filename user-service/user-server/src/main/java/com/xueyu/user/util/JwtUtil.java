@@ -1,5 +1,6 @@
 package com.xueyu.user.util;
 
+import com.xueyu.user.config.JwtProperties;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,16 +19,6 @@ import java.util.UUID;
 public class JwtUtil {
 
 	/**
-	 * 有效期默认为 1
-	 */
-	public static final Long JWT_TTL = 3600000L;
-
-	/**
-	 * 秘钥明文
-	 */
-	public static final String JWT_KEY = "durance";
-
-	/**
 	 * 签发 jwt
 	 *
 	 * @param id        令牌id
@@ -40,7 +31,8 @@ public class JwtUtil {
 		long nowMillis = System.currentTimeMillis();
 		Date now = new Date(nowMillis);
 		if (ttlMillis == null) {
-			ttlMillis = JwtUtil.JWT_TTL;
+			// 如果没有设置时间，设置默认过期时间：1天
+			ttlMillis = JwtProperties.expiration;
 		}
 		long expMillis = nowMillis + ttlMillis;
 		Date expDate = new Date(expMillis);
@@ -50,7 +42,7 @@ public class JwtUtil {
 				// 主题  可以是JSON数据
 				.setSubject(subject)
 				// 签发者
-				.setIssuer("xueyu")
+				.setIssuer(JwtProperties.issuer)
 				// 签发时间
 				.setIssuedAt(now)
 				//使用HS256对称加密算法签名, 第二个参数为秘钥
@@ -60,6 +52,11 @@ public class JwtUtil {
 		return builder.compact();
 	}
 
+	/**
+	 * 无参使用默认配置签发jwt
+	 *
+	 * @return jwt
+	 */
 	public static String createJwt() {
 		return createJwt(UUID.randomUUID().toString(), "xueyukeji", null);
 	}
@@ -70,7 +67,7 @@ public class JwtUtil {
 	 * @return 秘钥
 	 */
 	public static SecretKey generalKey() {
-		byte[] encodedKey = Base64.getDecoder().decode(JwtUtil.JWT_KEY);
+		byte[] encodedKey = Base64.getDecoder().decode(JwtProperties.key);
 		return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
 	}
 

@@ -6,56 +6,41 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-
 /**
+ * 用户数据统计
+ *
  * @author durance
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User {
+@TableName("user_general")
+public class UserGeneral {
 
 	/**
-	 * 自增id
+	 * 用户id
 	 */
 	@TableId
-	Integer id;
+	Integer userId;
 
 	/**
-	 * 用户名
+	 * 阅读量
 	 */
-	String username;
+	Integer viewNum;
 
 	/**
-	 * 名称
+	 * 点赞量
 	 */
-	String nickname;
+	Integer likeNum;
 
 	/**
-	 * 密码
+	 * 评论量
 	 */
-	String password;
+	Integer commentNum;
 
 	/**
-	 * 头像
+	 * 粉丝量
 	 */
-	String avatar;
-
-	/**
-	 * 个人介绍
-	 */
-	String introduce;
-
-	/**
-	 * 电话
-	 */
-	String phone;
-
-	/**
-	 * 创建时间
-	 */
-	Timestamp createTime;
+	Integer fansNum;
 
 }
