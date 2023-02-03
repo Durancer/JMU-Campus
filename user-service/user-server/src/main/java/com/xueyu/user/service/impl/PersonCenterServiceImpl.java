@@ -7,6 +7,7 @@ import com.xueyu.user.mapper.UserViewMapper;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.PersonCenterService;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * @author durance
  */
+@Service
 public class PersonCenterServiceImpl implements PersonCenterService {
 
 	@Resource
