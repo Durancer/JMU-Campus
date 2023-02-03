@@ -1,4 +1,4 @@
-package com.xueyu.user.pojo.domain;
+package com.xueyu.user.pojo.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 /**
+ * 用户显示层实体类
+ *
  * @author durance
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User {
+@TableName("user_view")
+public class UserView {
 
 	/**
 	 * 自增id
@@ -39,9 +41,9 @@ public class User {
 	String password;
 
 	/**
-	 * 头像
+	 * 头像路径
 	 */
-	String avatar;
+	String avatarUrl;
 
 	/**
 	 * 个人介绍
