@@ -3,7 +3,10 @@ package com.xueyu.user.controller;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.service.UserService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -36,11 +39,6 @@ public class UserController {
 		Map<String, String> resMap = new HashMap<>(1);
 		resMap.put("token", token);
 		return RestResult.ok(resMap, "登录成功");
-	}
-
-	@GetMapping("test")
-	public void test(@RequestHeader int userId) {
-		System.out.println("用户id为：" + userId);
 	}
 
 }
