@@ -38,4 +38,9 @@ public class UserGeneral {
 	 */
 	Integer commentNum;
 
+	/**
+	 * 粉丝量
+	 */
+	Integer fansNum;
+
 }

@@ -30,7 +30,7 @@ public class PostMqContant {
 	/**
 	 * 用户浏览帖子
 	 */
-	public static final String POST_OPERATE_READ_KEY = "post.read";
+	public static final String POST_OPERATE_VIEW_KEY = "post.view";
 
 	/**
 	 * 用户点赞帖子
