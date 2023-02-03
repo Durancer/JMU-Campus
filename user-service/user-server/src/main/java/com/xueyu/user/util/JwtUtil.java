@@ -37,6 +37,7 @@ public class JwtUtil {
 		long expMillis = nowMillis + ttlMillis;
 		Date expDate = new Date(expMillis);
 		SecretKey secretKey = generalKey();
+
 		JwtBuilder builder = Jwts.builder()
 				.setId(id)
 				// 主题  可以是JSON数据
