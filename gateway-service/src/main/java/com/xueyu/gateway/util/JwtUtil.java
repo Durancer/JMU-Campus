@@ -1,5 +1,6 @@
 package com.xueyu.gateway.util;
 
+import com.xueyu.gateway.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
@@ -15,19 +16,13 @@ import java.util.Base64;
 public class JwtUtil {
 
 	/**
-	 * 秘钥明文
-	 */
-	public static final String JWT_KEY = "durance";
-
-	/**
 	 * 生成加密后的秘钥 secretKey
 	 *
 	 * @return 秘钥
 	 */
 	public static SecretKey generalKey() {
-		byte[] encodedKey = Base64.getDecoder().decode(JwtUtil.JWT_KEY);
-		SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-		return key;
+		byte[] encodedKey = Base64.getDecoder().decode(JwtProperties.key);
+		return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
 	}
 
 	/**

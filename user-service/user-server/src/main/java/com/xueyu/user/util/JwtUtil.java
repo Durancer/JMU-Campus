@@ -26,7 +26,7 @@ public class JwtUtil {
 	 * @param ttlMillis jwt有效期
 	 * @return jwt
 	 */
-	public static String createJwt(String id, String subject, Long ttlMillis) {
+	public static String createJwt(String id, String subject, Long ttlMillis, String name, Object data) {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		long nowMillis = System.currentTimeMillis();
 		Date now = new Date(nowMillis);
@@ -37,19 +37,48 @@ public class JwtUtil {
 		long expMillis = nowMillis + ttlMillis;
 		Date expDate = new Date(expMillis);
 		SecretKey secretKey = generalKey();
-		JwtBuilder builder = Jwts.builder()
-				.setId(id)
-				// 主题  可以是JSON数据
-				.setSubject(subject)
-				// 签发者
-				.setIssuer(JwtProperties.issuer)
-				// 签发时间
-				.setIssuedAt(now)
-				//使用HS256对称加密算法签名, 第二个参数为秘钥
-				.signWith(signatureAlgorithm, secretKey)
-				// 设置过期时间
-				.setExpiration(expDate);
+		// 载荷内容为null不再添加额外载荷
+		JwtBuilder builder = null;
+		if (name == null || data == null) {
+			builder = Jwts.builder()
+					.setId(id)
+					// 主题  可以是JSON数据
+					.setSubject(subject)
+					// 签发者
+					.setIssuer(JwtProperties.issuer)
+					// 签发时间
+					.setIssuedAt(now)
+					//使用HS256对称加密算法签名, 第二个参数为秘钥
+					.signWith(signatureAlgorithm, secretKey)
+					// 设置过期时间
+					.setExpiration(expDate);
+		} else {
+			builder = Jwts.builder()
+					.setId(id)
+					// 主题  可以是JSON数据
+					.setSubject(subject)
+					// 签发者
+					.setIssuer(JwtProperties.issuer)
+					// 签发时间
+					.setIssuedAt(now)
+					// 设置载荷信息
+					.claim(name, data)
+					//使用HS256对称加密算法签名, 第二个参数为秘钥
+					.signWith(signatureAlgorithm, secretKey)
+					// 设置过期时间
+					.setExpiration(expDate);
+		}
+
 		return builder.compact();
+	}
+
+	/**
+	 * 添加指定载荷签发jwt
+	 *
+	 * @return jwt
+	 */
+	public static String createJwt(String name, Object data) {
+		return createJwt(UUID.randomUUID().toString(), "xueyukeji", null, name, data);
 	}
 
 	/**
@@ -58,7 +87,7 @@ public class JwtUtil {
 	 * @return jwt
 	 */
 	public static String createJwt() {
-		return createJwt(UUID.randomUUID().toString(), "xueyukeji", null);
+		return createJwt(UUID.randomUUID().toString(), "xueyukeji", null, null, null);
 	}
 
 	/**

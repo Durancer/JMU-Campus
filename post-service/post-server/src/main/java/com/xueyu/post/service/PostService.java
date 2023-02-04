@@ -18,4 +18,13 @@ public interface PostService extends IService<Post> {
 	 */
 	Boolean publishPost(Post post, MultipartFile[] files);
 
+	/**
+	 * 用户点赞（取消）帖子
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return true 点赞 or  false 取消
+	 */
+	Boolean likeUserPost(Integer postId, Integer userId);
+
 }
