@@ -22,6 +22,13 @@ public class PostController {
 	@Resource
 	PostService postService;
 
+	/**
+	 * 发布用户帖子
+	 *
+	 * @param post  帖子信息
+	 * @param files 图片文件
+	 * @return 发布结果
+	 */
 	@PostMapping("addPost")
 	public RestResult<?> pushlishPost(Post post, MultipartFile[] files) {
 		Boolean sendStatus = postService.publishPost(post, files);
