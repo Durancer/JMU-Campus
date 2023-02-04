@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,14 +30,12 @@ public class UserController {
 	}
 
 	@GetMapping("login")
-	public RestResult<Map<String, String>> loginUser(User user) {
-		String token = userService.loginUser(user);
-		if (token == null) {
+	public RestResult<Map<String, Object>> loginUser(User user) {
+		Map<String, Object> result = userService.loginUser(user);
+		if (result == null) {
 			return new RestResult<>(false, "账号或密码错误");
 		}
-		Map<String, String> resMap = new HashMap<>(1);
-		resMap.put("token", token);
-		return RestResult.ok(resMap, "登录成功");
+		return RestResult.ok(result, "登录成功");
 	}
 
 }
