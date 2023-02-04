@@ -22,7 +22,13 @@ public class ResourceClientResolver implements ResourceClient {
 
 	@Override
 	public RestResult<?> deleteFileByFileName(String fileName) {
-		log.error("Resource 服务异常：uploadFile 请求失败");
+		log.error("Resource 服务异常：deleteFileByFileName 请求失败");
+		return new RestResult<>(503, "fail");
+	}
+
+	@Override
+	public RestResult<?> deleteFilesListByFileName(String[] fileNames) {
+		log.error("Resource 服务异常：deleteFilesListByFileName 请求失败");
 		return new RestResult<>(503, "fail");
 	}
 

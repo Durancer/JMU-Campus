@@ -87,6 +87,15 @@ public interface ImageService {
 	void removeFile(String fileName, String bucketName) throws MinioException;
 
 	/**
+	 * 批量删除文件
+	 *
+	 * @param fileNames  文件名列表
+	 * @param bucketName 桶名称
+	 * @throws MinioException
+	 */
+	void removeFileList(String[] fileNames, String bucketName) throws MinioException;
+
+	/**
 	 * 获取桶内文件列表
 	 *
 	 * @param bucketName 桶名称

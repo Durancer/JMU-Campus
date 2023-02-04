@@ -123,6 +123,13 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
+	public void removeFileList(String[] fileNames, String bucketName) throws MinioException {
+		for (String fileName : fileNames) {
+			removeFile(fileName, "image");
+		}
+	}
+
+	@Override
 	public void removeFile(String fileName, String bucketName) throws MinioException {
 		try {
 			minioClient.removeObject(

@@ -33,4 +33,13 @@ public interface ResourceClient {
 	@PostMapping(value = "/resource/delete")
 	RestResult<?> deleteFileByFileName(String fileName);
 
+	/**
+	 * 批量删除文件接口
+	 *
+	 * @param fileNames 文件列表
+	 * @return 删除结果
+	 */
+	@PostMapping(value = "/resource/delete")
+	RestResult<?> deleteFilesListByFileName(String[] fileNames);
+
 }
