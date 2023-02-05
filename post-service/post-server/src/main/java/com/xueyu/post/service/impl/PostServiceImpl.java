@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
-import com.xueyu.post.mapper.*;
+import com.xueyu.post.mapper.LikePostMapper;
+import com.xueyu.post.mapper.PostGeneralMapper;
+import com.xueyu.post.mapper.PostMapper;
+import com.xueyu.post.mapper.PostViewMapper;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.ImageAnnex;
 import com.xueyu.post.pojo.domain.LikePost;
@@ -29,6 +32,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.xueyu.post.sdk.constant.PostMqContant.POST_DELETE_KEY;
 import static com.xueyu.post.sdk.constant.PostMqContant.POST_EXCHANGE;
@@ -59,9 +63,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	PostViewMapper postViewMapper;
-
-	@Resource
-	ImageAnnexViewMapper imageAnnexViewMapper;
 
 	@Override
 	public Boolean publishPost(Post post, MultipartFile[] files) {
@@ -137,25 +138,22 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 将除具体记录外的分页数据赋值
 		BeanUtils.copyProperties(result, page);
 		List<PostView> records = page.getRecords();
+		// 统计postId
+		List<Integer> postIds = new ArrayList<>();
+		for (PostView postView : records) {
+			postIds.add(postView.getId());
+		}
+		// 查询所有图片信息
+		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
 		for (PostView record : records) {
 			PostListVO postListVO = new PostListVO();
 			BeanUtils.copyProperties(postListVO, record);
-			// 查询图片信息 todo 优化：一次查出所有的附件图片
-			LambdaQueryWrapper<ImageAnnexView> imgWrapper = new LambdaQueryWrapper<>();
-			imgWrapper.eq(ImageAnnexView::getParentId, record.getId());
-			List<ImageAnnexView> imageAnnexViews = imageAnnexViewMapper.selectList(imgWrapper);
-			// 创建图片列表
-			if (imageAnnexViews.size() != 0) {
-				String[] imgs = new String[imageAnnexViews.size()];
-				for (int j = 0; j < imgs.length; j++) {
-					imgs[j] = imageAnnexViews.get(j).getImgUrl();
-				}
-				postListVO.setImgList(imgs);
-			}
+			// 设置该帖子图片信息
+			postListVO.setImgList(postListImgs.get(record.getId()));
+			// 创建用户id列表并设值用户值 todo 优化：添加用户服务接口，一次查询多组用户信息，减少client的调用
 			LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
 			likeWrapper.eq(LikePost::getPostId, record.getId());
 			List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
-			// 创建用户id列表并设值用户值 todo 优化：添加用户服务接口，一次查询多组用户信息，减少client的调用
 			List<Integer> userIds = new ArrayList<>();
 			for (LikePost likePost : likePosts) {
 				userIds.add(likePost.getUserId());

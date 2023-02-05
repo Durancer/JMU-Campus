@@ -1,5 +1,6 @@
 package com.xueyu.post.pojo.vo;
 
+import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.user.sdk.pojo.vo.UserDetail;
 import lombok.Data;
 
@@ -37,7 +38,7 @@ public class PostListVO {
 	/**
 	 * 图片列表
 	 */
-	String[] imgList;
+	List<ImageAnnexView> imgList;
 
 	/**
 	 * 点赞用户列表
