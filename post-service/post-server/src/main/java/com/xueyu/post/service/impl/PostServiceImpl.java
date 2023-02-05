@@ -6,11 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
-import com.xueyu.post.mapper.ImageAnnexViewMapper;
-import com.xueyu.post.mapper.PostGeneralMapper;
-import com.xueyu.post.mapper.PostMapper;
-import com.xueyu.post.mapper.PostViewMapper;
+import com.xueyu.post.mapper.*;
+import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.ImageAnnex;
+import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.domain.PostGeneral;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -19,6 +18,8 @@ import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
 import com.xueyu.resource.client.ResourceClient;
+import com.xueyu.user.client.UserClient;
+import com.xueyu.user.sdk.pojo.vo.UserDetail;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	ResourceClient resourceClient;
+
+	@Resource
+	UserClient userClient;
+
+	@Resource
+	LikePostMapper likePostMapper;
 
 	@Resource
 	RabbitTemplate rabbitTemplate;
@@ -130,17 +137,33 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 将除具体记录外的分页数据赋值
 		BeanUtils.copyProperties(result, page);
 		List<PostView> records = page.getRecords();
-		// 统计postId
-		List<Integer> postIdList = new ArrayList<>();
-		for (PostView record : records) {
-			postIdList.add(record.getId());
-		}
-		// todo 根据postId查询出图片列表
-		// todo 根据postId查询出点赞用户列表
 		for (PostView record : records) {
 			PostListVO postListVO = new PostListVO();
 			BeanUtils.copyProperties(postListVO, record);
-			// todo 在响应体添加额外的两个参数
+			// 查询图片信息 todo 优化：一次查出所有的附件图片
+			LambdaQueryWrapper<ImageAnnexView> imgWrapper = new LambdaQueryWrapper<>();
+			imgWrapper.eq(ImageAnnexView::getParentId, record.getId());
+			List<ImageAnnexView> imageAnnexViews = imageAnnexViewMapper.selectList(imgWrapper);
+			// 创建图片列表
+			if (imageAnnexViews.size() != 0) {
+				String[] imgs = new String[imageAnnexViews.size()];
+				for (int j = 0; j < imgs.length; j++) {
+					imgs[j] = imageAnnexViews.get(j).getImgUrl();
+				}
+				postListVO.setImgList(imgs);
+			}
+			LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
+			likeWrapper.eq(LikePost::getPostId, record.getId());
+			List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
+			// 创建用户id列表并设值用户值 todo 优化：添加用户服务接口，一次查询多组用户信息，减少client的调用
+			List<Integer> userIds = new ArrayList<>();
+			for (LikePost likePost : likePosts) {
+				userIds.add(likePost.getUserId());
+			}
+			if (userIds.size() != 0) {
+				List<UserDetail> userDetailList = userClient.getUserDeatilInfoList(userIds).getData();
+				postListVO.setUserLikeBOList(userDetailList);
+			}
 		}
 		return result;
 	}

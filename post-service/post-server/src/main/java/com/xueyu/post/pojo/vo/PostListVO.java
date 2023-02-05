@@ -1,6 +1,6 @@
 package com.xueyu.post.pojo.vo;
 
-import com.xueyu.user.sdk.pojo.bo.UserLikeBO;
+import com.xueyu.user.sdk.pojo.vo.UserDetail;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -42,7 +42,7 @@ public class PostListVO {
 	/**
 	 * 点赞用户列表
 	 */
-	List<UserLikeBO> userLikeBOList;
+	List<UserDetail> userLikeBOList;
 
 	/**
 	 * 帖子创建时间
