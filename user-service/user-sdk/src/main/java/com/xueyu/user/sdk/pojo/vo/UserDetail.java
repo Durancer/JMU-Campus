@@ -1,22 +1,16 @@
-package com.xueyu.user.pojo.vo;
+package com.xueyu.user.sdk.pojo.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 /**
- * 用户显示层实体类
+ * 用户信息实体类
  *
  * @author durance
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName("user_view")
-public class UserView {
+public class UserDetail {
 
 	/**
 	 * 自增id
@@ -32,11 +26,6 @@ public class UserView {
 	 * 名称
 	 */
 	String nickname;
-
-	/**
-	 * 密码
-	 */
-	String password;
 
 	/**
 	 * 头像路径
