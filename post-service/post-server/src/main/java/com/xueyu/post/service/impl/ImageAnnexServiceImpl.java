@@ -26,6 +26,9 @@ public class ImageAnnexServiceImpl extends ServiceImpl<ImageAnnexMapper, ImageAn
 
 	@Override
 	public Map<Integer, List<ImageAnnexView>> getPostListImgs(List<Integer> postIds) {
+		if (postIds.size() == 0) {
+			return new HashMap<>(0);
+		}
 		LambdaQueryWrapper<ImageAnnexView> wrapper = new LambdaQueryWrapper<>();
 		wrapper.in(ImageAnnexView::getParentId, postIds);
 		List<ImageAnnexView> imageAnnexes = imageAnnexViewMapper.selectList(wrapper);

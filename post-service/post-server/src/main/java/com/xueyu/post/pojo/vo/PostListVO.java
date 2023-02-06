@@ -21,9 +21,9 @@ public class PostListVO {
 	Integer id;
 
 	/**
-	 * 用户id
+	 * 帖子作者信息
 	 */
-	Integer userId;
+	UserDetail userInfo;
 
 	/**
 	 * 发布文本内容
@@ -33,7 +33,7 @@ public class PostListVO {
 	/**
 	 * 浏览量
 	 */
-	String viewNum;
+	Integer viewNum;
 
 	/**
 	 * 图片列表

@@ -10,12 +10,17 @@ import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.PostOperateService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 
 import static com.xueyu.post.sdk.constant.PostMqContant.*;
 
+/**
+ * @author durance
+ */
+@Service
 public class PostOperateServiceImpl implements PostOperateService {
 
 	@Resource
