@@ -34,11 +34,6 @@ public class UserView {
 	String nickname;
 
 	/**
-	 * 密码
-	 */
-	String password;
-
-	/**
 	 * 头像路径
 	 */
 	String avatarUrl;

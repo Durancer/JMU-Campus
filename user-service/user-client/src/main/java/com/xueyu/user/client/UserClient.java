@@ -4,8 +4,10 @@ import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.sdk.pojo.vo.UserDetail;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户服务客户端
@@ -22,7 +24,7 @@ public interface UserClient {
 	 * @return 用户信息
 	 */
 	@GetMapping("private/user/detail")
-	public RestResult<UserDetail> getUserInfo(Integer userId);
+	RestResult<UserDetail> getUserInfo(@RequestParam Integer userId);
 
 	/**
 	 * 批量获取用户信息
@@ -31,6 +33,15 @@ public interface UserClient {
 	 * @return 用户信息
 	 */
 	@GetMapping("private/user/detail/list")
-	public RestResult<List<UserDetail>> getUserDeatilInfoList(List<Integer> userIds);
+	RestResult<List<UserDetail>> getUserDeatilInfoList(@RequestParam List<Integer> userIds);
+
+	/**
+	 * 按照用户id获取用户列表
+	 *
+	 * @param userIds 用户id列表
+	 * @return 用户 id | 用户信息
+	 */
+	@GetMapping("private/user/detail/map")
+	RestResult<Map<Integer, UserDetail>> getUserDeatilInfoMap(@RequestParam List<Integer> userIds);
 
 }

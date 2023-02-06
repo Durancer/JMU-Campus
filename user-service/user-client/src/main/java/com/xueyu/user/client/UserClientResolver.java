@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author durance
@@ -23,6 +24,12 @@ public class UserClientResolver implements UserClient {
 	@Override
 	public RestResult<List<UserDetail>> getUserDeatilInfoList(List<Integer> userIds) {
 		log.error("user 服务异常：getUserDeatilInfoList 请求失败");
+		return new RestResult<>(503, "fail");
+	}
+
+	@Override
+	public RestResult<Map<Integer, UserDetail>> getUserDeatilInfoMap(List<Integer> userIds) {
+		log.error("user 服务异常：getUserDeatilInfoMap 请求失败");
 		return new RestResult<>(503, "fail");
 	}
 
