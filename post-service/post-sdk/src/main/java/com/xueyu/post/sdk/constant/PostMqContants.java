@@ -5,7 +5,7 @@ package com.xueyu.post.sdk.constant;
  *
  * @author durance
  */
-public class PostMqContant {
+public class PostMqContants {
 
 	/**
 	 * 帖子服务交换机

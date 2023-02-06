@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.xueyu.post.sdk.constant.PostMqContant.POST_DELETE_KEY;
-import static com.xueyu.post.sdk.constant.PostMqContant.POST_EXCHANGE;
+import static com.xueyu.post.sdk.constant.PostMqContants.POST_DELETE_KEY;
+import static com.xueyu.post.sdk.constant.PostMqContants.POST_EXCHANGE;
 
 /**
  * @author durance
