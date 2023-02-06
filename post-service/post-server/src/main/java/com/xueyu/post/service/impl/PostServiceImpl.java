@@ -136,18 +136,25 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postViewMapper.selectPage(page, wrapper);
 		ListVO<PostListVO> result = new ListVO<>();
 		// 将除具体记录外的分页数据赋值
-		BeanUtils.copyProperties(result, page);
+		BeanUtils.copyProperties(page, result);
 		List<PostView> records = page.getRecords();
-		// 统计postId
+		// 统计postId, userId
 		List<Integer> postIds = new ArrayList<>();
+		List<Integer> authors = new ArrayList<>();
 		for (PostView postView : records) {
 			postIds.add(postView.getId());
+			authors.add(postView.getUserId());
 		}
+		// 查询并设置帖子用户信息
+		Map<Integer, UserDetail> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
 		// 查询所有图片信息
 		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
+		List<PostListVO> postData = new ArrayList<>();
 		for (PostView record : records) {
 			PostListVO postListVO = new PostListVO();
-			BeanUtils.copyProperties(postListVO, record);
+			BeanUtils.copyProperties(record, postListVO);
+			// 设置帖子用户信息
+			postListVO.setUserInfo(userInfos.get(record.getUserId()));
 			// 设置该帖子图片信息
 			postListVO.setImgList(postListImgs.get(record.getId()));
 			// 创建用户id列表并设值用户值 todo 优化：添加用户服务接口，一次查询多组用户信息，减少client的调用
@@ -162,7 +169,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				List<UserDetail> userDetailList = userClient.getUserDeatilInfoList(userIds).getData();
 				postListVO.setUserLikeBOList(userDetailList);
 			}
+			postData.add(postListVO);
 		}
+		// todo 减少点赞用户信息传输字段提高传输效率
+		result.setRecords(postData);
 		return result;
 	}
 

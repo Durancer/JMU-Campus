@@ -15,7 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableMybatisPlusIPage
 @MapperScan("com.xueyu.post.mapper")
-@EnableFeignClients(basePackages = {"com.xueyu.resource.client"})
+@EnableFeignClients(basePackages = {"com.xueyu.resource.client", "com.xueyu.user.client"})
 @EnableAmqpMessageConverterConfig
 public class PostApplication {
 

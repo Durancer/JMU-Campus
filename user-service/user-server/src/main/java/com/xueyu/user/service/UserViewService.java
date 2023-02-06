@@ -5,6 +5,7 @@ import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.sdk.pojo.vo.UserDetail;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户数据业务层
@@ -20,6 +21,14 @@ public interface UserViewService extends IService<UserView> {
 	 * @return 用户数据
 	 */
 	List<UserDetail> getUserInfoList(List<Integer> userIdList);
+
+	/**
+	 * 按照用户id获取用户列表
+	 *
+	 * @param userIdList 用户id列表
+	 * @return 用户 id | 用户信息
+	 */
+	Map<Integer, UserDetail> getUserInfoListById(List<Integer> userIdList);
 
 	/**
 	 * 获取单个用户信息

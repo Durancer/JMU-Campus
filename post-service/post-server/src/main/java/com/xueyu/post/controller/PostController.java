@@ -68,14 +68,14 @@ public class PostController {
 	}
 
 	/**
-	 * 分页用户帖子
+	 * 分页获取用户帖子
 	 *
 	 * @param current 当前页
 	 * @param size    每页数量
 	 * @return 帖子信息
 	 */
-	@GetMapping("list/all")
-	public RestResult<ListVO<PostListVO>> getAllPost(Integer current, Integer size, @RequestHeader Integer userId) {
+	@GetMapping("list/user")
+	public RestResult<ListVO<PostListVO>> getUserPost(Integer current, Integer size, @RequestHeader Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}

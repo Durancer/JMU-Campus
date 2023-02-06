@@ -9,7 +9,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author durance
@@ -23,17 +25,27 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		List<UserDetail> userDetails = new ArrayList<>();
 		for (UserView userView : userViews) {
 			UserDetail userDetail = new UserDetail();
-			BeanUtils.copyProperties(userDetail, userView);
+			BeanUtils.copyProperties(userView, userDetail);
 			userDetails.add(userDetail);
 		}
 		return userDetails;
 	}
 
 	@Override
+	public Map<Integer, UserDetail> getUserInfoListById(List<Integer> userIdList) {
+		List<UserDetail> userInfoList = getUserInfoList(userIdList);
+		Map<Integer, UserDetail> userInfo = new HashMap<>(userIdList.size());
+		for (UserDetail userDetail : userInfoList) {
+			userInfo.put(userDetail.getId(), userDetail);
+		}
+		return userInfo;
+	}
+
+	@Override
 	public UserDetail getUserInfo(Integer userId) {
 		UserView userView = query().getBaseMapper().selectById(userId);
 		UserDetail userDetail = new UserDetail();
-		BeanUtils.copyProperties(userDetail, userView);
+		BeanUtils.copyProperties(userView, userDetail);
 		return userDetail;
 	}
 
