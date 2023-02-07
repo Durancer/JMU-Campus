@@ -1,7 +1,8 @@
 package com.xueyu.user.controller;
 
 import com.xueyu.common.core.result.RestResult;
-import com.xueyu.user.sdk.pojo.vo.UserDetail;
+import com.xueyu.user.pojo.vo.UserView;
+import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import com.xueyu.user.service.UserViewService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class UserInfoController {
 	 * @return 用户信息
 	 */
 	@GetMapping("detail")
-	public RestResult<UserDetail> getUserDetailInfo(@RequestParam Integer userId) {
+	public RestResult<UserView> getUserDetailInfo(@RequestParam Integer userId) {
 		return RestResult.ok(userViewService.getUserInfo(userId));
 	}
 
@@ -42,7 +43,7 @@ public class UserInfoController {
 	 * @return 用户信息
 	 */
 	@GetMapping("detail/list")
-	public RestResult<List<UserDetail>> getUserDeatilInfoList(@RequestParam List<Integer> userIds) {
+	public RestResult<List<UserSimpleVO>> getUserDeatilInfoList(@RequestParam List<Integer> userIds) {
 		return RestResult.ok(userViewService.getUserInfoList(userIds));
 	}
 
@@ -53,7 +54,7 @@ public class UserInfoController {
 	 * @return 用户id | 用户信息
 	 */
 	@GetMapping("detail/map")
-	public RestResult<Map<Integer, UserDetail>> getUserDeatilInfoMap(@RequestParam List<Integer> userIds) {
+	public RestResult<Map<Integer, UserSimpleVO>> getUserDeatilInfoMap(@RequestParam List<Integer> userIds) {
 		return RestResult.ok(userViewService.getUserInfoListById(userIds));
 	}
 

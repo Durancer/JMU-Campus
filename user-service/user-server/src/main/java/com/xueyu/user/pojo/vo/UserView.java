@@ -44,6 +44,11 @@ public class UserView {
 	String introduce;
 
 	/**
+	 * 性别 0 匿 | 1 boy | 2 girl
+	 */
+	Integer sex;
+
+	/**
 	 * 电话
 	 */
 	String phone;
