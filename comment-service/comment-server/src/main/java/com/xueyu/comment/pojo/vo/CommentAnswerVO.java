@@ -1,6 +1,6 @@
 package com.xueyu.comment.pojo.vo;
 
-import com.xueyu.user.sdk.pojo.vo.UserDetail;
+import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,12 +30,12 @@ public class CommentAnswerVO {
 	/**
 	 * 评论用户信息
 	 */
-	UserDetail userInfo;
+	UserSimpleVO userInfo;
 
 	/**
 	 * 回复的用户信息，为根评论时此项为null
 	 */
-	UserDetail answerUserInfo;
+	UserSimpleVO answerUserInfo;
 
 	/**
 	 * 根评论id，本身为根评论则为 id

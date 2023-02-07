@@ -11,7 +11,7 @@ import com.xueyu.comment.pojo.vo.CommentPostVO;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
 import com.xueyu.user.client.UserClient;
-import com.xueyu.user.sdk.pojo.vo.UserDetail;
+import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -100,7 +100,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		}
 		// 查询出所有有关的用户信息
 		List<Integer> userIds = new ArrayList<>(userIdSet);
-		Map<Integer, UserDetail> userInfo = userClient.getUserDeatilInfoMap(userIds).getData();
+		Map<Integer, UserSimpleVO> userInfo = userClient.getUserDeatilInfoMap(userIds).getData();
 		List<CommentPostVO> rootComment = new ArrayList<>();
 		// 创建关联map，key为根id，值为 子评论集合
 		Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(10);
@@ -132,6 +132,43 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			entry.getKey().setAnswerCommentList(answerCommentMap.get(entry.getValue().getRootId()));
 		}
 		return rootComment;
+	}
+
+	@Override
+	public List<CommentAnswerVO> getUserComments(Integer userId) {
+		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(Comment::getUserId, userId);
+		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
+		return commentConvertAnswerVO(comments);
+	}
+
+	@Override
+	public List<CommentAnswerVO> getUserAnsweredComments(Integer toUserId) {
+		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+		// 查询收到得到信息，且不为自己发送的
+		wrapper.eq(Comment::getToUserId, toUserId).ne(Comment::getUserId, toUserId);
+		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
+		return commentConvertAnswerVO(comments);
+	}
+
+	@Override
+	public List<CommentAnswerVO> commentConvertAnswerVO(List<Comment> commentList) {
+		// 统计关联的用户id
+		Set<Integer> userIdSet = new HashSet<>();
+		for (Comment comment : commentList) {
+			userIdSet.add(comment.getUserId());
+			userIdSet.add(comment.getToUserId());
+		}
+		Map<Integer, UserSimpleVO> userData = userClient.getUserDeatilInfoMap(new ArrayList<>(userIdSet)).getData();
+		List<CommentAnswerVO> answerVOList = new ArrayList<>();
+		for (Comment comment : commentList) {
+			CommentAnswerVO commentAnswerVO = new CommentAnswerVO();
+			BeanUtils.copyProperties(comment, commentAnswerVO);
+			commentAnswerVO.setUserInfo(userData.get(comment.getUserId()));
+			commentAnswerVO.setAnswerUserInfo(userData.get(comment.getToUserId()));
+			answerVOList.add(commentAnswerVO);
+		}
+		return answerVOList;
 	}
 
 }
