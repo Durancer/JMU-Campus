@@ -1,7 +1,7 @@
 package com.xueyu.post.pojo.vo;
 
 import com.xueyu.post.pojo.bo.ImageAnnexView;
-import com.xueyu.user.sdk.pojo.vo.UserDetail;
+import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -23,7 +23,7 @@ public class PostListVO {
 	/**
 	 * 帖子作者信息
 	 */
-	UserDetail userInfo;
+	UserSimpleVO userInfo;
 
 	/**
 	 * 发布文本内容
@@ -43,7 +43,7 @@ public class PostListVO {
 	/**
 	 * 点赞用户列表
 	 */
-	List<UserDetail> userLikeBOList;
+	List<UserSimpleVO> userLikeBOList;
 
 	/**
 	 * 帖子创建时间

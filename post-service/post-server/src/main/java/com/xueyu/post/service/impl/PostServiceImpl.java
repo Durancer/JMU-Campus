@@ -22,7 +22,7 @@ import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
-import com.xueyu.user.sdk.pojo.vo.UserDetail;
+import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.xueyu.post.sdk.constant.PostMqContant.POST_DELETE_KEY;
-import static com.xueyu.post.sdk.constant.PostMqContant.POST_EXCHANGE;
+import static com.xueyu.post.sdk.constant.PostMqContants.POST_DELETE_KEY;
+import static com.xueyu.post.sdk.constant.PostMqContants.POST_EXCHANGE;
 
 /**
  * @author durance
@@ -146,7 +146,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			authors.add(postView.getUserId());
 		}
 		// 查询并设置帖子用户信息
-		Map<Integer, UserDetail> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
+		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
 		// 查询所有图片信息
 		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
 		List<PostListVO> postData = new ArrayList<>();
@@ -166,8 +166,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				userIds.add(likePost.getUserId());
 			}
 			if (userIds.size() != 0) {
-				List<UserDetail> userDetailList = userClient.getUserDeatilInfoList(userIds).getData();
-				postListVO.setUserLikeBOList(userDetailList);
+				List<UserSimpleVO> userSimpleVOList = userClient.getUserDeatilInfoList(userIds).getData();
+				postListVO.setUserLikeBOList(userSimpleVOList);
 			}
 			postData.add(postListVO);
 		}

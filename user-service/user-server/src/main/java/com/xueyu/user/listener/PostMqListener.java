@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static com.xueyu.post.sdk.constant.PostMqContant.*;
+import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
 /**
  * 帖子服务 mq 监听器

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 
-import static com.xueyu.post.sdk.constant.PostMqContant.*;
+import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
 /**
  * @author durance
