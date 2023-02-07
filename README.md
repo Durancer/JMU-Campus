@@ -2,7 +2,7 @@
 i集大校园软件服务端
 
 <p align="center">
-<a target="_blank" href="https://github.com/stick-i/scblogs">
+<a target="_blank" href="https://github.com/Durancer/JMU-Campus">
   <img src="https://img.shields.io/hexpm/l/plug.svg" alt=""/>
   <img src="https://img.shields.io/github/stars/durancer/JMU-campus" alt=""/>
   <img src="https://img.shields.io/github/forks/durancer/JMU-campus" alt=""/>
@@ -14,9 +14,13 @@ i集大校园软件服务端
 
 ### 项目模块
 本项目基于 **SpringCloud Alibaba** 实现微服务架构项目。
-预估服务包含：**网关服务**、**资源服务**、**聊天服务**、**贴子服务**、**留言服务**、**支付服务**等再继续进行拓展
+预估服务包含：**网关服务**、**资源服务**、**聊天服务**、**帖子服务**、**留言服务**、**用户服务**等再继续进行拓展
 ![image](https://user-images.githubusercontent.com/102197880/214082236-c481fa90-1ef7-4aca-82a1-a0816684b36e.png)
 
+### 项目技术架构图
+<p align="center">
+<img src="https://user-images.githubusercontent.com/102197880/217150800-47d82bca-c18a-4093-a021-b1a4e6555ae1.png" style="width: 80%"/>
+</p>
 ### 技术选型
 #### 前端技术选型
 预计实现微信小程序和 app 两端
