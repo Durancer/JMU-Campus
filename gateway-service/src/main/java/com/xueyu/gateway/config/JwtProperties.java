@@ -1,4 +1,4 @@
-package com.xueyu.user.config;
+package com.xueyu.gateway.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +25,12 @@ public class JwtProperties {
 	 */
 	public static Long expiration;
 
-	public void setKey(String secret) {
-		JwtProperties.key = secret;
+	public void setKey(String key) {
+		JwtProperties.key = key;
 	}
 
-	public void setIssuer(String tokenHeader) {
-		JwtProperties.issuer = tokenHeader;
+	public void setIssuer(String issuer) {
+		JwtProperties.issuer = issuer;
 	}
 
 	public void setExpiration(Long expiration) {

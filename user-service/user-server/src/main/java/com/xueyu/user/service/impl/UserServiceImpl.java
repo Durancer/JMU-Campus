@@ -56,7 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (!checkpw) {
 			return null;
 		}
-		return JwtUtil.createJwt();
+		// 签发jwt，设置用户id
+		return JwtUtil.createJwt("userId", check.getId());
 	}
 
 }
