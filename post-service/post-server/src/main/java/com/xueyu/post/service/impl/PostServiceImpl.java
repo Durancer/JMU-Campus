@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.comment.client.CommentClient;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
 import com.xueyu.post.mapper.LikePostMapper;
@@ -11,10 +12,8 @@ import com.xueyu.post.mapper.PostGeneralMapper;
 import com.xueyu.post.mapper.PostMapper;
 import com.xueyu.post.mapper.PostViewMapper;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
-import com.xueyu.post.pojo.domain.ImageAnnex;
-import com.xueyu.post.pojo.domain.LikePost;
-import com.xueyu.post.pojo.domain.Post;
-import com.xueyu.post.pojo.domain.PostGeneral;
+import com.xueyu.post.pojo.domain.*;
+import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
@@ -63,6 +62,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	PostViewMapper postViewMapper;
+
+	@Resource
+	CommentClient commentClient;
 
 	@Override
 	public Boolean publishPost(Post post, MultipartFile[] files) {
@@ -174,6 +176,51 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// todo 减少点赞用户信息传输字段提高传输效率
 		result.setRecords(postData);
 		return result;
+	}
+
+	@Override
+	public PostDetailVO getPostDetailInfo(Integer postId, Integer userId) {
+		// 查询数据，创建数据响应体
+		PostView postView = postViewMapper.selectById(postId);
+		// 核对该帖子是否已通过审核，如果未通过审核且不为自己的帖子，拒绝访问
+		if (!postView.getStatus().equals(PostStatus.PUBLIC.getValue())) {
+			if (userId == null || !userId.equals(postView.getUserId())) {
+				throw new PostException("未审核的post信息");
+			}
+		}
+		PostDetailVO postDetailVO = new PostDetailVO();
+		// 拷贝相同属性项
+		BeanUtils.copyProperties(postView, postDetailVO);
+		// 查询并设置是否点赞
+		if (userId != null) {
+			LambdaQueryWrapper<LikePost> wrapper = new LambdaQueryWrapper<>();
+			wrapper.eq(LikePost::getPostId, postId).eq(LikePost::getUserId, userId);
+			LikePost likePost = likePostMapper.selectOne(wrapper);
+			if (likePost != null) {
+				postDetailVO.setIsLike(true);
+			} else {
+				postDetailVO.setIsLike(false);
+			}
+		} else {
+			postDetailVO.setIsLike(false);
+		}
+		// 查询并设置作者信息
+		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
+		// 查询评论信息
+		postDetailVO.setCommentList(commentClient.getPostCommentList(postId).getData());
+		return postDetailVO;
+	}
+
+	@Override
+	public void passPostContent(Integer postId, Integer desicion) {
+		if (!(desicion.equals(PostStatus.PUBLIC.getValue()) || desicion.equals(PostStatus.FAIL.getValue()))) {
+			throw new PostException("不合法的审核参数");
+		}
+		// 参数合法修改帖子状态 todo 如果审核失败，返回失败原因
+		Post post = new Post();
+		post.setId(postId);
+		post.setStatus(desicion);
+		lambdaUpdate().update(post);
 	}
 
 }

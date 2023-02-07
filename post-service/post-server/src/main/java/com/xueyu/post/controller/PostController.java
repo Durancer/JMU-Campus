@@ -3,9 +3,10 @@ package com.xueyu.post.controller;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.service.PostService;
-import org.springframework.lang.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +48,7 @@ public class PostController {
 	 * @return 删除结果
 	 */
 	@PostMapping("delete")
-	public RestResult<?> deletePost(@NonNull Integer postId, @RequestHeader Integer userId) {
+	public RestResult<?> deletePost(@NotNull Integer postId, @RequestHeader Integer userId) {
 		if (!postService.deletePost(postId, userId)) {
 			return RestResult.fail("删除失败");
 		}
@@ -78,6 +79,32 @@ public class PostController {
 	public RestResult<ListVO<PostListVO>> getUserPost(Integer current, Integer size, @RequestHeader Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
+	}
+
+	/**
+	 * 获取帖子详细信息
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return 帖子详细信息
+	 */
+	@GetMapping("detail")
+	public RestResult<PostDetailVO> getPostDetailInfo(@NotNull Integer postId, @RequestHeader(required = false) Integer userId) {
+		return RestResult.ok(postService.getPostDetailInfo(postId, userId));
+
+	}
+
+	/**
+	 * 审核用户帖子
+	 *
+	 * @param postId   帖子id
+	 * @param decision 帖子审核选项 1 审核通过 | 2 审核不通过
+	 * @return 审核结果
+	 */
+	@PostMapping("check")
+	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision) {
+		postService.passPostContent(postId, decision);
+		return RestResult.ok(null, "完成审核");
 	}
 
 }
