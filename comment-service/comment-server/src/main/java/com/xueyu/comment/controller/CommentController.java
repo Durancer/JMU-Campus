@@ -4,6 +4,7 @@ import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.service.CommentService;
 import com.xueyu.common.core.result.RestResult;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -76,7 +77,7 @@ public class CommentController {
 	 * @return 删除结果
 	 */
 	@PostMapping("delete")
-	public RestResult<?> deleteUserComment(Integer commentId, @RequestHeader Integer userId) {
+	public RestResult<?> deleteUserComment(@NotNull Integer commentId, @RequestHeader Integer userId) {
 		if (commentService.deleteUserComment(commentId, userId)) {
 			return RestResult.ok(null, "删除成功");
 		}
