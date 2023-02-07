@@ -21,6 +21,7 @@ i集大校园软件服务端
 <p align="center">
 <img src="https://user-images.githubusercontent.com/102197880/217150800-47d82bca-c18a-4093-a021-b1a4e6555ae1.png" style="width: 80%"/>
 </p>
+
 ### 技术选型
 #### 前端技术选型
 预计实现微信小程序和 app 两端
