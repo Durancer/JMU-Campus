@@ -9,33 +9,9 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>post-server</artifactId>
+	<artifactId>post-client</artifactId>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>com.xueyu</groupId>
-			<artifactId>common-web</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.xueyu</groupId>
-			<artifactId>common-data</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.xueyu</groupId>
-			<artifactId>common-amqp</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.xueyu</groupId>
-			<artifactId>resource-client</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
@@ -45,14 +21,13 @@
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
-			<artifactId>user-client</artifactId>
+			<artifactId>common-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.xueyu</groupId>
-			<artifactId>comment-client</artifactId>
-			<version>1.0.0</version>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 
 	</dependencies>

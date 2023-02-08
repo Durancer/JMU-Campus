@@ -10,6 +10,8 @@ import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.post.client.PostClient;
+import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -20,8 +22,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
 
-import static com.xueyu.comment.sdk.constant.CommentMqContants.COMMENT_EXCHANGE;
-import static com.xueyu.comment.sdk.constant.CommentMqContants.COMMENT_INSERT_KEY;
+import static com.xueyu.comment.sdk.constant.CommentMqContants.*;
 
 /**
  * @author durance
@@ -35,8 +36,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	@Resource
 	UserClient userClient;
 
+	@Resource
+	PostClient postClient;
+
 	@Override
 	public Boolean sendUserComment(Comment comment) {
+		PostDTO postInfo = postClient.getPostInfo(comment.getPostId()).getData();
+		if (postInfo == null) {
+			throw new CommentException("不存在该帖子信息");
+		}
 		if (!(comment.getType().equals(CommentType.ROOT.getValue()) || comment.getType().equals(CommentType.ANSWER.getValue()))) {
 			throw new CommentException("错误的评论类型");
 		}
@@ -52,7 +60,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		commentDTO.setCommentId(comment.getId());
 		commentDTO.setPostId(comment.getPostId());
 		commentDTO.setUserId(comment.getUserId());
-		// todo 添加作者id传输
+		commentDTO.setAuthorId(postInfo.getUserId());
 		rabbitTemplate.convertAndSend(COMMENT_EXCHANGE, COMMENT_INSERT_KEY, commentDTO);
 		return true;
 	}
@@ -78,7 +86,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		commentDTO.setUserId(userId);
 		commentDTO.setPostId(comment.getPostId());
 		commentDTO.setCommentId(commentId);
-		rabbitTemplate.convertAndSend(COMMENT_EXCHANGE, COMMENT_INSERT_KEY, commentDTO);
+		rabbitTemplate.convertAndSend(COMMENT_EXCHANGE, COMMENT_DELETE_KEY, commentDTO);
 		// todo 添加作者id传输
 		return true;
 	}
