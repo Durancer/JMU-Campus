@@ -15,7 +15,7 @@
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
-			<artifactId>user-sdk</artifactId>
+			<artifactId>comment-sdk</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 

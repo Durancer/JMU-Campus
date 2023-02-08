@@ -78,7 +78,7 @@ public class CommentController {
 	 */
 	@PostMapping("delete")
 	public RestResult<?> deleteUserComment(@NotNull Integer commentId, @RequestHeader Integer userId) {
-		if (commentService.deleteUserComment(commentId, userId)) {
+		if (commentService.deleteUserComment(userId, commentId)) {
 			return RestResult.ok(null, "删除成功");
 		}
 		return RestResult.fail("删除失败");
