@@ -26,4 +26,9 @@ public class UserSimpleVO {
 	 */
 	String avatarUrl;
 
+	/**
+	 * 性别 0 为匿 | 1为boy | 2为girl
+	 */
+	Integer sex;
+
 }
