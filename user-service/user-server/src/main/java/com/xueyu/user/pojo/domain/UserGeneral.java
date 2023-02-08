@@ -34,6 +34,11 @@ public class UserGeneral {
 	Integer likeNum;
 
 	/**
+	 * 帖子量
+	 */
+	Integer postNum;
+
+	/**
 	 * 评论量
 	 */
 	Integer commentNum;
