@@ -14,6 +14,7 @@
 	<modules>
 		<module>post-server</module>
 		<module>post-sdk</module>
+		<module>post-client</module>
 	</modules>
 
 

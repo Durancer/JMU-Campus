@@ -5,8 +5,10 @@ import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
+import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.post.service.PostService;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -105,6 +107,19 @@ public class PostController {
 	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision) {
 		postService.passPostContent(postId, decision);
 		return RestResult.ok(null, "完成审核");
+	}
+
+	/**
+	 * 获取帖子基本信息
+	 *
+	 * @param postId 帖子id
+	 * @return 帖子基本信息
+	 */
+	@GetMapping("one")
+	public RestResult<PostDTO> getPostInfo(@RequestParam Integer postId) {
+		PostDTO postDTO = new PostDTO();
+		BeanUtils.copyProperties(postService.getById(postId), postDTO);
+		return RestResult.ok(postDTO);
 	}
 
 }

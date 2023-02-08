@@ -173,7 +173,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			}
 			postData.add(postListVO);
 		}
-		// todo 减少点赞用户信息传输字段提高传输效率
 		result.setRecords(postData);
 		return result;
 	}
