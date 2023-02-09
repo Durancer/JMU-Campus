@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class PostDTO {
 
 	/**
-	 * 自增id
+	 * 帖子id
 	 */
 	Integer id;
 

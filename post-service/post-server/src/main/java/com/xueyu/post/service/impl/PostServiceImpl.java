@@ -25,6 +25,7 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -33,8 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.xueyu.post.sdk.constant.PostMqContants.POST_DELETE_KEY;
-import static com.xueyu.post.sdk.constant.PostMqContants.POST_EXCHANGE;
+import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
 /**
  * @author durance
@@ -67,6 +67,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	CommentClient commentClient;
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Boolean publishPost(Post post, MultipartFile[] files) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
@@ -112,7 +113,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			}
 			resourceClient.deleteFilesListByFileName(fileList);
 		}
-		// todo 删除帖子评论
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {
@@ -207,6 +207,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
 		// 查询评论信息
 		postDetailVO.setCommentList(commentClient.getPostCommentList(postId).getData());
+		// 发送mq信息
+		PostOperateDTO postOperateDTO = new PostOperateDTO();
+		postOperateDTO.setUserId(userId);
+		postOperateDTO.setPostId(postId);
+		postOperateDTO.setAuthorId(postView.getUserId());
+		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_VIEW_KEY, postOperateDTO);
 		return postDetailVO;
 	}
 
