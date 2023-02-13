@@ -29,3 +29,7 @@ spring:
           uri: lb://post-server
           predicates:
             - Path=/post/**
+        - id: comment-server
+          uri: lb://comment-server
+          predicates:
+            - Path=/comment/**

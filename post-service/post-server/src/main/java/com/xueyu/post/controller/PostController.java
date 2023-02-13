@@ -2,6 +2,7 @@ package com.xueyu.post.controller;
 
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.post.exception.PostException;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -35,6 +36,10 @@ public class PostController {
 	 */
 	@PostMapping("add")
 	public RestResult<?> pushlishPost(Post post, MultipartFile[] files) {
+		int MAX_FILES = 9;
+		if (files.length >= MAX_FILES) {
+			throw new PostException("最多上传 9 张图");
+		}
 		Boolean sendStatus = postService.publishPost(post, files);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
@@ -50,7 +55,7 @@ public class PostController {
 	 * @return 删除结果
 	 */
 	@PostMapping("delete")
-	public RestResult<?> deletePost(@NotNull Integer postId, @RequestHeader Integer userId) {
+	public RestResult<?> deletePost(@NotNull Integer postId, Integer userId) {
 		if (!postService.deletePost(postId, userId)) {
 			return RestResult.fail("删除失败");
 		}
@@ -65,7 +70,7 @@ public class PostController {
 	 * @return 帖子信息
 	 */
 	@GetMapping("list/all")
-	public RestResult<ListVO<PostListVO>> getAllPost(Integer current, Integer size) {
+	public RestResult<ListVO<PostListVO>> getAllPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size) {
 		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, null);
 		return RestResult.ok(postListByPage);
 	}
@@ -78,7 +83,7 @@ public class PostController {
 	 * @return 帖子信息
 	 */
 	@GetMapping("list/user")
-	public RestResult<ListVO<PostListVO>> getUserPost(Integer current, Integer size, @RequestHeader Integer userId) {
+	public RestResult<ListVO<PostListVO>> getUserPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
