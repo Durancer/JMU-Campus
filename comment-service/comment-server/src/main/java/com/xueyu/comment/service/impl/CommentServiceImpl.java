@@ -72,7 +72,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			throw new CommentException("评论与用户不匹配");
 		}
 		// 如果为根评论，需要连同回复评论一起删除，否则仅删除该条评论即可
-		int deleteNum = 0;
+		int deleteNum;
 		if (comment.getType().equals(CommentType.ROOT.getValue())) {
 			LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 			wrapper.eq(Comment::getRootId, commentId);
@@ -87,7 +87,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		commentDTO.setPostId(comment.getPostId());
 		commentDTO.setCommentId(commentId);
 		rabbitTemplate.convertAndSend(COMMENT_EXCHANGE, COMMENT_DELETE_KEY, commentDTO);
-		// todo 添加作者id传输
 		return true;
 	}
 
@@ -109,7 +108,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		// 查询出所有有关的用户信息
 		List<Integer> userIds = new ArrayList<>(userIdSet);
 		Map<Integer, UserSimpleVO> userInfo = userClient.getUserDeatilInfoMap(userIds).getData();
-		List<CommentPostVO> rootComment = new ArrayList<>();
+		List<CommentPostVO> rootComment = new LinkedList<>();
 		// 创建关联map，key为根id，值为 子评论集合
 		Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(10);
 		Map<CommentPostVO, Comment> linkMap = new HashMap<>(10);

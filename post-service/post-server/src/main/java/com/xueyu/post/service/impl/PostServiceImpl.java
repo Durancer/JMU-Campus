@@ -25,16 +25,17 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.xueyu.post.sdk.constant.PostMqContants.POST_DELETE_KEY;
-import static com.xueyu.post.sdk.constant.PostMqContants.POST_EXCHANGE;
+import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
 /**
  * @author durance
@@ -67,6 +68,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	CommentClient commentClient;
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Boolean publishPost(Post post, MultipartFile[] files) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
@@ -112,7 +114,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			}
 			resourceClient.deleteFilesListByFileName(fileList);
 		}
-		// todo 删除帖子评论
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {
@@ -143,12 +144,29 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 统计postId, userId
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();
+		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
+		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
 		for (PostView postView : records) {
 			postIds.add(postView.getId());
 			authors.add(postView.getUserId());
 		}
+		// 查询所有帖子的点赞信息，并按照帖子id进行分配
+		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
+		likeWrapper.in(LikePost::getPostId, postIds);
+		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
+		for (LikePost likePost : likePosts) {
+			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
+				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
+			} else {
+				List<Integer> userIds = new ArrayList<>();
+				userIds.add(likePost.getUserId());
+				likeUserIdsMap.put(likePost.getPostId(), userIds);
+			}
+		}
 		// 查询并设置帖子用户信息
 		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
+		// 查询所有帖子的点赞用户信息
+		Map<Integer, List<UserSimpleVO>> userLikeInfo = userClient.getUserInfoByGroup(likeUserIdsMap).getData();
 		// 查询所有图片信息
 		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
 		List<PostListVO> postData = new ArrayList<>();
@@ -159,18 +177,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			postListVO.setUserInfo(userInfos.get(record.getUserId()));
 			// 设置该帖子图片信息
 			postListVO.setImgList(postListImgs.get(record.getId()));
-			// 创建用户id列表并设值用户值 todo 优化：添加用户服务接口，一次查询多组用户信息，减少client的调用
-			LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
-			likeWrapper.eq(LikePost::getPostId, record.getId());
-			List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
-			List<Integer> userIds = new ArrayList<>();
-			for (LikePost likePost : likePosts) {
-				userIds.add(likePost.getUserId());
-			}
-			if (userIds.size() != 0) {
-				List<UserSimpleVO> userSimpleVOList = userClient.getUserDeatilInfoList(userIds).getData();
-				postListVO.setUserLikeBOList(userSimpleVOList);
-			}
+			// 设置点赞用户信息
+			postListVO.setUserLikeBOList(userLikeInfo.get(record.getId()));
 			postData.add(postListVO);
 		}
 		result.setRecords(postData);
@@ -184,7 +192,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 核对该帖子是否已通过审核，如果未通过审核且不为自己的帖子，拒绝访问
 		if (!postView.getStatus().equals(PostStatus.PUBLIC.getValue())) {
 			if (userId == null || !userId.equals(postView.getUserId())) {
-				throw new PostException("未审核的post信息");
+				throw new PostException("未审核的帖子信息");
 			}
 		}
 		PostDetailVO postDetailVO = new PostDetailVO();
@@ -207,6 +215,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
 		// 查询评论信息
 		postDetailVO.setCommentList(commentClient.getPostCommentList(postId).getData());
+		// 发送mq信息
+		PostOperateDTO postOperateDTO = new PostOperateDTO();
+		postOperateDTO.setUserId(userId);
+		postOperateDTO.setPostId(postId);
+		postOperateDTO.setAuthorId(postView.getUserId());
+		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_VIEW_KEY, postOperateDTO);
 		return postDetailVO;
 	}
 
