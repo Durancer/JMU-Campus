@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * 定义令牌桶根据的key, 主机ip
  *
- * @author duranec
+ * @author durance
  */
 @Configuration
 public class KeyResolverConfig {
