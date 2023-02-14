@@ -46,4 +46,15 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		return query().getBaseMapper().selectById(userId);
 	}
 
+	@Override
+	public Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<Integer, List<Integer>> userGroupIds) {
+		// 创建响应体
+		Map<Integer, List<UserSimpleVO>> result = new HashMap<>(userGroupIds.size());
+		for (Map.Entry<Integer, List<Integer>> next : userGroupIds.entrySet()) {
+			List<UserSimpleVO> userInfoList = getUserInfoList(next.getValue());
+			result.put(next.getKey(), userInfoList);
+		}
+		return result;
+	}
+
 }

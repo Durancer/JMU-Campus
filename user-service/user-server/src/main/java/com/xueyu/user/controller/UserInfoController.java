@@ -58,4 +58,15 @@ public class UserInfoController {
 		return RestResult.ok(userViewService.getUserInfoListById(userIds));
 	}
 
+	/**
+	 * 根据传入id进行分组查询用户信息
+	 *
+	 * @param userGroupIds 分组id，key为分组id | value为该key所以对应的需要查询的用户id列表
+	 * @return 分组用户信息
+	 */
+	@GetMapping("list/group")
+	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam Map<Integer, List<Integer>> userGroupIds) {
+		return RestResult.ok(userViewService.getUserInfoListByGroup(userGroupIds));
+	}
+
 }
