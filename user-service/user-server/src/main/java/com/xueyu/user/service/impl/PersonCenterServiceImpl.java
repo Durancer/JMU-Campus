@@ -32,7 +32,7 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 	public Boolean updateUserInfo(User user) {
 		int i = userMapper.updateById(user);
 		if (i != 1) {
-			throw new UserException("未存在的用户id");
+			throw new UserException("不存在的用户id");
 		}
 		return true;
 	}
@@ -41,7 +41,12 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 	public String updateUserAvatar(Integer userId, MultipartFile file) {
 		User check = userMapper.selectById(userId);
 		if (check == null) {
-			throw new UserException("恶意攻击: 不存在的userId");
+			throw new UserException("不存在的用户id");
+		}
+		// 如果不为默认头像，删除原来的头像文件
+		String originName = check.getAvatar();
+		if (!"default.jpg".equals(originName)) {
+			resourceClient.deleteFileByFileName(originName);
 		}
 		// 进行头像保存，获取文件名
 		Map<String, String> resDate = resourceClient.uploadImageFile(file).getData();

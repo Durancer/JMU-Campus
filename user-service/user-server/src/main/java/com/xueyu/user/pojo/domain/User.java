@@ -24,6 +24,11 @@ public class User {
 	Integer id;
 
 	/**
+	 * 小程序openid
+	 */
+	String openid;
+
+	/**
 	 * 用户名
 	 */
 	String username;

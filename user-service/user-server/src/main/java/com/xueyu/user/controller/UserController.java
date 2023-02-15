@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,14 +42,24 @@ public class UserController {
 	 * @return 登录结果
 	 */
 	@GetMapping("login")
-	public RestResult<Map<String, String>> loginUser(User user) {
-		String token = userService.loginUser(user);
-		if (token == null) {
+	public RestResult<Map<String, Object>> loginUser(User user) {
+		Map<String, Object> result = userService.loginUser(user);
+		if (result == null) {
 			return new RestResult<>(false, "账号或密码错误");
 		}
-		Map<String, String> resMap = new HashMap<>(1);
-		resMap.put("token", token);
-		return RestResult.ok(resMap, "登录成功");
+		return RestResult.ok(result, "登录成功");
+	}
+
+	/**
+	 * 小程序授权登录用户
+	 *
+	 * @param user 用户信息
+	 * @param code 前端接口code
+	 * @return token和用户信息
+	 */
+	@PostMapping("auth")
+	public RestResult<Map<String, Object>> authUserByminApp(User user, String code) {
+		return RestResult.ok(userService.authUserByMinApp(user, code));
 	}
 
 }
