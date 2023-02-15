@@ -8,3 +8,5 @@ spring:
         shared-configs:
           - data-id: public-security.yaml
             refresh: true
+          - data-id: default-redis.yaml
+            refresh: true

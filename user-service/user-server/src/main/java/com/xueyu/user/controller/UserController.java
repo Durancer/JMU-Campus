@@ -21,6 +21,12 @@ public class UserController {
 	@Resource
 	UserService userService;
 
+	/**
+	 * 注册用户
+	 *
+	 * @param user 用户信息
+	 * @return 注册结果
+	 */
 	@PostMapping("register")
 	public RestResult<?> registerUser(User user) {
 		if (userService.registerUser(user)) {
@@ -29,6 +35,12 @@ public class UserController {
 		return RestResult.fail("已存在相同的的用户名或电话");
 	}
 
+	/**
+	 * 用户登录
+	 *
+	 * @param user 用户信息
+	 * @return 登录结果
+	 */
 	@GetMapping("login")
 	public RestResult<Map<String, Object>> loginUser(User user) {
 		Map<String, Object> result = userService.loginUser(user);

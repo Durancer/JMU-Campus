@@ -1,6 +1,5 @@
 package com.xueyu.user.pojo.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +21,6 @@ public class UserView {
 	/**
 	 * 自增id
 	 */
-	@TableId
 	Integer id;
 
 	/**
@@ -44,6 +42,11 @@ public class UserView {
 	 * 个人介绍
 	 */
 	String introduce;
+
+	/**
+	 * 性别 0 匿 | 1 boy | 2 girl
+	 */
+	Integer sex;
 
 	/**
 	 * 电话

@@ -1,7 +1,10 @@
 package com.xueyu.post.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.pojo.vo.PostDetailVO;
+import com.xueyu.post.pojo.vo.PostListVO;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -19,12 +22,39 @@ public interface PostService extends IService<Post> {
 	Boolean publishPost(Post post, MultipartFile[] files);
 
 	/**
-	 * 用户点赞（取消）帖子
+	 * 删除帖子
+	 *
+	 * @param postId 帖子id
+	 * @param userId 帖子用户id
+	 * @return 删除结果
+	 */
+	Boolean deletePost(Integer postId, Integer userId);
+
+	/**
+	 * 分页查询帖子列表
+	 *
+	 * @param current 当前页
+	 * @param size    每页大小
+	 * @param userId  用户id，为空时查找全部
+	 * @return 分页数据
+	 */
+	ListVO<PostListVO> getPostListByPage(Integer current, Integer size, Integer userId);
+
+	/**
+	 * 获取帖子详情信息
 	 *
 	 * @param postId 帖子id
 	 * @param userId 用户id
-	 * @return true 点赞 or  false 取消
+	 * @return 帖子详情信息
 	 */
-	Boolean likeUserPost(Integer postId, Integer userId);
+	PostDetailVO getPostDetailInfo(Integer postId, Integer userId);
+
+	/**
+	 * 审核帖子内容
+	 *
+	 * @param postId   帖子id
+	 * @param decision 审核选择 1 通过，2 未通过
+	 */
+	void passPostContent(Integer postId, Integer decision);
 
 }
