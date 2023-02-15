@@ -22,8 +22,17 @@ public interface UserService extends IService<User> {
 	 * 登录用户
 	 *
 	 * @param user 用户信息
-	 * @return token 登录失败返回 null
+	 * @return token和用户信息 登录失败返回 null
 	 */
 	Map<String, Object> loginUser(User user);
+
+	/**
+	 * 小程序授权登录用户
+	 *
+	 * @param user 用户信息
+	 * @param code 前端接口code
+	 * @return token和用户信息
+	 */
+	Map<String, Object> authUserByMinApp(User user, String code);
 
 }

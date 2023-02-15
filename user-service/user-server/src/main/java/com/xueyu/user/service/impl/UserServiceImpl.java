@@ -2,6 +2,7 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.user.exception.UserException;
 import com.xueyu.user.mapper.UserGeneralMapper;
 import com.xueyu.user.mapper.UserMapper;
 import com.xueyu.user.mapper.UserViewMapper;
@@ -10,6 +11,7 @@ import com.xueyu.user.pojo.domain.UserGeneral;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.util.JwtUtil;
+import com.xueyu.user.util.WxOpenUtil;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public Boolean registerUser(User user) {
+		if (user.getUsername() == null || user.getPassword() == null) {
+			throw new UserException("账号和密码不能为空");
+		}
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getPhone, user.getPhone()).or().eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
@@ -70,6 +75,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		res.put("token", token);
 		UserView userView = userViewMapper.selectById(user.getId());
 		res.put("userInfo", userView);
+		return res;
+	}
+
+	@Override
+	public Map<String, Object> authUserByMinApp(User user, String code) {
+		if (code == null) {
+			throw new UserException("code码不能为空");
+		}
+		// 获取用户openid
+		String openid = WxOpenUtil.getOpenid(code);
+		LambdaQueryWrapper<UserView> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(UserView::getOpenid, openid);
+		UserView userView = userViewMapper.selectOne(wrapper);
+		Map<String, Object> res = new HashMap<>(2);
+		if (userView != null) {
+			// 不为空则已经注册过，签发jwt
+			String token = JwtUtil.createJwt("userId", userView.getId());
+			res.put("token", token);
+			res.put("userInfo", userView);
+			return res;
+		}
+		// 否则，执行注册操作
+		user.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		userMapper.insert(user);
+		UserView userInfo = userViewMapper.selectById(user.getId());
+		// 签发jwt，设置用户id
+		String token = JwtUtil.createJwt("userId", userView.getId());
+		res.put("token", token);
+		res.put("userInfo", userInfo);
 		return res;
 	}
 
