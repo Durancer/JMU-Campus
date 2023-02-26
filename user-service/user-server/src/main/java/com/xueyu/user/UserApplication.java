@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author durance
@@ -17,6 +18,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableAmqpMessageConverterConfig
 @EnableFeignClients(basePackages = {"com.xueyu.resource.client"})
 @EnableRedisSerialize
+@EnableScheduling
 public class UserApplication {
 
 	public static void main(String[] args) {

@@ -19,6 +19,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.xueyu.user.constant.TrafficVoucherContants.*;
+
 /**
  * 活动业务层
  *
@@ -27,14 +29,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class ActivityServiceImpl implements ActivityService {
-
-	public static final String LOCK_KEY = "traffic";
-
-	public static final Long LOCK_TTL = 10L;
-
-	public static final Long ADD_LOCK_TTL = 3L;
-
-	public static final String STOCK_KEY = "stock_traffic_voucher_num";
 
 	@Resource
 	RedisTemplate<String, String> redisTemplate;
