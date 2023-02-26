@@ -1,5 +1,6 @@
 package com.xueyu.user.pojo.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Item {
 	/**
 	 * 自增id
 	 */
+	@TableId
 	Integer id;
 
 	/**

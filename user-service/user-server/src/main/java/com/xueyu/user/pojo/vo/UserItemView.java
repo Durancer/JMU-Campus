@@ -12,4 +12,34 @@ import lombok.Data;
 @TableName("user_item_view")
 public class UserItemView {
 
+	/**
+	 * 用户id
+	 */
+	Integer userId;
+
+	/**
+	 * 资源id
+	 */
+	Integer itemId;
+
+	/**
+	 * 资源数量
+	 */
+	Integer num;
+
+	/**
+	 * 资源名称
+	 */
+	String name;
+
+	/**
+	 * 资源描述
+	 */
+	String desc;
+
+	/**
+	 * 资源图片路径
+	 */
+	String imageUrl;
+
 }
