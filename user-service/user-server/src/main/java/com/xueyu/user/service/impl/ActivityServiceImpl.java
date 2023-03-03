@@ -47,16 +47,19 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Boolean getTrafficVoucher(Integer userId) {
-		// 判断是否存在用户
-		User user = userMapper.selectById(userId);
-		if (user == null) {
-			throw new UserException("不存在该用户");
-		}
-		// todo 判断用户是否已经抢到过
 		// 判断是否还存剩余流量券
 		String stock = redisTemplate.opsForValue().get(STOCK_KEY);
 		if (stock == null) {
 			throw new UserException("流量券抢送暂未开始");
+		}
+		// 判断用户是否已经抢到过
+		if (userIds.contains(userId)) {
+			throw new UserException("改用户已经抢过");
+		}
+		// 判断是否存在用户
+		User user = userMapper.selectById(userId);
+		if (user == null) {
+			throw new UserException("不存在该用户");
 		}
 		int stockNum = Integer.parseInt(stock);
 		if (stockNum <= 0) {
@@ -97,6 +100,8 @@ public class ActivityServiceImpl implements ActivityService {
 				userItemMapper.updateById(userItem);
 			}
 		}
+		// 添加用户已抢送数据
+		userIds.add(userId);
 		// 关闭续命线程，释放锁资源
 		addLockLifeThread.cancel(true);
 		redisTemplate.delete(LOCK_KEY);

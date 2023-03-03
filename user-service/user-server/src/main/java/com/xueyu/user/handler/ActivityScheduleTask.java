@@ -7,8 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.Resource;
 
-import static com.xueyu.user.constant.TrafficVoucherContants.STOCK_KEY;
-import static com.xueyu.user.constant.TrafficVoucherContants.VOUCHER_NUM;
+import static com.xueyu.user.constant.TrafficVoucherContants.*;
 
 /**
  * 活动相关定时任务
@@ -38,9 +37,11 @@ public class ActivityScheduleTask {
 	 */
 	@Scheduled(cron = "0 0 14 * 1 *")
 	public void trafficVoucherEnd() {
-		log.info("删除缓存截止抢送");
-		// 进行缓存预热
+		log.info("删除缓存，结束本轮抢送");
+		// 删除活动key，活动结束
 		redisTemplate.delete(STOCK_KEY);
+		// 格式化key
+		userIds.clear();
 	}
 
 }
