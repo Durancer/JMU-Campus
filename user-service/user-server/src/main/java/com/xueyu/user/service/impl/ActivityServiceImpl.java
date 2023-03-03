@@ -56,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
 		// 判断是否还存剩余流量券
 		String stock = redisTemplate.opsForValue().get(STOCK_KEY);
 		if (stock == null) {
-			throw new UserException("未获取到流量券剩余数量信息");
+			throw new UserException("流量券抢送暂未开始");
 		}
 		int stockNum = Integer.parseInt(stock);
 		if (stockNum <= 0) {

@@ -29,7 +29,6 @@ public class ActivityController {
 	 */
 	@PostMapping("traffic/voucher")
 	public RestResult<Boolean> getPostTrafficVoucher(@RequestHeader Integer userId) {
-		// todo 对抢送直接进行限制
 		Boolean res = activityService.getTrafficVoucher(userId);
 		if (res) {
 			return RestResult.ok(true, "成功抢到");
