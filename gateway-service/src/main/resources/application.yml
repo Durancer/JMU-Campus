@@ -29,8 +29,8 @@ spring:
             - name: RequestRateLimiter #限流名称
               args:
                 key-resolver: "#{@ipKeyResolver}"
-                redis-rate-limiter.replenishRate: 1 #令牌桶每秒填充平均速率
-                redis-rate-limiter.burstCapacity: 1 #令牌桶总容量
+                redis-rate-limiter.replenishRate: 5 #令牌桶每秒填充平均速率
+                redis-rate-limiter.burstCapacity: 5 #令牌桶总容量
         - id: post-server
           uri: lb://post-server
           predicates:
@@ -39,8 +39,8 @@ spring:
             - name: RequestRateLimiter
               args:
                 key-resolver: "#{@ipKeyResolver}"
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 5
         - id: comment-server
           uri: lb://comment-server
           predicates:
@@ -49,5 +49,5 @@ spring:
             - name: RequestRateLimiter
               args:
                 key-resolver: "#{@ipKeyResolver}"
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 5
