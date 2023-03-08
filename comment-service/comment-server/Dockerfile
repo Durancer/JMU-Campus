@@ -3,7 +3,7 @@ FROM java:8-alpine
 # 指定存储卷, 任何向/tmp写入的信息都不会记录到容器存储层
 VOLUME /tmp
 # 拷贝运行JAR包
-ADD comment-service-1.0.0.jar app.jar
+ADD comment-server-1.0.0.jar app.jar
 # 设置JVM运行参数， 这里限定下内存大小，减少开销
 ENV JAVA_OPTS="\
 -server \
