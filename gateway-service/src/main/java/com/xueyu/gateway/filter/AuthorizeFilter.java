@@ -1,6 +1,7 @@
 package com.xueyu.gateway.filter;
 
 import com.alibaba.nacos.api.utils.StringUtils;
+import com.xueyu.gateway.config.JwtProperties;
 import com.xueyu.gateway.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,11 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 		ServerHttpResponse response = exchange.getResponse();
 		// 进行请求路径判度，放行不需要认证的接口
 		String path = request.getURI().getPath();
-		if (path.contains("user/register")) {
-			return chain.filter(exchange);
+		String[] matchers = JwtProperties.matchers;
+		for (String matcher : matchers) {
+			if (path.contains(matcher)) {
+				return chain.filter(exchange);
+			}
 		}
 		// 拿到jwt的值
 		String jwt = request.getHeaders().getFirst(AUTHORIZE_TOKEN);

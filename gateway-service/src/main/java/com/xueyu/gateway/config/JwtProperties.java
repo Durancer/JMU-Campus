@@ -25,6 +25,8 @@ public class JwtProperties {
 	 */
 	public static Long expiration;
 
+	public static String[] matchers;
+
 	public void setKey(String key) {
 		JwtProperties.key = key;
 	}
@@ -35,6 +37,10 @@ public class JwtProperties {
 
 	public void setExpiration(Long expiration) {
 		JwtProperties.expiration = expiration;
+	}
+
+	public void setMatchers(String[] matchers) {
+		JwtProperties.matchers = matchers;
 	}
 
 }
