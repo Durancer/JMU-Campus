@@ -25,6 +25,9 @@ public class JwtProperties {
 	 */
 	public static Long expiration;
 
+	/**
+	 * 免鉴权的接口
+	 */
 	public static String[] matchers;
 
 	public void setKey(String key) {
