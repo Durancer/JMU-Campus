@@ -34,7 +34,7 @@ public class UserClientResolver implements UserClient {
 	}
 
 	@Override
-	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(Map<Integer, List<Integer>> userGroupIds) {
+	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(Map<String, List<Integer>> userGroupIds) {
 		log.error("user 服务异常：getUserInfoByGroup 请求失败");
 		return new RestResult<>(503, "fail");
 	}
