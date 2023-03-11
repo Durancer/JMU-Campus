@@ -46,11 +46,12 @@ public interface UserClient {
 
 	/**
 	 * 根据传入id进行分组查询用户信息
+	 * 由于feign调用是通过http请求的，所以 map的key都需要为 String类型，否则相干服务启动会报错
 	 *
 	 * @param userGroupIds 分组id，key为分组id | value为该key所以对应的需要查询的用户id列表
 	 * @return 分组用户信息
 	 */
 	@GetMapping("private/user/list/group")
-	RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam Map<Integer, List<Integer>> userGroupIds);
+	RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam Map<String, List<Integer>> userGroupIds);
 
 }
