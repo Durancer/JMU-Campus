@@ -78,4 +78,12 @@ i集大校园软件服务端
 **github**地址：https://github.com/Durancer/JMU-Campus <br>
 **gitee**地址：https://gitee.com/Durancer/JMU-Campus
 
+### 项目交流
+
+- 项目后端已经自动化部署在 aliyun 服务器
+- QQ交流群：294590170 
+- 欢迎加入参与贡献！🌹
+
+<img src="https://user-images.githubusercontent.com/102197880/218965642-d4e4643b-1f01-4b8c-9e1e-124f6b99f993.png" alt="" align="center"/>
+
 对项目感兴趣欢迎 star 项目🌹
