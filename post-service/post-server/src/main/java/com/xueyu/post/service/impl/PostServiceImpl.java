@@ -145,7 +145,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();
 		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
-		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
+		Map<String, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
 		for (PostView postView : records) {
 			postIds.add(postView.getId());
 			authors.add(postView.getUserId());
@@ -155,12 +155,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		likeWrapper.in(LikePost::getPostId, postIds);
 		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
 		for (LikePost likePost : likePosts) {
-			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
-				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
+			if (likeUserIdsMap.containsKey(likePost.getPostId().toString())) {
+				likeUserIdsMap.get(likePost.getPostId().toString()).add(likePost.getUserId());
 			} else {
 				List<Integer> userIds = new ArrayList<>();
 				userIds.add(likePost.getUserId());
-				likeUserIdsMap.put(likePost.getPostId(), userIds);
+				likeUserIdsMap.put(likePost.getPostId().toString(), userIds);
 			}
 		}
 		// 查询并设置帖子用户信息
