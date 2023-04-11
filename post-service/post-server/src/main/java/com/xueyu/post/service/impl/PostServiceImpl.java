@@ -117,7 +117,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {
-			throw new PostException("帖子删除失败");
+			throw new PostException("帖子删除异常");
 		}
 		// 发送mq消息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
@@ -145,7 +145,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();
 		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
-		Map<String, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
+		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
 		for (PostView postView : records) {
 			postIds.add(postView.getId());
 			authors.add(postView.getUserId());
@@ -155,21 +155,20 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		likeWrapper.in(LikePost::getPostId, postIds);
 		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
 		for (LikePost likePost : likePosts) {
-			if (likeUserIdsMap.containsKey(likePost.getPostId().toString())) {
-				likeUserIdsMap.get(likePost.getPostId().toString()).add(likePost.getUserId());
+			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
+				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
 			} else {
 				List<Integer> userIds = new ArrayList<>();
 				userIds.add(likePost.getUserId());
-				likeUserIdsMap.put(likePost.getPostId().toString(), userIds);
+				likeUserIdsMap.put(likePost.getPostId(), userIds);
 			}
 		}
 		// 查询并设置帖子用户信息
 		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
-		// 查询所有帖子的点赞用户信息
-		Map<Integer, List<UserSimpleVO>> userLikeInfo = userClient.getUserInfoByGroup(likeUserIdsMap).getData();
 		// 查询所有图片信息
 		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
 		List<PostListVO> postData = new ArrayList<>();
+		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
 		for (PostView record : records) {
 			PostListVO postListVO = new PostListVO();
 			BeanUtils.copyProperties(record, postListVO);
@@ -178,7 +177,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			// 设置该帖子图片信息
 			postListVO.setImgList(postListImgs.get(record.getId()));
 			// 设置点赞用户信息
-			postListVO.setUserLikeBOList(userLikeInfo.get(record.getId()));
+			if (likeUserIdsMap.get(record.getId()) != null) {
+				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
+				postListVO.setUserLikeBOList(userLikeInfos);
+			}
 			postData.add(postListVO);
 		}
 		result.setRecords(postData);

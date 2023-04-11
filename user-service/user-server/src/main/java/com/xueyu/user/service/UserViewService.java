@@ -44,6 +44,6 @@ public interface UserViewService extends IService<UserView> {
 	 * @param userGroupIds 分组id，key为分组id | value为该key所以对应的需要查询的用户id列表
 	 * @return 分组用户信息
 	 */
-	Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<Integer, List<Integer>> userGroupIds);
+	Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<String, List<Integer>> userGroupIds);
 
 }

@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		Map<String, Object> res = new HashMap<>(2);
 		String token = JwtUtil.createJwt("userId", check.getId());
 		res.put("token", token);
-		UserView userView = userViewMapper.selectById(user.getId());
+		UserView userView = userViewMapper.selectById(check.getId());
 		res.put("userInfo", userView);
 		return res;
 	}
