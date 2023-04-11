@@ -47,12 +47,14 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 	}
 
 	@Override
-	public Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<Integer, List<Integer>> userGroupIds) {
+	public Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<String, List<Integer>> userGroupIds) {
 		// 创建响应体
 		Map<Integer, List<UserSimpleVO>> result = new HashMap<>(userGroupIds.size());
-		for (Map.Entry<Integer, List<Integer>> next : userGroupIds.entrySet()) {
+		for (Map.Entry<String, List<Integer>> next : userGroupIds.entrySet()) {
 			List<UserSimpleVO> userInfoList = getUserInfoList(next.getValue());
-			result.put(next.getKey(), userInfoList);
+			// 由于网络 Feign 网络传输只能传送 String类型，所以进行一次类型转化
+			System.out.println(next.getKey());
+			result.put(Integer.parseInt(next.getKey()), userInfoList);
 		}
 		return result;
 	}

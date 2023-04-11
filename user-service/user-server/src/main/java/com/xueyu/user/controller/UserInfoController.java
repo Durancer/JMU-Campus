@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,8 @@ public class UserInfoController {
 	 * @return 分组用户信息
 	 */
 	@GetMapping("list/group")
-	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam Map<Integer, List<Integer>> userGroupIds) {
+	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam HashMap<String, List<Integer>> userGroupIds) {
+		System.out.println(userGroupIds);
 		return RestResult.ok(userViewService.getUserInfoListByGroup(userGroupIds));
 	}
 
