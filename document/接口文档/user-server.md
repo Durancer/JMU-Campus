@@ -2,7 +2,7 @@
 
 
 
-#### 登录
+#### 用户登录
 
 ```
 请求地址：/user/login
@@ -67,13 +67,92 @@
 
 
 
-#### 注册
+#### 用户注册
 
 
 
+#### 获取用户信息
+
+```
+请求地址：/user/detail
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段   | 类型    | 含义   | 必填 |
+| ------ | ------- | ------ | ---- |
+| userId | Integer | 用户id | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
 
 
 
+#### 修改用户头像
+
+```
+请求地址：/user/person/update/avatar
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段   | 类型    | 含义                                 | 必填 |
+| ------ | ------- | ------------------------------------ | ---- |
+| userId | Integer | 用户id                               | 是   |
+| file   | file    | 新头像文件（限jpg、jpeg、png、webp） | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "上传成功",
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### 更新用户信息
+
+传递需要更新的字段即可
+
+```
+请求地址：/user/person/update/userInfo
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段      | 类型    | 含义                               | 必填 |
+| --------- | ------- | ---------------------------------- | ---- |
+| id        | Integer | 用户id                             | 是   |
+| nickname  | String  | 用户名称                           | 否   |
+| introduce | String  | 个性介绍                           | 否   |
+| sex       | Integer | 性别，合法值：0 匿 \| 1 男 \| 2 女 | 否   |
+| phone     | String  | 电话号码                           | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "更新成功",
+    "data": null,
+    "status": true
+}
+```
 
 
 
