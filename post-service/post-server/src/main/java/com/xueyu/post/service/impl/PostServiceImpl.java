@@ -191,6 +191,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	public PostDetailVO getPostDetailInfo(Integer postId, Integer userId) {
 		// 查询数据，创建数据响应体
 		PostView postView = postViewMapper.selectById(postId);
+		if (postView == null) {
+			throw new PostException("不存在该帖子");
+		}
 		// 核对该帖子是否已通过审核，如果未通过审核且不为自己的帖子，拒绝访问
 		if (!postView.getStatus().equals(PostStatus.PUBLIC.getValue())) {
 			if (userId == null || !userId.equals(postView.getUserId())) {

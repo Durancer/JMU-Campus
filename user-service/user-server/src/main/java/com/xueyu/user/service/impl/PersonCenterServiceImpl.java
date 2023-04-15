@@ -30,6 +30,9 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 
 	@Override
 	public Boolean updateUserInfo(User user) {
+		if (user.getPassword() != null || user.getAvatar() != null || user.getUsername() != null || user.getCreateTime() != null || user.getOpenid() != null) {
+			throw new UserException("不合法的参数传入");
+		}
 		int i = userMapper.updateById(user);
 		if (i != 1) {
 			throw new UserException("不存在的用户id");

@@ -3,10 +3,7 @@ package com.xueyu.post.controller;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.service.PostOperateService;
 import org.springframework.lang.NonNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -31,7 +28,7 @@ public class PostOperateController {
 	 * @return 执行结果
 	 */
 	@PostMapping("like")
-	public RestResult<?> likeUserPost(@NonNull Integer postId, @NonNull Integer userId) {
+	public RestResult<?> likeUserPost(@NonNull Integer postId, @RequestHeader Integer userId) {
 		if (postOperateService.likeUserPost(postId, userId)) {
 			return RestResult.ok(null, "点赞成功");
 		}
