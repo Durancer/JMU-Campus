@@ -76,6 +76,19 @@ public class PostController {
 	}
 
 	/**
+	 * 分页获取我的帖子
+	 *
+	 * @param current 当前页
+	 * @param size    每页数量
+	 * @return 帖子信息
+	 */
+	@GetMapping("list/user/self")
+	public RestResult<ListVO<PostListVO>> getUserSelfPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader Integer userId) {
+		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
+		return RestResult.ok(postListByPage);
+	}
+
+	/**
 	 * 分页获取用户帖子
 	 *
 	 * @param current 当前页
@@ -83,7 +96,7 @@ public class PostController {
 	 * @return 帖子信息
 	 */
 	@GetMapping("list/user")
-	public RestResult<ListVO<PostListVO>> getUserPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader Integer userId) {
+	public RestResult<ListVO<PostListVO>> getUserPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @NotNull Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
@@ -111,7 +124,7 @@ public class PostController {
 	@PostMapping("check")
 	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision) {
 		postService.passPostContent(postId, decision);
-		return RestResult.ok(null, "完成审核");
+		return RestResult.ok(null, "提交成功");
 	}
 
 	/**

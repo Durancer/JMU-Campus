@@ -3,6 +3,7 @@ package com.xueyu.user.controller;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.service.PersonCenterService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class PersonCenterController {
 	 * @return 新头像路径
 	 */
 	@PostMapping("update/avatar")
-	public RestResult<String> updateUserAvatar(Integer userId, MultipartFile file) {
+	public RestResult<String> updateUserAvatar(@NotNull Integer userId, MultipartFile file) {
 		if (file == null) {
 			return RestResult.fail("上传头像不能为空");
 		}

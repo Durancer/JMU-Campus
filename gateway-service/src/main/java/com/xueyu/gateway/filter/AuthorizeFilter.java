@@ -67,7 +67,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 	@Override
 	public int getOrder() {
 		// 过滤器优先级，越小越先
-		return 0;
+		return -1;
 	}
 
 }
