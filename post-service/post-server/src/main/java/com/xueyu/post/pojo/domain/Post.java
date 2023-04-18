@@ -31,7 +31,12 @@ public class Post {
 	Integer userId;
 
 	/**
-	 * 发布文本内容
+	 * 帖子标题
+	 */
+	String title;
+
+	/**
+	 * 帖子文本内容
 	 */
 	String content;
 

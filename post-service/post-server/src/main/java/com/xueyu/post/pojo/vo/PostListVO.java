@@ -26,6 +26,11 @@ public class PostListVO {
 	UserSimpleVO userInfo;
 
 	/**
+	 * 帖子标题
+	 */
+	String title;
+
+	/**
 	 * 发布文本内容
 	 */
 	String content;

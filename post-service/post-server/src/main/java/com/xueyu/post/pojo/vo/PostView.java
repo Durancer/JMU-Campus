@@ -23,6 +23,11 @@ public class PostView {
 	Integer userId;
 
 	/**
+	 * 帖子标题
+	 */
+	String title;
+
+	/**
 	 * 发布文本内容
 	 */
 	String content;
