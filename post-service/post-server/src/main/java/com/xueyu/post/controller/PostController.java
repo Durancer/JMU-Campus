@@ -30,16 +30,18 @@ public class PostController {
 	/**
 	 * 发布用户帖子
 	 *
-	 * @param post  帖子信息
-	 * @param files 图片文件
+	 * @param post   帖子信息
+	 * @param files  图片文件
+	 * @param userId 用户id
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> pushlishPost(Post post, MultipartFile[] files) {
+	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId) {
 		int MAX_FILES = 9;
-		if (files.length >= MAX_FILES) {
+		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
+		post.setUserId(userId);
 		Boolean sendStatus = postService.publishPost(post, files);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");

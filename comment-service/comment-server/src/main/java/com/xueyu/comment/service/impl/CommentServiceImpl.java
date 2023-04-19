@@ -55,6 +55,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		Timestamp time = new Timestamp(System.currentTimeMillis());
 		comment.setCreateTime(time);
 		query().getBaseMapper().insert(comment);
+		// 将root设置为生成的id
+		comment.setRootId(comment.getId());
+		updateById(comment);
 		// 发送mq消息
 		CommentDTO commentDTO = new CommentDTO();
 		commentDTO.setCommentId(comment.getId());
