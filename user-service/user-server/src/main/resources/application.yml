@@ -1,2 +1,14 @@
 server:
   port: 8001
+
+spring:
+  # 邮箱相关
+  mail:
+    # 账号密码端口等配置在nacos上
+    default-encoding: UTF-8
+    properties:
+      mail:
+        #        debug: true # 开启发送邮件debug模式
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
