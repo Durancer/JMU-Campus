@@ -49,6 +49,11 @@ public class UserView {
 	String introduce;
 
 	/**
+	 * 用户邮箱
+	 */
+	String email;
+
+	/**
 	 * 性别 0 匿 | 1 boy | 2 girl
 	 */
 	Integer sex;
