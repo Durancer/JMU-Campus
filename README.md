@@ -12,6 +12,14 @@ i集大校园软件服务端
   <img src="https://img.shields.io/badge/SpringCloudAlibaba-2021.0.1.0-green" alt=""/><br>
 </a></p>
 
+### 项目交流
+
+- 项目后端已经自动化部署在 aliyun 服务器
+- QQ交流群：294590170 
+- 欢迎加入参与贡献！🌹
+
+<img src="https://user-images.githubusercontent.com/102197880/218965642-d4e4643b-1f01-4b8c-9e1e-124f6b99f993.png" alt="" align="center"/>
+
 ### 项目模块
 本项目基于 **SpringCloud Alibaba** 实现微服务架构项目。
 预估服务包含：**网关服务**、**资源服务**、**聊天服务**、**帖子服务**、**留言服务**、**用户服务**等再继续进行拓展
@@ -77,13 +85,5 @@ i集大校园软件服务端
 
 **github**地址：https://github.com/Durancer/JMU-Campus <br>
 **gitee**地址：https://gitee.com/Durancer/JMU-Campus
-
-### 项目交流
-
-- 项目后端已经自动化部署在 aliyun 服务器
-- QQ交流群：294590170 
-- 欢迎加入参与贡献！🌹
-
-<img src="https://user-images.githubusercontent.com/102197880/218965642-d4e4643b-1f01-4b8c-9e1e-124f6b99f993.png" alt="" align="center"/>
 
 对项目感兴趣欢迎 star 项目🌹
