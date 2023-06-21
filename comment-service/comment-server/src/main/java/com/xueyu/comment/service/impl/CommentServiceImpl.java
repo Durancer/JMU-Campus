@@ -100,7 +100,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		// 查询出属于该帖子的所有评论
 		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
 		// 如果为空返回空列表
-		if (comments.size() == 1) {
+		if (comments.size() == 0) {
 			return new ArrayList<>();
 		}
 		// 统计用户id，并进行去重
