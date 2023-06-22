@@ -10,6 +10,7 @@ import com.xueyu.comment.pojo.vo.LikeVO;
 import com.xueyu.comment.service.LikeService;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
@@ -26,6 +27,9 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
 
     @Resource
     UserClient userClient;
+
+    @Resource
+    RabbitTemplate rabbitTemplate;
 
     @Override
     public boolean isLike(Integer userId, Integer commentId) {
