@@ -34,4 +34,11 @@ public class LikeController {
         return RestResult.ok(likeService.likeByCommons(userId));
     }
 
+    @PostMapping("/test")
+    public RestResult test()
+    {
+        likeService.transLikedFromRedis2DB();
+        return RestResult.ok();
+    }
+
 }

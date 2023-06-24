@@ -2,6 +2,7 @@ package com.xueyu.comment.pojo.domain;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Like {
     /**
      * 点赞表主键
      */
+    @TableId
     Integer likeId;
 
     /**

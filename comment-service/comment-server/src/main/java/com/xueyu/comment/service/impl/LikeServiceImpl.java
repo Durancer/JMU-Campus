@@ -8,13 +8,17 @@ import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.domain.Like;
 import com.xueyu.comment.pojo.vo.LikeVO;
 import com.xueyu.comment.service.LikeService;
+import com.xueyu.comment.service.RedisService;
+import com.xueyu.comment.utils.RedisKeyUtils;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+import static com.xueyu.comment.utils.RedisKeyUtils.*;
 
 @Service
 public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements LikeService {
@@ -29,38 +33,70 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
     UserClient userClient;
 
     @Resource
-    RabbitTemplate rabbitTemplate;
+    RedisTemplate<String,String> redisTemplate;
+
+    @Resource
+    RedisService redisService;
 
     @Override
     public boolean isLike(Integer userId, Integer commentId) {
-        LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Like::getUserId,userId)
+        //生成评论点赞数据的key
+        String LikeKey = RedisKeyUtils.getLikedKey(userId,commentId);
+        //从redis中查看是否存在
+        if(redisTemplate.opsForHash().hasKey(CACHE_COMMENT_LIKE,LikeKey)){
+            String value = Objects.requireNonNull(redisTemplate.opsForHash().get(CACHE_COMMENT_LIKE, LikeKey)).toString();
+            String status = redisService.getStatus(value)[0];
+            return status.equals("1");
+        }else {
+            LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Like::getUserId,userId)
                     .eq(Like::getCommentId,commentId);
-        Long count = likeMapper.selectCount(queryWrapper);
-        return count>0;
+            Long count = likeMapper.selectCount(queryWrapper);
+            if (count>0){
+                return true;
+            } else{
+                redisService.likes(userId,commentId);
+                return false;
+            }
+        }
     }
 
     @Override
     public boolean like(Integer userId, Integer commentId) {
+        //生成评论点赞数据的key
+        String LikeKey = RedisKeyUtils.getLikedKey(userId,commentId);
+        //从redis中查看是否存在
+        if(redisTemplate.opsForHash().hasKey(CACHE_COMMENT_LIKE,LikeKey)){
+            String value = Objects.requireNonNull(redisTemplate.opsForHash().get(CACHE_COMMENT_LIKE, LikeKey)).toString();
+            String status = redisService.getStatus(value)[0];
+            if(status.equals("1")){
+                redisService.unLikes(userId,commentId);
+                return false;
+            }
+            if(status.equals("0")){
+                redisService.likes(userId,commentId);
+                return true;
+            }
+        }
+        //redis中不存在该点赞数据，从数据库中查找
         LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Like::getCommentId,commentId)
-                    .eq(Like::getUserId,userId);
+                .eq(Like::getUserId,userId);
         Like like = likeMapper.selectOne(queryWrapper);
-        if(like!=null){
-            int row = likeMapper.delete(queryWrapper);
-            commentMapper.updateLikeNum(commentId,-1);
-            return row>0;
+        //判断点赞数据是否为空，若为空则没有点赞记录，添加点赞数据
+        if(like==null){
+            redisService.likes(userId,commentId);
+            return true;
         }
-        like = new Like();
-        like.setCommentId(commentId);
-        like.setUserId(userId);
-        int row = likeMapper.insert(like);
-        commentMapper.updateLikeNum(commentId,1);
-        return row>0;
+        //点赞数据不为空，说明已经点赞，则进行取消点赞
+        redisService.unLikes(userId,commentId);
+        return false;
     }
 
     @Override
     public List<LikeVO> likeCommons(Integer userId) {
+        //立即执行redis存入mysql的定时任务
+        transLikedFromRedis2DB();
         //查出该用户点赞的所有评论
         LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Like::getUserId,userId);
@@ -101,6 +137,8 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
 
     @Override
     public List<LikeVO> likeByCommons(Integer userId) {
+        //立即执行redis存入mysql的定时任务
+        transLikedFromRedis2DB();
         //查询出该用户的所有评论
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getUserId,userId);
@@ -142,5 +180,38 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
             likeVO.setCreateTime(item.getCreateTime());
             return likeVO;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void transLikedFromRedis2DB() {
+        Map<Like,String> likedStatusMap = redisService.getLikedDataFromRedis();
+        for (Map.Entry<Like,String> entry : likedStatusMap.entrySet()) {
+            //获得点赞状态和点赞时间
+            String status = redisService.getStatus(entry.getValue())[0];
+            String time = redisService.getStatus(entry.getValue())[1];
+            //查询数据库中数据
+            LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Like::getCommentId,entry.getKey().getCommentId())
+                    .eq(Like::getUserId,entry.getKey().getUserId());
+            Like like = likeMapper.selectOne(queryWrapper);
+            if(status.equals("1")){
+                //判断状态是点赞还是未点赞
+                if (like!=null){
+                    //数据库内有数据
+                    if(entry.getKey().getCreateTime()!=like.getCreateTime()){
+                        like.setCreateTime(Timestamp.valueOf(time));
+                        likeMapper.updateById(like);
+                    }
+                }else{
+                    //数据库内没有数据
+                    likeMapper.insert(entry.getKey());
+                }
+            }else {
+                if (like!=null){
+                    //数据库内有数据
+                    likeMapper.deleteById(like.getLikeId());
+                }
+            }
+        }
     }
 }
