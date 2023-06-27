@@ -2,6 +2,7 @@ package com.xueyu.comment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.mapper.CommentMapper;
 import com.xueyu.comment.mapper.LikeMapper;
 import com.xueyu.comment.pojo.domain.Comment;
@@ -59,6 +60,9 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
 
     @Override
     public List<LikeVO> likeCommons(Integer userId) {
+        if(userId==null) {
+            throw new CommentException("用户状态异常");
+        }
         //查出该用户点赞的所有评论
         LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Like::getUserId,userId);
@@ -99,6 +103,9 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
 
     @Override
     public List<LikeVO> likeByCommons(Integer userId) {
+        if(userId==null) {
+            throw new CommentException("用户状态异常");
+        }
         //查询出该用户的所有评论
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getUserId,userId);
