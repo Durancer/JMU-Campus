@@ -42,8 +42,4 @@ public interface LikeService extends IService<Like> {
      */
     List<LikeVO> likeByCommons(Integer userId);
 
-    /**
-     * 把redis持久化到mysql
-     */
-    void transLikedFromRedis2DB();
 }
