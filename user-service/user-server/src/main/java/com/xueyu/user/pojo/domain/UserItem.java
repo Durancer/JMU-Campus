@@ -20,7 +20,6 @@ public class UserItem {
 	/**
 	 * 用户id
 	 */
-	@TableId
 	Integer userId;
 
 	/**
