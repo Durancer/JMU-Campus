@@ -13,7 +13,6 @@ import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,7 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
         Like like = likeMapper.selectOne(queryWrapper);
         //判断点赞数据是否为空，若为空则没有点赞记录，添加点赞数据
         if(like==null){
-            like = new Like(null,userId,commentId,new Timestamp(System.currentTimeMillis()));
+            like = new Like(null,userId,commentId,null);
             likeMapper.insert(like);
             commentMapper.updateLikeNum(commentId,1);
             return true;
