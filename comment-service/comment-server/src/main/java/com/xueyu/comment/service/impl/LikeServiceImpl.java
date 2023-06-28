@@ -126,8 +126,6 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
         likeLambdaQueryWrapper.in(Like::getCommentId,commentIds);
         likeLambdaQueryWrapper.orderByDesc(Like::getCreateTime);
         List<Like> likes = likeMapper.selectList(likeLambdaQueryWrapper);
-        //把查出的点赞关系按照时间排序
-        //likes = likes.stream().sorted(Comparator.comparing(Like::getCreateTime).reversed()).collect(Collectors.toList());
 
         //查出点赞用户信息
         Set<Integer> userIds = new HashSet<>();
