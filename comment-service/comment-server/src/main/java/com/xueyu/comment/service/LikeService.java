@@ -32,7 +32,7 @@ public interface LikeService extends IService<Like> {
      * @param userId 用户id
      * @return {@link List}<{@link LikeVO}>
      */
-    List<LikeVO> likeCommons(Integer userId);
+    List<LikeVO> getUserLikeList(Integer userId);
 
     /**
      * 用户被点赞列表
@@ -40,6 +40,6 @@ public interface LikeService extends IService<Like> {
      * @param userId 用户id
      * @return {@link List}<{@link LikeVO}>
      */
-    List<LikeVO> likeByCommons(Integer userId);
+    List<LikeVO> getUserBeLikedList(Integer userId);
 
 }

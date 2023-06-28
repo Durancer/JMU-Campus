@@ -14,24 +14,38 @@ public class LikeController {
     @Resource
     LikeService likeService;
 
+    /**
+     * 点赞或取消点赞
+     *
+     * @param userId    用户id
+     * @param commentId 评论id
+     * @return {@link RestResult}<{@link ?}>
+     */
     @PostMapping
     public RestResult<?> like(@RequestHeader Integer userId, @RequestParam Integer commentId) {
         return RestResult.ok(likeService.like(userId, commentId));
     }
 
-    @GetMapping("/exist")
-    public RestResult<Boolean> isLike(@RequestHeader Integer userId,@RequestParam Integer commentId) {
-        return RestResult.ok(likeService.isLike(userId,commentId));
-    }
-
+    /**
+     * 用户点赞的所有评论
+     *
+     * @param userId 用户id
+     * @return {@link RestResult}<{@link List}<{@link LikeVO}>>
+     */
     @GetMapping("/common")
-    public RestResult<List<LikeVO>> likeCommons(@RequestHeader Integer userId){
-        return RestResult.ok(likeService.likeCommons(userId));
+    public RestResult<List<LikeVO>> getUserLikeList(@RequestHeader Integer userId){
+        return RestResult.ok(likeService.getUserLikeList(userId));
     }
 
+    /**
+     * 查询用户被点赞的所有评论
+     *
+     * @param userId 用户id
+     * @return {@link RestResult}<{@link List}<{@link LikeVO}>>
+     */
     @GetMapping("/user/common")
-    public RestResult<List<LikeVO>> likeByCommons(@RequestHeader Integer userId){
-        return RestResult.ok(likeService.likeByCommons(userId));
+    public RestResult<List<LikeVO>> getUserBeLikedList(@RequestHeader Integer userId){
+        return RestResult.ok(likeService.getUserBeLikedList(userId));
     }
 
 }

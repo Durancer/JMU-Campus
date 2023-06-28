@@ -58,7 +58,7 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
     }
 
     @Override
-    public List<LikeVO> likeCommons(Integer userId) {
+    public List<LikeVO> getUserLikeList(Integer userId) {
         if(userId==null) {
             throw new CommentException("用户状态异常");
         }
@@ -101,7 +101,7 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
     }
 
     @Override
-    public List<LikeVO> likeByCommons(Integer userId) {
+    public List<LikeVO> getUserBeLikedList(Integer userId) {
         if(userId==null) {
             throw new CommentException("用户状态异常");
         }
