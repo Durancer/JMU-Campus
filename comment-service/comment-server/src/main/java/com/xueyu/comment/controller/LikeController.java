@@ -22,7 +22,7 @@ public class LikeController {
      * @return {@link RestResult}<{@link ?}>
      */
     @PostMapping
-    public RestResult<?> like(@RequestHeader Integer userId, @RequestParam Integer commentId) {
+    public RestResult<?> like(@RequestHeader Integer userId,Integer commentId) {
         return RestResult.ok(likeService.like(userId, commentId));
     }
 
