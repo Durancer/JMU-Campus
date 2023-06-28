@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.mapper.CommentMapper;
+import com.xueyu.comment.mapper.LikeMapper;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.domain.CommentType;
+import com.xueyu.comment.pojo.domain.Like;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;
 import com.xueyu.comment.sdk.dto.CommentDTO;
@@ -35,6 +37,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
 	@Resource
 	UserClient userClient;
+
+	@Resource
+	LikeMapper likeMapper;
 
 	@Resource
 	PostClient postClient;
@@ -94,19 +99,22 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	}
 
 	@Override
-	public List<CommentPostVO> getPostComments(Integer postId) {
+	public List<CommentPostVO> getPostComments(Integer userId,Integer postId) {
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Comment::getPostId, postId).orderByAsc(Comment::getCreateTime);
 		// 查询出属于该帖子的所有评论
 		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
+		// 评论id集合
+		List<Integer> commentIdList = new ArrayList<>();
 		// 如果为空返回空列表
 		if (comments.size() == 0) {
 			return new ArrayList<>();
 		}
-		// 统计用户id，并进行去重
+		// 统计用户id，并进行去重,同时统计commentId
 		Set<Integer> userIdSet = new HashSet<>();
 		for (Comment comment : comments) {
 			userIdSet.add(comment.getUserId());
+			commentIdList.add(comment.getId());
 		}
 		// 查询出所有有关的用户信息
 		List<Integer> userIds = new ArrayList<>(userIdSet);
@@ -115,6 +123,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		// 创建关联map，key为根id，值为 子评论集合
 		Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(10);
 		Map<CommentPostVO, Comment> linkMap = new HashMap<>(10);
+		//获取用户点赞信息
+		LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(Like::getUserId,userId)
+				.in(Like::getCommentId,commentIdList);
+		List<Like> likeList = likeMapper.selectList(queryWrapper);
+		//创建点赞映射
+		Map<Integer,Like> likeMap = new HashMap<>();
+		for(Like like : likeList){
+			likeMap.put(like.getCommentId(),like);
+		}
 		for (Comment comment : comments) {
 			// 倒序存入根评论，正序存入回复
 			if (comment.getType().equals(CommentType.ROOT.getValue())) {
@@ -122,6 +140,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 				BeanUtils.copyProperties(comment, commentPostVO);
 				// 设置用户信息
 				commentPostVO.setUserInfo(userInfo.get(comment.getUserId()));
+				// 设置是否点赞信息
+				commentPostVO.setIsLike(likeMap.containsKey(comment.getId()));
 				// 从头部插入根评论，并创建map
 				rootComment.add(0, commentPostVO);
 				answerCommentMap.put(comment.getRootId(), new ArrayList<>());
@@ -134,6 +154,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 				// 设置用户信息和回复用户信息
 				commentAnswerVO.setUserInfo(userInfo.get(comment.getUserId()));
 				commentAnswerVO.setAnswerUserInfo(userInfo.get(comment.getToUserId()));
+				// 设置是否点赞信息
+				commentAnswerVO.setIsLike(likeMap.containsKey(comment.getId()));
 				commentAnswerVOList.add(commentAnswerVO);
 			}
 		}

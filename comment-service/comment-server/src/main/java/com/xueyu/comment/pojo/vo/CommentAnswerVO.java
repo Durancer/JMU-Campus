@@ -58,6 +58,11 @@ public class CommentAnswerVO {
 	String type;
 
 	/**
+	 * 是否点赞
+	 */
+	Boolean isLike;
+
+	/**
 	 * 创建时间
 	 */
 	Timestamp createTime;
