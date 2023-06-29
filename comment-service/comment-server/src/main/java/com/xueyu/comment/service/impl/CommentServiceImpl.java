@@ -123,15 +123,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		// 创建关联map，key为根id，值为 子评论集合
 		Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(10);
 		Map<CommentPostVO, Comment> linkMap = new HashMap<>(10);
-		//获取用户点赞信息
-		LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(Like::getUserId,userId)
-				.in(Like::getCommentId,commentIdList);
-		List<Like> likeList = likeMapper.selectList(queryWrapper);
 		//创建点赞映射
 		Map<Integer,Like> likeMap = new HashMap<>();
-		for(Like like : likeList){
-			likeMap.put(like.getCommentId(),like);
+		if(userId!=null){
+			//获取用户点赞信息
+			LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
+			queryWrapper.eq(Like::getUserId,userId)
+					.in(Like::getCommentId,commentIdList);
+			List<Like> likeList = likeMapper.selectList(queryWrapper);
+			//点赞数据存入map集合
+			for(Like like : likeList){
+				likeMap.put(like.getCommentId(),like);
+			}
 		}
 		for (Comment comment : comments) {
 			// 倒序存入根评论，正序存入回复
@@ -141,7 +144,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 				// 设置用户信息
 				commentPostVO.setUserInfo(userInfo.get(comment.getUserId()));
 				// 设置是否点赞信息
-				commentPostVO.setIsLike(likeMap.containsKey(comment.getId()));
+				if(userId!=null){
+					commentPostVO.setIsLike(likeMap.containsKey(comment.getId()));
+				}
 				// 从头部插入根评论，并创建map
 				rootComment.add(0, commentPostVO);
 				answerCommentMap.put(comment.getRootId(), new ArrayList<>());

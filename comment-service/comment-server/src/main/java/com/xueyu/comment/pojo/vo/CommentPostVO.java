@@ -56,7 +56,7 @@ public class CommentPostVO {
 	/**
 	 * 是否点赞
 	 */
-	Boolean isLike;
+	Boolean isLike = false;
 
 	/**
 	 * 创建时间
