@@ -33,9 +33,9 @@ public class VoteVO {
     String type;
 
     /**
-     * 投票周期
+     * 投票是否过期
      */
-    String cycle;
+    Boolean expired;
 
     /**
      * 投票总人数

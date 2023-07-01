@@ -10,4 +10,6 @@ public interface VoteService extends IService<Vote> {
     boolean deleteVote(Integer voteId);
 
     VoteVO getVoteDetail(Integer postId);
+
+    Boolean isVoteExpired(Vote vote);
 }

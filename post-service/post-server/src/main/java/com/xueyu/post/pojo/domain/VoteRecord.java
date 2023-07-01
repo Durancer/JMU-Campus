@@ -33,6 +33,11 @@ public class VoteRecord {
     Integer userId;
 
     /**
+     * 投票id
+     */
+    Integer voteId;
+
+    /**
      * 选项id
      */
     Integer optionId;
