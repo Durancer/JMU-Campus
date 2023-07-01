@@ -3,6 +3,7 @@ package com.xueyu.post.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,14 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface PostService extends IService<Post> {
 
+
 	/**
 	 * 上传帖子信息
 	 *
-	 * @param post  帖子信息
-	 * @param files 图片信息
-	 * @return 发布结果
+	 * @param post    帖子
+	 * @param files   文件
+	 * @param vote    投票
+	 * @param options 选项
+	 * @return {@link Boolean}
 	 */
-	Boolean publishPost(Post post, MultipartFile[] files);
+	Boolean publishPost(Post post, MultipartFile[] files, Vote vote ,String[] options);
 
 	/**
 	 * 删除帖子

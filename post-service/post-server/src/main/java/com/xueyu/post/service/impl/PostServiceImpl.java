@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.comment.client.CommentClient;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
-import com.xueyu.post.mapper.LikePostMapper;
-import com.xueyu.post.mapper.PostGeneralMapper;
-import com.xueyu.post.mapper.PostMapper;
-import com.xueyu.post.mapper.PostViewMapper;
+import com.xueyu.post.mapper.*;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.vo.PostDetailVO;
@@ -19,6 +16,7 @@ import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
+import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
@@ -47,6 +45,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	ImageAnnexService imageAnnexService;
 
 	@Resource
+	VoteService voteService;
+
+	@Resource
+	VoteMapper voteMapper;
+
+	@Resource
 	PostGeneralMapper postGeneralMapper;
 
 	@Resource
@@ -69,7 +73,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Boolean publishPost(Post post, MultipartFile[] files) {
+	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
 		// 存入帖子数据，获得主键值
@@ -89,6 +93,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			}
 			// 将文件名存入帖子服务的图片附件表
 			imageAnnexService.saveBatch(images);
+		}
+		//添加投票
+		if(vote.getType()!=null & vote.getCycle()!=null & vote.getTopic()!=null){
+			vote.setPostId(post.getId());
+			voteService.launchVote(vote,options);
 		}
 		return true;
 	}
@@ -113,6 +122,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				fileList[i] = imgList.get(i).getFileName();
 			}
 			resourceClient.deleteFilesListByFileName(fileList);
+		}
+		// 删除投票
+		LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
+		voteQueryWrapper.eq(Vote::getPostId,postId);
+		Vote vote = voteMapper.selectOne(voteQueryWrapper);
+		if(vote!=null){
+			voteService.deleteVote(vote.getVoteId());
 		}
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);

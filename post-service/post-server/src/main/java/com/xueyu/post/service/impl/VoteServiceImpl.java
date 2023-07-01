@@ -31,7 +31,7 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean launchVote(Vote vote,String[] options) {
+    public boolean launchVote(Vote vote, String[] options) {
         //判断投票类型
         if (!(vote.getType().equals(VoteType.MULTIPLE.getValue()) || vote.getType().equals(VoteType.RADIO.getValue()))) {
             throw new PostException("错误的投票类型");

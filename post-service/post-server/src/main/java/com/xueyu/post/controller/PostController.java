@@ -4,6 +4,7 @@ import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.exception.PostException;
 import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.sdk.dto.PostDTO;
@@ -36,13 +37,13 @@ public class PostController {
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId) {
+	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
 		post.setUserId(userId);
-		Boolean sendStatus = postService.publishPost(post, files);
+		Boolean sendStatus = postService.publishPost(post, files, vote, options);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
 		}

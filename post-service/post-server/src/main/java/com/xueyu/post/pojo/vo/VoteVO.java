@@ -25,7 +25,7 @@ public class VoteVO {
     /**
      * 投票主题
      */
-    String title;
+    String topic;
 
     /**
      * 投票类型
