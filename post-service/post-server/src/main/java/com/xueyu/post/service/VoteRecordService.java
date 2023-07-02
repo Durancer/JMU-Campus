@@ -6,7 +6,23 @@ import com.xueyu.post.pojo.domain.VoteRecord;
 import java.util.List;
 
 public interface VoteRecordService extends IService<VoteRecord> {
+
+    /**
+     * 添加投票记录
+     *
+     * @param userId    用户id
+     * @param voteId    投票id
+     * @param optionIds 选择id
+     * @return boolean
+     */
     boolean addVoteRecord(Integer userId, Integer voteId, Integer[] optionIds);
 
+    /**
+     * 是否投票
+     *
+     * @param userId 用户id
+     * @param voteId 投票id
+     * @return {@link List}<{@link Integer}>
+     */
     List<Integer> isVote(Integer userId, Integer voteId);
 }

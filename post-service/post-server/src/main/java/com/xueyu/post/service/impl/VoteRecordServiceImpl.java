@@ -95,6 +95,9 @@ public class VoteRecordServiceImpl extends ServiceImpl<VoteRecordMapper, VoteRec
         for(VoteRecord voteRecord : list){
             optionIds.add(voteRecord.getOptionId());
         }
+        if(optionIds.isEmpty()){
+            optionIds = null;
+        }
         return optionIds;
     }
 }

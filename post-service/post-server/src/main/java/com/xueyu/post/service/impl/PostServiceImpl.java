@@ -13,9 +13,11 @@ import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
+import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
+import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
@@ -49,6 +51,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	VoteMapper voteMapper;
+
+	@Resource
+	VoteRecordService voteRecordService;
 
 	@Resource
 	PostGeneralMapper postGeneralMapper;
@@ -197,6 +202,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
 				postListVO.setUserLikeBOList(userLikeInfos);
 			}
+			// 设置投票信息
+			VoteVO voteVO = voteService.getVoteDetail(record.getId());
+			postListVO.setVoteMessage(voteVO);
+			// 设置是否投票
+			if(voteVO!=null){
+				postListVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
+			}else {
+				postListVO.setIsVote(null);
+			}
 			postData.add(postListVO);
 		}
 		result.setRecords(postData);
@@ -236,6 +250,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
 		// 查询评论信息
 		postDetailVO.setCommentList(commentClient.getPostCommentList(postId).getData());
+		// 设置投票信息
+		VoteVO voteVO = voteService.getVoteDetail(postId);
+		postDetailVO.setVoteMessage(voteVO);
+		// 设置是否投票
+		if(voteVO!=null){
+			postDetailVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
+			System.out.println(voteRecordService.isVote(userId,voteVO.getVoteId()));
+		}else {
+			postDetailVO.setIsVote(null);
+		}
 		// 发送mq信息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
 		postOperateDTO.setUserId(userId);
@@ -255,6 +279,70 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setId(postId);
 		post.setStatus(desicion);
 		lambdaUpdate().update(post);
+	}
+
+	@Override
+	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
+		IPage<PostView> page = new Page<>(current, size);
+		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+		postViewMapper.selectPage(page, wrapper);
+		ListVO<PostListVO> result = new ListVO<>();
+		// 将除具体记录外的分页数据赋值
+		BeanUtils.copyProperties(page, result);
+		List<PostView> records = page.getRecords();
+		// 统计postId, userId
+		List<Integer> postIds = new ArrayList<>();
+		List<Integer> authors = new ArrayList<>();
+		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
+		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
+		for (PostView postView : records) {
+			postIds.add(postView.getId());
+			authors.add(postView.getUserId());
+		}
+		// 查询所有帖子的点赞信息，并按照帖子id进行分配
+		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
+		likeWrapper.in(LikePost::getPostId, postIds);
+		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
+		for (LikePost likePost : likePosts) {
+			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
+				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
+			} else {
+				List<Integer> userIds = new ArrayList<>();
+				userIds.add(likePost.getUserId());
+				likeUserIdsMap.put(likePost.getPostId(), userIds);
+			}
+		}
+		// 查询并设置帖子用户信息
+		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
+		// 查询所有图片信息
+		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
+		List<PostListVO> postData = new ArrayList<>();
+		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
+		for (PostView record : records) {
+			PostListVO postListVO = new PostListVO();
+			BeanUtils.copyProperties(record, postListVO);
+			// 设置帖子用户信息
+			postListVO.setUserInfo(userInfos.get(record.getUserId()));
+			// 设置该帖子图片信息
+			postListVO.setImgList(postListImgs.get(record.getId()));
+			// 设置点赞用户信息
+			if (likeUserIdsMap.get(record.getId()) != null) {
+				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
+				postListVO.setUserLikeBOList(userLikeInfos);
+			}
+			// 设置投票信息
+			VoteVO voteVO = voteService.getVoteDetail(record.getId());
+			postListVO.setVoteMessage(voteVO);
+			// 设置是否投票
+			if(voteVO!=null){
+				postListVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
+			}else {
+				postListVO.setIsVote(null);
+			}
+			postData.add(postListVO);
+		}
+		result.setRecords(postData);
+		return result;
 	}
 
 }

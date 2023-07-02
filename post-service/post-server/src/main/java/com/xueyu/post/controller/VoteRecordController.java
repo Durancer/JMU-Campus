@@ -31,16 +31,4 @@ public class VoteRecordController {
         return RestResult.ok("投票成功");
     }
 
-    /**
-     * 是否投票
-     *
-     * @param userId 用户id
-     * @param voteId 投票id
-     * @return {@link RestResult}<{@link List}<{@link Integer}>>
-     */
-    @GetMapping("is")
-    public RestResult<List<Integer>> isVote(@RequestHeader Integer userId, Integer voteId){
-        return RestResult.ok(voteRecordService.isVote(userId,voteId));
-    }
-
 }

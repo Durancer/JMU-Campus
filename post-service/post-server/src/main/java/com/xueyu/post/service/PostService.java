@@ -61,4 +61,13 @@ public interface PostService extends IService<Post> {
 	 */
 	void passPostContent(Integer postId, Integer decision);
 
+	/**
+	 * 分页获得所有帖子
+	 *
+	 * @param current 当前
+	 * @param size    大小
+	 * @param userId  用户id
+	 * @return {@link ListVO}<{@link PostListVO}>
+	 */
+	ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId);
 }
