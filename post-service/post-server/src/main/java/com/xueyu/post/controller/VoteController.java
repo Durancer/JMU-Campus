@@ -24,7 +24,7 @@ public class VoteController {
      */
     @PostMapping("launch")
     public RestResult<?> launchVote(Vote vote, String[] options){
-        if(options.length == 0){
+        if(options == null || options.length == 0){
             throw new PostException("未添加投票选项");
         }
         if(options.length > 15){

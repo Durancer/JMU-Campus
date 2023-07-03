@@ -73,7 +73,7 @@ public class PostController {
 	 * @return 帖子信息
 	 */
 	@GetMapping("list/all")
-	public RestResult<ListVO<PostListVO>> getAllPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader Integer userId) {
+	public RestResult<ListVO<PostListVO>> getAllPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader(required = false) Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getAllPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
