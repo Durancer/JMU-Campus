@@ -8,13 +8,12 @@ import com.xueyu.post.mapper.VoteOptionMapper;
 import com.xueyu.post.mapper.VoteRecordMapper;
 import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.vo.VoteVO;
+import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -22,6 +21,9 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
 
     @Resource
     VoteMapper voteMapper;
+
+    @Resource
+    VoteRecordService voteRecordService;
 
     @Resource
     VoteOptionMapper voteOptionMapper;
@@ -81,7 +83,7 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     }
 
     @Override
-    public VoteVO getVoteDetail(Integer postId) {
+    public VoteVO getVoteDetail(Integer postId, Integer userId) {
         //查询是否存在投票
         LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
         voteQueryWrapper.eq(Vote::getPostId,postId);
@@ -98,25 +100,6 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         }
         //不存在返回null
         return null;
-    }
-
-    @Override
-    public Boolean isVoteExpired(Vote vote){
-        //判断投票是否过期
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(vote.getCreateTime());
-        if(vote.getCycle().equals(VoteCycle.DAY.getValue())){
-            calendar.add(Calendar.DATE,1);
-        } else if(vote.getCycle().equals(VoteCycle.WEEK.getValue())){
-            calendar.add(Calendar.WEEK_OF_MONTH,1);
-        } else if(vote.getCycle().equals(VoteCycle.MONTH.getValue())){
-            calendar.add(Calendar.MONTH,1);
-        } else if(vote.getCycle().equals(VoteCycle.YEAR.getValue())){
-            calendar.add(Calendar.YEAR,1);
-        }
-        Timestamp endTime = new Timestamp(calendar.getTimeInMillis());
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        return now.before(endTime);
     }
 
 }

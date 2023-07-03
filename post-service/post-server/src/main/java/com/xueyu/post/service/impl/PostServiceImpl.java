@@ -203,18 +203,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				postListVO.setUserLikeBOList(userLikeInfos);
 			}
 			// 设置投票信息
-			VoteVO voteVO = voteService.getVoteDetail(record.getId());
-			postListVO.setVoteMessage(voteVO);
-			// 设置是否投票
+			VoteVO voteVO;
 			if(userId!=null){
-				// 设置是否投票
-				if(voteVO!=null){
-					postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
-				}else {
-					postListVO.setIsVote(null);
-				}
+				voteVO = voteService.getVoteDetail(record.getId(), userId);
+			}else {
+				voteVO = voteService.getVoteDetail(record.getId(), null);
 			}
-			postData.add(postListVO);
+			postListVO.setVoteMessage(voteVO);
 		}
 		result.setRecords(postData);
 		return result;
@@ -254,17 +249,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 查询评论信息
 		postDetailVO.setCommentList(commentClient.getPostCommentList(postId).getData());
 		// 设置投票信息
-		VoteVO voteVO = voteService.getVoteDetail(postId);
-		postDetailVO.setVoteMessage(voteVO);
-		// 设置是否投票
+		VoteVO voteVO;
 		if(userId!=null){
-			// 设置是否投票
-			if(voteVO!=null){
-				postDetailVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
-			}else {
-				postDetailVO.setIsVote(null);
-			}
+			voteVO = voteService.getVoteDetail(postId, userId);
+		}else {
+			voteVO = voteService.getVoteDetail(postId, null);
 		}
+		postDetailVO.setVoteMessage(voteVO);
 		// 发送mq信息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
 		postOperateDTO.setUserId(userId);
@@ -336,16 +327,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				postListVO.setUserLikeBOList(userLikeInfos);
 			}
 			// 设置投票信息
-			VoteVO voteVO = voteService.getVoteDetail(record.getId());
-			postListVO.setVoteMessage(voteVO);
+			VoteVO voteVO;
 			if(userId!=null){
-				// 设置是否投票
-				if(voteVO!=null){
-					postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
-				}else {
-					postListVO.setIsVote(null);
-				}
+				voteVO = voteService.getVoteDetail(record.getId(), userId);
+			}else {
+				voteVO = voteService.getVoteDetail(record.getId(), null);
 			}
+			postListVO.setVoteMessage(voteVO);
 			postData.add(postListVO);
 		}
 		result.setRecords(postData);

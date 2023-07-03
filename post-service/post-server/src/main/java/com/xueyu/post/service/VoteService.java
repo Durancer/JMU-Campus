@@ -29,14 +29,6 @@ public interface VoteService extends IService<Vote> {
      * @param postId post id
      * @return {@link VoteVO}
      */
-    VoteVO getVoteDetail(Integer postId);
-
-    /**
-     * 投票是否过期
-     *
-     * @param vote 投票
-     * @return {@link Boolean}
-     */
-    Boolean isVoteExpired(Vote vote);
+    VoteVO getVoteDetail(Integer postId, Integer userId);
 
 }

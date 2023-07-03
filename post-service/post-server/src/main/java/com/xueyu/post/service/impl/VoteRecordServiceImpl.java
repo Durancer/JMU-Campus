@@ -7,13 +7,16 @@ import com.xueyu.post.mapper.VoteMapper;
 import com.xueyu.post.mapper.VoteOptionMapper;
 import com.xueyu.post.mapper.VoteRecordMapper;
 import com.xueyu.post.pojo.domain.Vote;
+import com.xueyu.post.pojo.domain.VoteCycle;
 import com.xueyu.post.pojo.domain.VoteRecord;
 import com.xueyu.post.pojo.domain.VoteType;
 import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -28,9 +31,6 @@ public class VoteRecordServiceImpl extends ServiceImpl<VoteRecordMapper, VoteRec
     @Resource
     VoteOptionMapper voteOptionMapper;
 
-    @Resource
-    VoteService voteService;
-
     @Override
     public boolean addVoteRecord(Integer userId, Integer voteId , Integer[] optionIds) {
         //判断投票是否存在
@@ -39,7 +39,7 @@ public class VoteRecordServiceImpl extends ServiceImpl<VoteRecordMapper, VoteRec
             throw new PostException("该投票不存在");
         }
         //判断投票是否过期
-        if(!voteService.isVoteExpired(vote)){
+        if(!isVoteExpired(vote)){
             throw new PostException("该投票已过期");
         }
         //判断选项个数是否为0
@@ -99,5 +99,24 @@ public class VoteRecordServiceImpl extends ServiceImpl<VoteRecordMapper, VoteRec
             optionIds = null;
         }
         return optionIds;
+    }
+
+    @Override
+    public Boolean isVoteExpired(Vote vote){
+        //判断投票是否过期
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(vote.getCreateTime());
+        if(vote.getCycle().equals(VoteCycle.DAY.getValue())){
+            calendar.add(Calendar.DATE,1);
+        } else if(vote.getCycle().equals(VoteCycle.WEEK.getValue())){
+            calendar.add(Calendar.WEEK_OF_MONTH,1);
+        } else if(vote.getCycle().equals(VoteCycle.MONTH.getValue())){
+            calendar.add(Calendar.MONTH,1);
+        } else if(vote.getCycle().equals(VoteCycle.YEAR.getValue())){
+            calendar.add(Calendar.YEAR,1);
+        }
+        Timestamp endTime = new Timestamp(calendar.getTimeInMillis());
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return now.before(endTime);
     }
 }

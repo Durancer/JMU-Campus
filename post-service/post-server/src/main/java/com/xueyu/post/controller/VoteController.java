@@ -30,7 +30,7 @@ public class VoteController {
         if(options.length > 15){
             throw new PostException("不能添加超过15个选项");
         }
-        boolean status = voteService.launchVote(vote,options);
+        boolean status = voteService.launchVote(vote, options);
         if(!status){
             return RestResult.fail("发布投票失败");
         }
@@ -59,8 +59,8 @@ public class VoteController {
      * @return {@link RestResult}<{@link VoteVO}>
      */
     @GetMapping("getone")
-    public RestResult<VoteVO> getVoteDetail(@RequestParam Integer postId){
-        return RestResult.ok(voteService.getVoteDetail(postId));
+    public RestResult<VoteVO> getVoteDetail(@RequestParam Integer postId, @RequestHeader(required = false) Integer userId){
+        return RestResult.ok(voteService.getVoteDetail(postId, userId));
     }
 
 }
