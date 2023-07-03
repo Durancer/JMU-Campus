@@ -4,7 +4,6 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 
 /**
@@ -56,6 +55,11 @@ public class CommentAnswerVO {
 	 * 评论类型 枚举值 root | answer
 	 */
 	String type;
+
+	/**
+	 * 是否点赞
+	 */
+	Boolean isLike = false;
 
 	/**
 	 * 创建时间
