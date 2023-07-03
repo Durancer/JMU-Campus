@@ -255,8 +255,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postDetailVO.setVoteMessage(voteVO);
 		// 设置是否投票
 		if(voteVO!=null){
-			postDetailVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
-			System.out.println(voteRecordService.isVote(userId,voteVO.getVoteId()));
+			postDetailVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
 		}else {
 			postDetailVO.setIsVote(null);
 		}
@@ -335,7 +334,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			postListVO.setVoteMessage(voteVO);
 			// 设置是否投票
 			if(voteVO!=null){
-				postListVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
+				postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
 			}else {
 				postListVO.setIsVote(null);
 			}
