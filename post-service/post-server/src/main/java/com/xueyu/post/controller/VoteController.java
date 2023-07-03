@@ -1,6 +1,7 @@
 package com.xueyu.post.controller;
 
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.post.exception.PostException;
 import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.service.VoteService;
@@ -23,6 +24,12 @@ public class VoteController {
      */
     @PostMapping("launch")
     public RestResult<?> launchVote(Vote vote, String[] options){
+        if(options.length == 0){
+            throw new PostException("未添加投票选项");
+        }
+        if(options.length > 15){
+            throw new PostException("不能添加超过15个选项");
+        }
         boolean status = voteService.launchVote(vote,options);
         if(!status){
             return RestResult.fail("发布投票失败");
