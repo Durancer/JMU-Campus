@@ -206,10 +206,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			VoteVO voteVO = voteService.getVoteDetail(record.getId());
 			postListVO.setVoteMessage(voteVO);
 			// 设置是否投票
-			if(voteVO!=null){
-				postListVO.setIsVote(voteRecordService.isVote(userId,voteVO.getVoteId()));
-			}else {
-				postListVO.setIsVote(null);
+			if(userId!=null){
+				// 设置是否投票
+				if(voteVO!=null){
+					postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
+				}else {
+					postListVO.setIsVote(null);
+				}
 			}
 			postData.add(postListVO);
 		}
@@ -254,10 +257,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		VoteVO voteVO = voteService.getVoteDetail(postId);
 		postDetailVO.setVoteMessage(voteVO);
 		// 设置是否投票
-		if(voteVO!=null){
-			postDetailVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
-		}else {
-			postDetailVO.setIsVote(null);
+		if(userId!=null){
+			// 设置是否投票
+			if(voteVO!=null){
+				postDetailVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
+			}else {
+				postDetailVO.setIsVote(null);
+			}
 		}
 		// 发送mq信息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
@@ -332,11 +338,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			// 设置投票信息
 			VoteVO voteVO = voteService.getVoteDetail(record.getId());
 			postListVO.setVoteMessage(voteVO);
-			// 设置是否投票
-			if(voteVO!=null){
-				postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
-			}else {
-				postListVO.setIsVote(null);
+			if(userId!=null){
+				// 设置是否投票
+				if(voteVO!=null){
+					postListVO.setIsVote(voteRecordService.isVote(userId, voteVO.getVoteId()));
+				}else {
+					postListVO.setIsVote(null);
+				}
 			}
 			postData.add(postListVO);
 		}
