@@ -50,5 +50,5 @@ public class VoteVO {
     /**
      * 选项列表
      */
-    List<VoteOption> optionList;
+    List<VoteOptionVO> optionList;
 }
