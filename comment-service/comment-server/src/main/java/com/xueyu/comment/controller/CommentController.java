@@ -6,7 +6,6 @@ import com.xueyu.comment.service.CommentService;
 import com.xueyu.common.core.result.RestResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -27,8 +26,8 @@ public class CommentController {
 	 * @return 评论集合
 	 */
 	@GetMapping("post/list")
-	public RestResult<Object> getPostCommentList(@RequestParam Integer postId) {
-		return RestResult.ok(commentService.getPostComments(postId));
+	public RestResult<Object> getPostCommentList(@RequestHeader(required = false) Integer userId, @RequestParam Integer postId) {
+		return RestResult.ok(commentService.getPostComments(userId,postId));
 	}
 
 	/**

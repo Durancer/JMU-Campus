@@ -35,7 +35,7 @@ public interface CommentService extends IService<Comment> {
 	 * @param postId 帖子id
 	 * @return 评论信息
 	 */
-	List<CommentPostVO> getPostComments(Integer postId);
+	List<CommentPostVO> getPostComments(Integer userId,Integer postId);
 
 	/**
 	 * 获取用户发送的评论信息

@@ -1,6 +1,7 @@
 package com.xueyu.post;
 
 import com.xueyu.common.ampq.annotation.EnableAmqpMessageConverterConfig;
+import com.xueyu.common.data.annotation.EnableAutofill;
 import com.xueyu.common.data.annotation.EnableMybatisPlusIPage;
 import com.xueyu.common.web.annotation.EnableDefaultExceptionAdvice;
 import org.mybatis.spring.annotation.MapperScan;
@@ -19,6 +20,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = {"com.xueyu.resource.client", "com.xueyu.user.client", "com.xueyu.comment.client"})
 @EnableAmqpMessageConverterConfig
 @EnableDefaultExceptionAdvice
+@EnableAutofill
 public class PostApplication {
 
 	public static void main(String[] args) {

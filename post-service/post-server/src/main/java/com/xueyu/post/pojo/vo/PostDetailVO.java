@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * 帖子详情页面显示实体类
@@ -46,6 +47,16 @@ public class PostDetailVO {
 	 * 点赞量
 	 */
 	Integer likeNum;
+
+	/**
+	 * 投票信息
+	 */
+	VoteVO voteMessage;
+
+	/**
+	 * 是否投票 若集合为空则为未投票或未登录，投票则返回用户投票选项id的集合
+	 */
+	List<Integer> isVote;
 
 	/**
 	 * 评论列表
