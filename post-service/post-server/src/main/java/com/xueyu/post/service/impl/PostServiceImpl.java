@@ -17,7 +17,6 @@ import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
-import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
@@ -51,9 +50,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	VoteMapper voteMapper;
-
-	@Resource
-	VoteRecordService voteRecordService;
 
 	@Resource
 	PostGeneralMapper postGeneralMapper;

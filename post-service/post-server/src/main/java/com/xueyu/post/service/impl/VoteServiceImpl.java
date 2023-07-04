@@ -7,6 +7,7 @@ import com.xueyu.post.mapper.VoteMapper;
 import com.xueyu.post.mapper.VoteOptionMapper;
 import com.xueyu.post.mapper.VoteRecordMapper;
 import com.xueyu.post.pojo.domain.*;
+import com.xueyu.post.pojo.vo.VoteOptionVO;
 import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;

@@ -11,7 +11,6 @@ import com.xueyu.post.pojo.domain.VoteCycle;
 import com.xueyu.post.pojo.domain.VoteRecord;
 import com.xueyu.post.pojo.domain.VoteType;
 import com.xueyu.post.service.VoteRecordService;
-import com.xueyu.post.service.VoteService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
