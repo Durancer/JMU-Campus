@@ -26,7 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.util.HtmlUtils;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -77,6 +77,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
+		//html标签转码
+		post.setContent(HtmlUtils.htmlEscapeHex(post.getContent()));
 		// 存入帖子数据，获得主键值
 		query().getBaseMapper().insert(post);
 		// 添加数据统计表行数据
@@ -198,6 +200,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
 				postListVO.setUserLikeBOList(userLikeInfos);
 			}
+			//html转码
+			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
 			// 设置投票信息
 			VoteVO voteVO;
 			if(userId!=null){
@@ -227,16 +231,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		PostDetailVO postDetailVO = new PostDetailVO();
 		// 拷贝相同属性项
 		BeanUtils.copyProperties(postView, postDetailVO);
+		// html标签转码
+		postDetailVO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
 		// 查询并设置是否点赞
 		if (userId != null) {
 			LambdaQueryWrapper<LikePost> wrapper = new LambdaQueryWrapper<>();
 			wrapper.eq(LikePost::getPostId, postId).eq(LikePost::getUserId, userId);
 			LikePost likePost = likePostMapper.selectOne(wrapper);
-			if (likePost != null) {
-				postDetailVO.setIsLike(true);
-			} else {
-				postDetailVO.setIsLike(false);
-			}
+			postDetailVO.setIsLike(likePost != null);
 		} else {
 			postDetailVO.setIsLike(false);
 		}
@@ -322,6 +324,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
 				postListVO.setUserLikeBOList(userLikeInfos);
 			}
+			//html转码
+			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
 			// 设置投票信息
 			VoteVO voteVO;
 			if(userId!=null){
