@@ -9,6 +9,7 @@ import com.xueyu.post.mapper.VoteRecordMapper;
 import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.vo.VoteOptionVO;
 import com.xueyu.post.pojo.vo.VoteVO;
+import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
 
     @Resource
     VoteMapper voteMapper;
+
+    @Resource
+    VoteRecordService voteRecordService;
 
     @Resource
     VoteOptionMapper voteOptionMapper;
@@ -105,6 +109,10 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
                 optionVOList.add(voteOptionVO);
             }
             voteVO.setOptionList(optionVOList);
+            //设置是否过期
+            voteVO.setExpired(voteRecordService.isVoteExpired(vote));
+            //设置是否投票
+            voteVO.setIsVote(voteRecordService.isVote(userId,vote.getVoteId()));
             return voteVO;
         }
         //不存在返回null
