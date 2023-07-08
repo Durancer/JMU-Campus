@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -96,7 +97,22 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
             LambdaQueryWrapper<VoteOption> optionQueryWrapper = new LambdaQueryWrapper<>();
             optionQueryWrapper.eq(VoteOption::getVoteId,vote.getVoteId());
             List<VoteOption> optionList = voteOptionMapper.selectList(optionQueryWrapper);
-            voteVO.setOptionList(optionList);
+            List<VoteOptionVO> optionVOList = new ArrayList<>();
+            for(VoteOption voteOption : optionList){
+                VoteOptionVO voteOptionVO = new VoteOptionVO();
+                BeanUtils.copyProperties(voteOption,voteOptionVO);
+                if(voteOption.getNum()!=0&vote.getAmount()!=0){
+                    voteOptionVO.setRatio(String.format("%.1f",(double) voteOption.getNum()/vote.getAmount()*100));
+                }else {
+                    voteOptionVO.setRatio("0");
+                }
+                optionVOList.add(voteOptionVO);
+            }
+            voteVO.setOptionList(optionVOList);
+            //设置是否过期
+            voteVO.setExpired(voteRecordService.isVoteExpired(vote));
+            //设置是否投票
+            voteVO.setIsVote(voteRecordService.isVote(userId,vote.getVoteId()));
             return voteVO;
         }
         //不存在返回null

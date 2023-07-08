@@ -51,11 +51,6 @@ public class PostListVO {
 	VoteVO voteMessage;
 
 	/**
-	 * 是否投票 若集合为空则为未投票或未登录，投票则返回用户投票选项id的集合
-	 */
-	List<Integer> isVote;
-
-	/**
 	 * 点赞用户列表
 	 */
 	List<UserSimpleVO> userLikeBOList;
