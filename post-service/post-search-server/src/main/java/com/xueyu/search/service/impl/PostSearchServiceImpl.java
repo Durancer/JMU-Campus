@@ -15,7 +15,6 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -29,8 +28,6 @@ public class PostSearchServiceImpl implements PostSearchService {
     @Resource
     private RestHighLevelClient restHighLevelClient;
 
-    @Resource
-    private RabbitTemplate rabbitTemplate;
 
     @Override
     public List<Map<String,String>> searchByPage(UserSearchVO userSearchVO) {
