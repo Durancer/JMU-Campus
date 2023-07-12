@@ -291,7 +291,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			BeanUtils.copyProperties(postView,postDTO);
 			//html转码
 			postDTO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
-			postDTO.setNickname("aaa");
+			postDTO.setNickname(userSimpleVO.getNickname());
 			rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postDTO);
 		}
 	}

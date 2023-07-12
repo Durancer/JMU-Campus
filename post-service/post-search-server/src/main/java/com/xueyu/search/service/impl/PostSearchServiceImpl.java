@@ -81,9 +81,7 @@ public class PostSearchServiceImpl implements PostSearchService {
             //处理高亮
             if(hit.getHighlightFields() != null && hit.getHighlightFields().size() > 0){
                 Text[] titles = hit.getHighlightFields().get("title").getFragments();
-                System.out.println(titles);
                 String title = StringUtils.join(titles);
-                System.out.println(title);
                 //高亮标题
                 map.put("h_title",title);
             }else {
