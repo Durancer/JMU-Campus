@@ -47,4 +47,9 @@ public class PostMqContants {
 	 */
 	public static final String POST_OPERATE_RELAY_KEY = "post.relay";
 
+	/**
+	 * 帖子审核通过
+	 */
+	public static final String POST_PASS_KEY = "post.pass";
+
 }

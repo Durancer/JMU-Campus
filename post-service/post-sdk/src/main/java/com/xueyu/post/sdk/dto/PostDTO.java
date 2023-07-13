@@ -23,6 +23,16 @@ public class PostDTO {
 	Integer userId;
 
 	/**
+	 * 标题
+	 */
+	String title;
+
+	/**
+	 * 昵称
+	 */
+	String nickname;
+
+	/**
 	 * 发布文本内容
 	 */
 	String content;
@@ -31,10 +41,5 @@ public class PostDTO {
 	 * 帖子创建时间
 	 */
 	Timestamp createTime;
-
-	/**
-	 * 帖子状态 0为审核中 | 1为公开 | 2审核失败
-	 */
-	Integer status;
 
 }

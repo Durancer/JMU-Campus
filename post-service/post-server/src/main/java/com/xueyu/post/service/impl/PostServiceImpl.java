@@ -14,6 +14,7 @@ import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.pojo.vo.VoteVO;
+import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
@@ -68,6 +69,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	PostViewMapper postViewMapper;
+
+	@Resource
+	PostMapper postMapper;
 
 	@Resource
 	CommentClient commentClient;
@@ -278,7 +282,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		Post post = new Post();
 		post.setId(postId);
 		post.setStatus(desicion);
-		lambdaUpdate().update(post);
+		postMapper.updateById(post);
+		//发送mq信息
+		if(desicion==1){
+			PostView postView = postViewMapper.selectById(postId);
+			UserSimpleVO userSimpleVO = userClient.getUserInfo(postView.getUserId()).getData();
+			PostDTO postDTO = new PostDTO();
+			BeanUtils.copyProperties(postView,postDTO);
+			//html转码
+			postDTO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
+			postDTO.setNickname(userSimpleVO.getNickname());
+			rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postDTO);
+		}
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.comment.mapper.CommentMapper;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.sdk.dto.CommentDTO;
-import com.xueyu.post.sdk.dto.PostDTO;
+import com.xueyu.post.sdk.dto.PostOperateDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -45,17 +45,17 @@ public class PostMqListener {
 			value = @Queue(name = POST_DELETE_QUEUE),
 			key = POST_DELETE_KEY
 	))
-	public void addPostComment(PostDTO postDTO) {
-		log.info("帖子 id ->{},被删除", postDTO.getId());
+	public void deletePostComment(PostOperateDTO postOperateDTO) {
+		log.info("帖子 id ->{},被删除", postOperateDTO.getPostId());
 		// 删除对应的评论
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(Comment::getPostId, postDTO.getId());
+		wrapper.eq(Comment::getPostId, postOperateDTO.getPostId());
 		int deleteNum = commentMapper.delete(wrapper);
 		// 删除的数量，发送mq
 		CommentDTO commentDTO = new CommentDTO();
-		commentDTO.setAuthorId(postDTO.getUserId());
-		commentDTO.setPostId(postDTO.getId());
-		commentDTO.setUserId(postDTO.getUserId());
+		commentDTO.setAuthorId(postOperateDTO.getAuthorId());
+		commentDTO.setPostId(postOperateDTO.getPostId());
+		commentDTO.setUserId(postOperateDTO.getUserId());
 		commentDTO.setEffectNum(deleteNum);
 		rabbitTemplate.convertAndSend(COMMENT_EXCHANGE, COMMENT_DELETE_KEY, commentDTO);
 	}
