@@ -10,7 +10,7 @@ public class CommentMqContants {
 	/**
 	 * 评论服务交换机
 	 */
-	public static final String COMMENT_EXCHANGE = "post";
+	public static final String COMMENT_EXCHANGE = "comment";
 
 	/**
 	 * 评论插入
