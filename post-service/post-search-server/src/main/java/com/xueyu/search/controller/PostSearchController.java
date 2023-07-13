@@ -16,6 +16,12 @@ public class PostSearchController {
     @Resource
     PostSearchService postSearchService;
 
+    /**
+     * es分页搜索
+     *
+     * @param userSearchVO 用户搜索类
+     * @return {@link RestResult}<{@link List}>
+     */
     @PostMapping("page")
     public RestResult<List> searchByPage(UserSearchVO userSearchVO){
         return RestResult.ok(postSearchService.searchByPage(userSearchVO));

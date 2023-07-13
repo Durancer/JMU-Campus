@@ -9,6 +9,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * es搜索配置
+ *
+ * @author fsj0591
+ * @date 2023/07/13
+ */
 @Getter
 @Setter
 @Configuration
@@ -19,8 +25,6 @@ public class ElasticSearchConfig {
 
     @Bean
     public RestHighLevelClient client(){
-        System.out.println(host);
-        System.out.println(port);
         return new RestHighLevelClient(RestClient.builder(
                 new HttpHost(
                         host,

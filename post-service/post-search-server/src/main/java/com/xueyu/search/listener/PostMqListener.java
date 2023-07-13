@@ -34,6 +34,11 @@ public class PostMqListener {
     @Resource
     private RestHighLevelClient restHighLevelClient;
 
+    /**
+     * 添加文章到es
+     *
+     * @param postDTO 帖子dto
+     */
     @RabbitListener(bindings = @QueueBinding(
             exchange = @Exchange(name = POST_EXCHANGE, type = ExchangeTypes.TOPIC),
             value = @Queue(name = POST_QUEUE),

@@ -36,7 +36,7 @@ public class PostSearchServiceImpl implements PostSearchService {
             throw new PostSearchException("搜索内容为空");
         }
 
-        //2.设置查询条件
+        //2.设置查询请求
         SearchRequest searchRequest = new SearchRequest("jmu_post_info");
         //查询条件构造
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();

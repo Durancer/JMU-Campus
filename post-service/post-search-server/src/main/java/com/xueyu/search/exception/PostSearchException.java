@@ -3,9 +3,9 @@ package com.xueyu.search.exception;
 import com.xueyu.common.core.exception.BusinessException;
 
 /**
- * 帖子异常类
+ * 帖子搜索异常类
  *
- * @author durance
+ * @author fsj0591
  */
 public class PostSearchException extends BusinessException {
 
