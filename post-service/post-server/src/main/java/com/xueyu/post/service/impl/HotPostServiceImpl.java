@@ -33,7 +33,6 @@ public class HotPostServiceImpl implements HotPostService {
 
     @Override
     public void searchHotPost() {
-
         //1.查询前一周的帖子数据
         LambdaQueryWrapper<PostView> queryWrapper = new LambdaQueryWrapper<>();
         //计算时间
@@ -45,12 +44,13 @@ public class HotPostServiceImpl implements HotPostService {
         queryWrapper.lt(PostView::getCreateTime,now);
         queryWrapper.gt(PostView::getCreateTime,time);
         List<PostView> postViewlist = postViewMapper.selectList(queryWrapper);
+        if(postViewlist != null){
+            //2.计算帖子的分数
+            List<HotPostVO> hotPostVOList = computeHotPost(postViewlist);
 
-        //2.计算帖子的分数
-        List<HotPostVO> hotPostVOList = computeHotPost(postViewlist);
-
-        //3.前20条数据存入redis
-        cacheHotToRedis(hotPostVOList);
+            //3.前20条数据存入redis
+            cacheHotToRedis(hotPostVOList);
+        }
     }
 
     /**
@@ -59,7 +59,6 @@ public class HotPostServiceImpl implements HotPostService {
      * @param hotPostVOList 热门帖子列表
      */
     private void cacheHotToRedis(List<HotPostVO> hotPostVOList) {
-
         hotPostVOList = hotPostVOList.stream().sorted(Comparator.comparing(HotPostVO::getScore).reversed()).collect(Collectors.toList());
         if (hotPostVOList.size() > 20) {
             hotPostVOList = hotPostVOList.subList(0, 20);
@@ -75,13 +74,11 @@ public class HotPostServiceImpl implements HotPostService {
      */
     private List<HotPostVO> computeHotPost(List<PostView> postViewlist) {
         List<HotPostVO> list = new ArrayList<>();
-        if(postViewlist != null && postViewlist.size() > 0){
-            for(PostView postView : postViewlist){
-                HotPostVO hotPostVO = new HotPostVO();
-                BeanUtils.copyProperties(postView,hotPostVO);
-                hotPostVO.setScore(computeScore(postView));
-                list.add(hotPostVO);
-            }
+        for(PostView postView : postViewlist){
+            HotPostVO hotPostVO = new HotPostVO();
+            BeanUtils.copyProperties(postView,hotPostVO);
+            hotPostVO.setScore(computeScore(postView));
+            list.add(hotPostVO);
         }
         return list;
     }

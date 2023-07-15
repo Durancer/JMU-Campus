@@ -9,6 +9,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 帖子服务
@@ -23,6 +24,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDefaultExceptionAdvice
 @EnableAutofill
 @EnableRedisSerialize
+@EnableScheduling
 public class PostApplication {
 
 	public static void main(String[] args) {
