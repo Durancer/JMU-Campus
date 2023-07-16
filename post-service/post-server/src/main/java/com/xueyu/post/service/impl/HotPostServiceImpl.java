@@ -5,8 +5,10 @@ import com.alibaba.nacos.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.post.mapper.PostViewMapper;
 import com.xueyu.post.pojo.vo.HotPostVO;
+import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.service.HotPostService;
+import com.xueyu.post.service.PostService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class HotPostServiceImpl implements HotPostService {
     @Resource
     RedisTemplate<String,String> redisTemplate;
 
+    @Resource
+    PostService postService;
+
     @Override
     public void searchHotPost() {
         //1.查询前一周的帖子数据
@@ -55,14 +60,21 @@ public class HotPostServiceImpl implements HotPostService {
     }
 
     @Override
-    public List<HotPostVO> getHotPostList() {
+    public List<PostListVO> getHotPostList(Integer userId) {
         String value = redisTemplate.opsForValue().get(HOT_POST_KEY);
-        List<HotPostVO> list = null;
+        List<HotPostVO> list = new ArrayList<>();
+        List<PostView> postViews = new ArrayList<>();
+        List<PostListVO> result = new ArrayList<>();
         if(StringUtils.isNotBlank(value)){
-            list = JSON.parseArray(value,HotPostVO.class);
+            list = JSON.parseArray(value, HotPostVO.class);
+            for(HotPostVO hotPostVO : list){
+                PostView postView = new PostView();
+                BeanUtils.copyProperties(hotPostVO, postView);
+                postViews.add(postView);
+            }
+            result = postService.queryByList(postViews, userId);
         }
-
-        return list;
+        return result;
     }
 
     /**
@@ -72,8 +84,8 @@ public class HotPostServiceImpl implements HotPostService {
      */
     private void cacheHotToRedis(List<HotPostVO> hotPostVOList) {
         hotPostVOList = hotPostVOList.stream().sorted(Comparator.comparing(HotPostVO::getScore).reversed()).collect(Collectors.toList());
-        if (hotPostVOList.size() > 20) {
-            hotPostVOList = hotPostVOList.subList(0, 20);
+        if (hotPostVOList.size() > 10) {
+            hotPostVOList = hotPostVOList.subList(0, 10);
         }
         redisTemplate.opsForValue().set(HOT_POST_KEY,JSON.toJSONString(hotPostVOList));
         //使用hash存

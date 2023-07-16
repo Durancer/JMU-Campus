@@ -6,7 +6,10 @@ import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
+import com.xueyu.post.pojo.vo.PostView;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @author durance
@@ -70,4 +73,13 @@ public interface PostService extends IService<Post> {
 	 * @return {@link ListVO}<{@link PostListVO}>
 	 */
 	ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId);
+
+	/**
+	 * 查询列表VO
+	 *
+	 * @param list   列表
+	 * @param userId 用户id
+	 * @return {@link List}<{@link PostListVO}>
+	 */
+	List<PostListVO> queryByList(List<PostView> list, Integer userId);
 }

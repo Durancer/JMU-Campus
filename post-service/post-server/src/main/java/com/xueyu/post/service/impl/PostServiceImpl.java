@@ -158,16 +158,17 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		if (userId != null) {
 			wrapper.eq(PostView::getUserId, userId);
 		}
-		return queryByPage(current, size, userId, wrapper);
-	}
-
-	public ListVO<PostListVO> queryByPage(Integer current, Integer size, Integer userId, LambdaQueryWrapper<PostView> wrapper){
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
 		ListVO<PostListVO> result = new ListVO<>();
 		// 将除具体记录外的分页数据赋值
 		BeanUtils.copyProperties(page, result);
 		List<PostView> records = page.getRecords();
+		result.setRecords(queryByList(records, userId));
+		return result;
+	}
+
+	public List<PostListVO> queryByList(List<PostView> records, Integer userId){
 		// 统计postId, userId
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();
@@ -220,8 +221,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			postListVO.setVoteMessage(voteVO);
 			postData.add(postListVO);
 		}
-		result.setRecords(postData);
-		return result;
+		return postData;
 	}
 
 
@@ -299,7 +299,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
-		return queryByPage(current, size, userId, wrapper);
+		IPage<PostView> page = new Page<>(current, size);
+		postViewMapper.selectPage(page, wrapper);
+		ListVO<PostListVO> result = new ListVO<>();
+		// 将除具体记录外的分页数据赋值
+		BeanUtils.copyProperties(page, result);
+		List<PostView> records = page.getRecords();
+		result.setRecords(queryByList(records, userId));
+		return result;
 	}
 
 }

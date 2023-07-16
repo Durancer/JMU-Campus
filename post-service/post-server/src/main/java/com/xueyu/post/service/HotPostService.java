@@ -1,6 +1,7 @@
 package com.xueyu.post.service;
 
 import com.xueyu.post.pojo.vo.HotPostVO;
+import com.xueyu.post.pojo.vo.PostListVO;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface HotPostService {
      */
     void searchHotPost();
 
-    List<HotPostVO> getHotPostList();
+    List<PostListVO> getHotPostList(Integer userId);
 }
