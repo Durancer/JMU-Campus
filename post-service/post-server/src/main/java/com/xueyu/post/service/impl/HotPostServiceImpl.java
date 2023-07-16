@@ -1,6 +1,7 @@
 package com.xueyu.post.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.nacos.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.post.mapper.PostViewMapper;
 import com.xueyu.post.pojo.vo.HotPostVO;
@@ -53,6 +54,17 @@ public class HotPostServiceImpl implements HotPostService {
         }
     }
 
+    @Override
+    public List<HotPostVO> getHotPostList() {
+        String value = redisTemplate.opsForValue().get(HOT_POST_KEY);
+        List<HotPostVO> list = null;
+        if(StringUtils.isNotBlank(value)){
+            list = JSON.parseArray(value,HotPostVO.class);
+        }
+
+        return list;
+    }
+
     /**
      * 缓存热门帖子
      *
@@ -64,6 +76,7 @@ public class HotPostServiceImpl implements HotPostService {
             hotPostVOList = hotPostVOList.subList(0, 20);
         }
         redisTemplate.opsForValue().set(HOT_POST_KEY,JSON.toJSONString(hotPostVOList));
+        //使用hash存
     }
 
     /**
