@@ -52,4 +52,21 @@ public class PostMqContants {
 	 */
 	public static final String POST_PASS_KEY = "post.pass";
 
+	public static final String HOT_POST_KEY = "hot_post_recommend";
+
+	/**
+	 * 帖子点赞权重
+	 */
+	public static final Integer HOT_POST_LIKE_WEIGHT = 3;
+
+	/**
+	 * 帖子浏览权重
+	 */
+	public static final Integer HOT_POST_VIEW_WEIGHT = 1;
+
+	/**
+	 * 帖子评论权重
+	 */
+	public static final Integer HOT_POST_COMMENT_WEIGHT = 5;
+
 }
