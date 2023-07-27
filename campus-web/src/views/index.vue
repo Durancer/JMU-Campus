@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <h2>compus-web</h2>
+    <h2>compus-web666</h2>
   </div>
 </template>
 
