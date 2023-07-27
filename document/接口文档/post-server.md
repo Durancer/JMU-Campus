@@ -120,12 +120,16 @@
 
 **入参字段**
 
-| 字段    | 类型   | 含义                                                  | 必填 |
-| ------- | ------ | ----------------------------------------------------- | ---- |
-| title   | String | 帖子标题                                              | 是   |
-| content | String | 帖子内容                                              | 是   |
-| files   | file   | 帖子附件图片（限jpg、jpeg、png、webp格式，最大 9 张） | 否   |
-| token   | String | 请求头添加                                            | 是   |
+| 字段    | 类型    | 含义                                                  | 必填 |
+| ------- | ------- | ----------------------------------------------------- | ---- |
+| title   | String  | 帖子标题                                              | 是   |
+| content | String  | 帖子内容                                              | 是   |
+| files   | file    | 帖子附件图片（限jpg、jpeg、png、webp格式，最大 9 张） | 否   |
+| token   | String  | 请求头添加                                            | 是   |
+| topic   | String  | 投票内容                                              | 是   |
+| type    | String  | 投票类型                                              | 是   |
+| cycle   | String  | 投票周期                                              | 是   |
+| options | Integer | 投票选项                                              |      |
 
 **出参**
 
@@ -216,6 +220,146 @@
 {
     "code": 200,
     "message": "点赞成功 | 取消点赞",
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### 发起投票
+
+```
+请求地址：/post/vote/launch
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段    | 类型    | 含义                       | 必填 |
+| ------- | ------- | -------------------------- | ---- |
+| postId  | Integer | 帖子id                     | 是   |
+| token   | String  | 请求头添加                 | 是   |
+| topic   | String  | 投票标题                   | 是   |
+| type    | String  | 投票类型 multiple \| redio | 是   |
+| cycle   | String  | 投票周期                   | 是   |
+| options | String  | 投票选项1                  | 是   |
+| options | String  | 投票选项2                  | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "投票成功 | 投票失败",
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### 删除投票
+
+```
+请求地址：/post/vote/delete
+请求方法：POST
+```
+
+**入参字段**
+
+| token  | String  | 请求头添加 | 是   |
+| ------ | ------- | ---------- | ---- |
+| voteId | Integer | 投票id     | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "删除成功",
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### 查询投票信息
+
+```
+请求地址：/post/vote/getone
+请求方法：GET
+```
+
+**入参字段**
+
+| token  | String  | 请求头添加 | 是   |
+| ------ | ------- | ---------- | ---- |
+| postId | Integer | 投票id     | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": data,
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### 用户投票
+
+```
+请求地址：/post/vote/record/add
+请求方法：POST
+```
+
+**入参字段**
+
+| token     | String  | 请求头添加 | 是   |
+| --------- | ------- | ---------- | ---- |
+| postId    | Integer | 投票id     | 是   |
+| userId    | Integer | 请求头添加 | 是   |
+| voteId    | Integer | 投票id     | 是   |
+| optionIds | Integer | 投票选项id | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": data,
+    "data": null,
+    "status": true
+}
+```
+
+
+
+#### es分页查询
+
+```
+请求地址：/post/search/page
+请求方法：POST
+```
+
+**入参字段**
+
+| pageNum     | Integer | 页数     | 是   |
+| ----------- | ------- | -------- | ---- |
+| pageSize    | Integer | 每页条数 | 是   |
+| searchWords | String  | 搜索词   | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": data,
     "data": null,
     "status": true
 }
