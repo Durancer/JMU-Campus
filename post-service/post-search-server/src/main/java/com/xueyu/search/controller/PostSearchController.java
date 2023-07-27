@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 帖子搜索接口
+ *
+ * @author fsj0591
+ */
 @RestController
 @RequestMapping("post/search")
 public class PostSearchController {
