@@ -1,4 +1,4 @@
-## 用户服务接口文档
+## 评论服务接口文档
 
 
 
@@ -111,4 +111,116 @@
     "status": true
 }
 ```
+
+
+
+#### 点赞或取消点赞
+
+```
+请求地址：/comment/like
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段      | 类型   | 含义       | 必填 |
+| --------- | ------ | ---------- | ---- |
+| token     | String | 请求头添加 | 是   |
+| userId    | String | 请求头添加 | 是   |
+| commentId | String | 评论id     | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+#### 判断评论是否被点赞
+
+```
+请求地址：/comment/like/exist
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段      | 类型   | 含义       | 必填 |
+| --------- | ------ | ---------- | ---- |
+| token     | String | 请求头添加 | 是   |
+| userId    | String | 请求头添加 | 是   |
+| commentId | String | 评论id     | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+#### 查询用户点赞所有评论
+
+```
+请求地址：/comment/like/common
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段   | 类型   | 含义       | 必填 |
+| ------ | ------ | ---------- | ---- |
+| token  | String | 请求头添加 | 是   |
+| userId | String | 请求头添加 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+#### 查询用户被点赞所有评论
+
+```
+请求地址：/comment/like/user/common
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段   | 类型   | 含义       | 必填 |
+| ------ | ------ | ---------- | ---- |
+| token  | String | 请求头添加 | 是   |
+| userId | String | 请求头添加 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
 
