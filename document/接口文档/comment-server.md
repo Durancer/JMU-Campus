@@ -1,5 +1,5 @@
 ## 评论服务接口文档
-
+请求 BaseUrl：http://www.jmucampus.top/api/
 
 
 #### 添加评论

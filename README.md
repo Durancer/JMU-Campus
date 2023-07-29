@@ -9,12 +9,18 @@ i集大校园软件服务端
 <br>
   <img src="https://img.shields.io/badge/SpringBoot-2.6.6-green" alt=""/>
   <img src="https://img.shields.io/badge/SpringCloud-2021.0.2-green" alt=""/>
-  <img src="https://img.shields.io/badge/SpringCloudAlibaba-2021.0.1.0-green" alt=""/><br>
+  <img src="https://img.shields.io/badge/SpringCloudAlibaba-2021.0.1.0-green" alt=""/>
+ <br>
+  <img src="https://img.shields.io/badge/Vue-3.2-green" alt=""/>
+  <img src="https://img.shields.io/badge/pinia-2.0.32-green" alt=""/>
+  <img src="https://img.shields.io/badge/vite-4.1.4-green" alt=""/>
 </a></p>
 
 ### 项目交流
 
-- 项目后端已经自动化部署在 aliyun 服务器
+- 项目后端已经自动化部署在 服务器
+- 前端正在开发阶段，基本功能可用后将会部署上线
+- 项目地址：http://www.jmucampus.top
 - QQ交流群：294590170 
 - 欢迎加入参与贡献！🌹
 
@@ -32,8 +38,8 @@ i集大校园软件服务端
 
 ### 技术选型
 #### 前端技术选型
-预计实现微信小程序和 app 两端
-所以前端使用 **微信原生** 或 **uniapp** 实现
+计划实现 web端
+vue3.2 + vue-router + pinia + axios + typescript + vite
 
 #### 后端及部署技术选型
 |      技术      |       说明       |                       官网                        |
@@ -72,8 +78,8 @@ i集大校园软件服务端
 ├─user-service：用户服务
 ├─chat-service：聊天服务
 ├─post-service：帖子服务
-├─pay-service：支付服务
-└─uniapp：前端uniapp(将另建仓库)
+├─post-search-service：帖子搜索服务
+└─campus-web：项目前端
 
 通用部分
 ├─ -server 服务后端

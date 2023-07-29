@@ -1,5 +1,5 @@
 ## 用户服务接口文档
-
+请求 BaseUrl：http://www.jmucampus.top/api/
 
 
 #### 用户登录
@@ -68,6 +68,33 @@
 
 
 #### 用户注册
+
+```
+请求地址：/user/register
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段     | 类型   | 含义                                  | 必填 |
+| -------- | ------ | ------------------------------------- | ---- |
+| idencode | String | 验证码                                | 是   |
+| username | String | 用户账号                              | 是   |
+| password | String | 用户密码                              | 是   |
+| email    | String | 用户邮箱                              | 是   |
+| nickname | String | 用户名称                              | 是   |
+| type     | String | 用户类型 合法值：shopkeeper \| custom | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "注册成功",
+    "data": null,
+    "status": true
+}
+```
 
 
 
@@ -151,6 +178,91 @@
 {
     "code": 200,
     "message": "更新成功",
+    "data": null,
+    "status": true
+}
+```
+
+#### 邮箱验证登录
+
+```
+请求地址：/user/login/email
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段     | 类型   | 含义     | 必填 |
+| -------- | ------ | -------- | ---- |
+| idencode | String | 验证码   | 是   |
+| email    | String | 用户邮箱 | 是   |
+
+**出参**
+
+- **登录失败**
+
+```json
+{
+    "code": 200,
+    "message": "验证码错误",
+    "data": null,
+    "status": false
+}
+```
+
+- **登录成功**
+
+```json
+{
+    "code": 200,
+    "message": "登录成功",
+    "data": {
+        "userInfo": {
+            "id": 1,
+            "openid": "",
+            "username": "lucy",
+            "nickname": "lucy",
+            "avatarUrl": "http://xxx/default.jpg",
+            "introduce": "ta还没有个人介绍哦！",
+            "sex": 0,
+            "phone": null,
+            "createTime": "2023-02-03T08:41:57.000+00:00"
+        },
+        "token": "xxxxx"
+    },
+    "status": true
+}
+```
+
+**出参字段解释**
+
+| 字段       | 解释      |
+| ---------- | --------- |
+| username   | 用户账号  |
+| nickname   | 用户名称  |
+| avatarUrl  | 头像地址  |
+| createTime | 注册时间  |
+| token      | 用户token |
+
+#### 发送邮箱验证码
+
+```
+请求地址：/user/send/code
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段  | 类型   | 含义     | 必填 |
+| ----- | ------ | -------- | ---- |
+| email | String | 用户邮箱 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "发送成功",
     "data": null,
     "status": true
 }

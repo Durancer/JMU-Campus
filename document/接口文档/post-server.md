@@ -1,5 +1,5 @@
 ## 帖子服务接口文档
-
+请求 BaseUrl：http://www.jmucampus.top/api/
 
 
 #### 分页获取所有帖子
@@ -340,7 +340,7 @@
 
 
 
-#### es分页查询
+#### 分页搜索帖子
 
 ```
 请求地址：/post/search/page

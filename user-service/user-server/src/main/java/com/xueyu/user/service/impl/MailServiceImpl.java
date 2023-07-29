@@ -123,7 +123,7 @@ public class MailServiceImpl {
 		// 生成随机 6位验证码
 		int idenCode = (int) ((Math.random() * 9 + 1) * 100000);
 		mail.setSubject("欢迎进入 i集大校园，快来开启校园生活吧！");
-		mail.setText("【云店】您正在注册/登录i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。");
+		mail.setText("【i集大校园】您正在注册/登录 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。");
 		redisTemplate.opsForValue().set(key, idenCode, 60, TimeUnit.SECONDS);
 		sendMail(mail);
 	}

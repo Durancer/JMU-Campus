@@ -17,6 +17,12 @@
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-web</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.xueyu</groupId>
+					<artifactId>common-data</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!--minio相关依赖-->
