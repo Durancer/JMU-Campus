@@ -76,14 +76,16 @@
 
 **入参字段**
 
-| 字段     | 类型   | 含义                                  | 必填 |
-| -------- | ------ | ------------------------------------- | ---- |
-| idencode | String | 验证码                                | 是   |
-| username | String | 用户账号                              | 是   |
-| password | String | 用户密码                              | 是   |
-| email    | String | 用户邮箱                              | 是   |
-| nickname | String | 用户名称                              | 是   |
-| type     | String | 用户类型 合法值：shopkeeper \| custom | 是   |
+| 字段      | 类型    | 含义                                 | 必填 |
+| --------- | ------- | ------------------------------------ | ---- |
+| idencode  | String  | 验证码                               | 是   |
+| username  | String  | 用户账号                             | 是   |
+| password  | String  | 用户密码                             | 是   |
+| email     | String  | 用户邮箱                             | 是   |
+| nickname  | String  | 用户名称                             | 是   |
+| introduce | String  | 个人介绍                             | 否   |
+| sex       | Integer | 性别 0 匿 \| 1 boy \| 2 girl，默认 0 | 否   |
+| phone     | String  | 电话                                 | 否   |
 
 **出参**
 
