@@ -1,15 +1,17 @@
 <template>
-    <nav class="nav-slide-wrap">
-        <div v-for="(item, index) in leftTabsList" :key="item.value" class="nav-item-wrap">
-            <div class="nav-item-content">
-                <a class="nav-item">
-                    <span class="nav-item-texx">
-                        {{ item.lable }}
-                    </span>
-                </a>
+    <div>
+        <nav class="nav-slide-wrap">
+            <div v-for="(item, index) in leftTabsList" :key="item.value" class="nav-item-wrap">
+                <div class="nav-item-content">
+                    <a class="nav-item">
+                        <span class="nav-item-texx">
+                            {{ item.lable }}
+                        </span>
+                    </a>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 </template>
 
 <script setup lang="ts">

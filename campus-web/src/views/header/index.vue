@@ -1,14 +1,20 @@
 <template>
-    <header class="header">
-        <div class="header_nav">
-            <div>
-                666666
+    <div>
+        <header class="header">
+            <div class="header_nav">
+                <div>
+                    <img class="logo-img" src="@/assets/img/logo.jpg" alt="">
+                </div>
+                <div>
+                    <input type="text" placeholder="搜索" class='searcher'>
+                </div>
+                <div class="login">
+                    <div>登录</div>
+                    <div>注册</div>
+                </div>
             </div>
-            <div>
-                <input type="text" placeholder="搜索" class='searcher'>
-            </div>
-        </div>
-    </header>
+        </header>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +28,17 @@
         margin: auto;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+
+        .logo-img {
+            padding: 10px;
+            width: 40px;
+        }
+
+        .login {
+            // margin-left: auto;
+            display: flex;
+        }
     }
 }
 </style>

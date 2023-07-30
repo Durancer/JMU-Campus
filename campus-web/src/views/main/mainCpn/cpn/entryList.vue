@@ -1,32 +1,34 @@
 <template>
-    <div class="enty-list-wrap">
-        <ul class="entry-list">
-            <li class="item" v-for="item in essay" :key="item.id">
-                <div class="entry">
-                    <div class="meta-container">
-                        <a href="#" class="user-message">
-                            <div class="user-popover">
-                                作者昵称
-                            </div>
-                        </a>
-                    </div>
-                    <div class="content-wrapper">
-                        <div class="content-main">
-                            <div class="title-row">
-                                <a href="#" class="title"> {{ item.title }}</a>
-                            </div>
-                            <div class="abstract">
-                                <a href="#" class="text-link">
-                                    <div class="text">
-                                        {{ item.text }}
-                                    </div>
-                                </a>
+    <div>
+        <div class="enty-list-wrap">
+            <ul class="entry-list">
+                <li class="item" v-for="item in essay" :key="item.id">
+                    <div class="entry">
+                        <div class="meta-container">
+                            <a href="#" class="user-message">
+                                <div class="user-popover">
+                                    作者昵称
+                                </div>
+                            </a>
+                        </div>
+                        <div class="content-wrapper">
+                            <div class="content-main">
+                                <div class="title-row">
+                                    <a href="#" class="title"> {{ item.title }}</a>
+                                </div>
+                                <div class="abstract">
+                                    <a href="#" class="text-link">
+                                        <div class="text">
+                                            {{ item.text }}
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 

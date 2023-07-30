@@ -1,14 +1,15 @@
 <template>
-  <div class="container ">
-
-    <div class="header-box">
-      <div class="header-wrapper" :class="{ 'hidden': isHidden }">
-        <header-cpm />
+  <div>
+    <div class="container ">
+      <div class="header-box">
+        <div class="header-wrapper" :class="{ 'hidden': isHidden }">
+          <header-cpm />
+        </div>
       </div>
+
+      <main-cpm :is-hidden="isHidden" />
+
     </div>
-
-    <main-cpm :is-hidden="isHidden" />
-
   </div>
 </template>
 

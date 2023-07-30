@@ -1,12 +1,14 @@
 <template>
-    <header class="list-header">
-        <nav class="list-nav">
-            <ul class="nav-list">
-                <li class="nav-item">热门</li>
-                <li class="nav-item">最新</li>
-            </ul>
-        </nav>
-    </header>
+    <div>
+        <header class="list-header">
+            <nav class="list-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">热门</li>
+                    <li class="nav-item">最新</li>
+                </ul>
+            </nav>
+        </header>
+    </div>
 </template>
 
 <script setup lang="ts"></script>
