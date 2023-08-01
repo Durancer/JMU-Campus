@@ -11,10 +11,10 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
   server: {
     proxy: {
-      '/api': {
-        target: 'http://www.jmucampus.top/api/',
+      '/Api': {
+        target: 'http://60.204.139.75/api',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/Api/, '')
       }
     }
   },

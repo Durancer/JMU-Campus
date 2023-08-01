@@ -16,41 +16,65 @@
             </div>
         </header>
 
-        <el-dialog v-model="loginFlag" width="20%" align-center>
-            <h3>99</h3>
-            <el-form :model="loginForm" :rules="loginRules">
-                <el-form-item label="账户" prop="account">
-                    <el-input v-model="loginForm.account" autocomplete="off" />
+        <el-dialog v-model="loginFlag" title="登录" width="320px" center>
+            <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-width="auto" label-position="right">
+                <el-form-item label="账户" prop="username">
+                    <el-input v-model="loginForm.username" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
-                    <el-input v-model="loginForm.account" autocomplete="off" />
+                    <el-input v-model="loginForm.password" autocomplete="off" />
                 </el-form-item>
-                <el-form-item style="border: none; background: none">
-                    <el-button type="primary" style="width: 100%" @click="handleBtn('loginForm')">注册</el-button>
-                </el-form-item>
+                <div style="border: none; background: none; display: flex; justify-content: center; ">
+                    <el-form-item style="border: none; background: none">
+                        <el-button type="primary" style="width: 100%" @click="handleBtn('loginForm')">登录</el-button>
+                    </el-form-item>
+                </div>
+
             </el-form>
         </el-dialog>
 
-        <el-dialog v-model="registerFlag" width="20%" align-center>
-            <el-form :model="registerForm" :rules="registerRules" label-width="auto" label-position="right">
-                <el-form-item label="账户" prop="account">
-                    <el-input v-model="registerForm.account" autocomplete="off" />
+        <el-dialog v-model="registerFlag" title="注册" width="400px" center>
+
+            <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" label-width="auto"
+                label-position="right">
+                <el-form-item class="from-item" label="名称" prop="nickName">
+                    <el-input class="input-width" v-model="registerForm.nickName" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model="registerForm.account" autocomplete="off" />
+                <el-form-item class="from-item" label="账户" prop="username">
+                    <el-input class="input-width" v-model="registerForm.username" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="用户名" prop="userName">
-                    <el-input v-model="registerForm.userName" autocomplete="off" />
+                <el-form-item class="from-item" label="密码" prop="password">
+                    <el-input class="input-width" v-model="registerForm.password" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="邮箱" prop="userEmail">
-                    <el-input v-model="registerForm.userEmail" autocomplete="off" />
+                <el-form-item class="from-item" label="邮箱" prop="email">
+                    <div style="display: flex; flex-direction: row;">
+                        <el-input class="input-width" v-model="registerForm.email" autocomplete="off" />
+                        <el-button @click="requestCode(registerForm.email)">请求验证码</el-button>
+                    </div>
                 </el-form-item>
-                <el-form-item label="验证码" prop="code">
-                    <el-input v-model="registerForm.code" autocomplete="off" />
+                <el-form-item class="from-item" label="验证码" prop="idencode">
+                    <el-input class="input-width" v-model="registerForm.idencode" autocomplete="off" />
                 </el-form-item>
-                <el-form-item style="border: none; background: none">
-                    <el-button type="primary" style="width: 100%" @click="handleBtn('registerForm')">注册</el-button>
+                <el-form-item class="from-item" label="个人介绍" prop="introduce">
+                    <el-input class="input-width" type="textarea" maxlength="100" show-word-limit
+                        v-model="registerForm.introduce" autocomplete="off" />
                 </el-form-item>
+                <el-form-item class="from-item" label="性别" prop="sex">
+                    <el-radio-group v-model="registerForm.sex" class="ml-4">
+                        <el-radio label=1 size="large">男</el-radio>
+                        <el-radio label=2 size="large">女</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item class="from-item" label="电话" prop="phone">
+                    <el-input class="input-width" v-model="registerForm.phone" autocomplete="off" />
+                </el-form-item>
+                <div style="border: none; background: none; display: flex; justify-content: center; ">
+                    <el-form-item class="from-item" style="border: none; background: none; ">
+                        <el-button class="input-width" type="primary" style="width: 100%"
+                            @click="handleBtn('registerForm')">注册</el-button>
+                    </el-form-item>
+                </div>
+
             </el-form>
         </el-dialog>
     </div>
@@ -58,84 +82,107 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-
 import type { FormInstance, FormRules } from 'element-plus'
 
+import { useRegisterStore } from '@/stores/register'
+import { useLoginStore } from '@/stores/login'
+
 interface APILoginForm {
-    account: string
+    username: string
     password: string
 }
 
 interface APIResigerForm {
-    account: string
+    nickName: string
+    username: string
     password: string
     userName: string
-    userEmail: string
-    code: string
+    email: string
+    idencode: string
+    introduce: string
+    sex: number
+    phone: string
 }
 
 
 
 const loginFormRef = ref<FormInstance>()
+const registerFormRef = ref<FormInstance>()
 
 const loginForm = reactive<APILoginForm>({
-    account: '',
+    username: '',
     password: ''
 })
 
 
 
 const loginRules = reactive<FormRules<APILoginForm>>({
-    account: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+    username: [
+        { required: true, message: '请输入账号', trigger: 'blur' },
     ],
     password: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+        { required: true, message: '请输入账号密码', trigger: 'blur' },
     ],
 })
 
 const registerForm = reactive<APIResigerForm>({
-    account: '',
+    nickName: '',
+    username: '',
     password: '',
     userName: '',
-    userEmail: '',
-    code: ''
+    email: '',
+    idencode: '',
+    introduce: '',
+    sex: 0,
+    phone: ''
 
 })
 const registerRules = reactive<FormRules<APIResigerForm>>({
-    account: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
-    ],
-    password: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+    nickName: [
+
     ],
     userName: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+        { required: true, message: '请输入用户名', trigger: 'blur' },
+        { min: 3, max: 8, message: '请输入长度3-5的用户名', trigger: 'blur' },
     ],
-    userEmail: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+    username: [
+        { required: true, message: '请输入账号', trigger: 'blur' },
+        { min: 3, max: 8, message: '请输入长度3-5的账号', trigger: 'blur' },
     ],
-    code: [
-        { required: true, message: 'Please input Activity name', trigger: 'blur' },
-        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { min: 3, max: 8, message: '请输入长度3-5的密码', trigger: 'blur' },
+    ],
+    email: [
+        { required: true, message: '请输入邮箱', trigger: 'blur' },
+    ],
+    idencode: [
+        { required: true, message: '请输入验证码', trigger: 'blur' },
+        { min: 3, max: 8, message: '请输入长度3-5的验证码', trigger: 'blur' },
     ],
 })
 
+const requestCode = (val: string) => {
+    console.log(val);
+    useRegisterStore().requestCodeFn({ email: val })
+
+}
 const loginFlag = ref(false)
 const registerFlag = ref(false)
 const handleBtn = (str: string) => {
     if (str === 'loginBtn') {
+        loginFormRef.value?.resetFields()
         loginFlag.value = true
     } else if (str === 'register') {
+        registerFormRef.value?.resetFields()
         registerFlag.value = true
     } else if (str === 'registerForm') {
         console.log(registerForm);
+        useRegisterStore().registerFn(registerForm)
+    } else if (str === 'loginForm') {
+        console.log(loginForm);
+        useLoginStore().loginFn(loginForm)
+        // useRegisterStore().registerFn(registerForm)
     }
 }
 
@@ -201,9 +248,11 @@ const handleBtn = (str: string) => {
 }
 
 
-.el-form-item {
+.from-item {
+    width: 360px;
 
-    width: 270px;
-
+    .input-width {
+        width: 170px;
+    }
 }
 </style>
