@@ -25,5 +25,6 @@ declare module 'vue' {
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SuperDialog: typeof import('./src/components/superDialog/index.vue')['default']
   }
 }
