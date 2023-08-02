@@ -35,7 +35,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 import { useRegisterStore } from '@/stores/register'
 
-defineEmit(['close'])
+const emits = defineEmits(['close'])
 
 
 interface APIResigerForm {
@@ -95,7 +95,7 @@ const requestCode = (val: string) => {
     console.log(val);
     try {
         useRegisterStore().requestCodeFn({ email: val })
-        emit('close')
+        emits('close')
 
     } catch (err) {
 
