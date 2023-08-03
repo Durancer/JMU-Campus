@@ -268,8 +268,9 @@
 
 **入参字段**
 
-| token  | String  | 请求头添加 | 是   |
+| 字段   | 类型    | 含义       | 必填 |
 | ------ | ------- | ---------- | ---- |
+| token  | String  | 请求头添加 | 是   |
 | voteId | Integer | 投票id     | 是   |
 
 **出参**
@@ -294,8 +295,9 @@
 
 **入参字段**
 
-| token  | String  | 请求头添加 | 是   |
+| 字段   | 类型    | 含义       | 必填 |
 | ------ | ------- | ---------- | ---- |
+| token  | String  | 请求头添加 | 是   |
 | postId | Integer | 投票id     | 是   |
 
 **出参**
@@ -320,8 +322,9 @@
 
 **入参字段**
 
-| token     | String  | 请求头添加 | 是   |
+| 字段      | 类型    | 含义       | 必填 |
 | --------- | ------- | ---------- | ---- |
+| token     | String  | 请求头添加 | 是   |
 | postId    | Integer | 投票id     | 是   |
 | userId    | Integer | 请求头添加 | 是   |
 | voteId    | Integer | 投票id     | 是   |
@@ -349,9 +352,10 @@
 
 **入参字段**
 
-| pageNum     | Integer | 页数     | 是   |
+| 字段        | 类型    | 含义     | 必填 |
 | ----------- | ------- | -------- | ---- |
-| pageSize    | Integer | 每页条数 | 是   |
+| pageNum     | Integer | 页数     | 是   |
+| pageSize    | Integer | 每页条数 | 否   |
 | searchWords | String  | 搜索词   | 是   |
 
 **出参**
