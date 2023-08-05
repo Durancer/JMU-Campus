@@ -80,7 +80,7 @@ watch(directions, () => {
 
     .header-wrapper {
       position: fixed;
-      z-index: 9999;
+      z-index: 1000;
       top: 0;
       left: 0;
       right: 0;

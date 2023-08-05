@@ -15,10 +15,9 @@ export function sucMessage(message: string) {
 }
 
 // 失败的消息提示
-// export function failMessage(message: string) {
-//   // const { appContext } = getCurrentInstance()!
-//   return ElMessage({
-//     message,
-//     type: 'error'
-//   })
-// }
+export function failMessage(message: string) {
+  return ElMessage({
+    message,
+    type: 'error'
+  })
+}
