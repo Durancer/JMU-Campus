@@ -1,7 +1,18 @@
 <template>
   <div class="editor">
-    <input placeholder="请输入帖子标题" class="edit-input" />
-    <div class="content" contenteditable="true" @input="handleInput" @blur="handleInput">
+    <input
+      placeholder="请输入帖子标题"
+      class="edit-input"
+      v-model="post.title"
+      @input="titleInput"
+    />
+    <div
+      class="content"
+      contenteditable="true"
+      @input="handleInput"
+      @blur="handleInput"
+      ref="contentRef"
+    >
       <div class="placeholder" style="pointer-events: none" :class="{ hasContent: hasContent }">
         此刻你想和大家分享什么
       </div>
@@ -14,10 +25,11 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { addPost } from '@/api/posts/index.ts'
-import { sucMessage } from '@/utils/common.ts'
+import { sucMessage, failMessage } from '@/utils/common.ts'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
+const contentRef = ref(null)
 const post = reactive({
   title: '',
   content: ''
@@ -25,32 +37,34 @@ const post = reactive({
 const handleInput = (event) => {
   post.content = event.target.innerText
 }
+const titleInput = (e) => {
+  console.log(e.target.value, post.title)
+}
 const hasContent = computed(() => post.content.length > 0)
-const router = useRouter()
-const publish = () => {
+const valid = () => {
   if (!post.title) {
-    ElMessage({
-      message: '请输入标题',
-      type: 'error'
-    })
-    return
+    failMessage('请输入标题')
+    return false
   }
   if (!post.content) {
-    ElMessage({
-      message: '请输入内容',
-      type: 'error'
-    })
-    return
+    sucMessage('请输入内容')
+    return false
   }
-  addPost(post).then((res) => {
-    if (res.status) {
-      ElMessage({
-        message: '发布成功',
-        type: 'success'
-      })
-      router.push({ name: 'index' })
-    }
-  })
+  return true
+}
+const router = useRouter()
+const publish = () => {
+  post.content = contentRef.value?.innerText
+  if (valid()) {
+    addPost(post).then((res) => {
+      if (res.status) {
+        sucMessage('发布成功')
+        router.push({ name: 'index' })
+      } else {
+        failMessage(res.message)
+      }
+    })
+  }
 }
 const totast = () => {
   ElMessage({
