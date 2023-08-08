@@ -2,26 +2,31 @@
   <div>
     <div class="enty-list-wrap">
       <ul class="entry-list" v-infinite-scroll="toBottom">
-        <li class="item" v-for="item in essay" :key="item.id">
+        <li
+          class="item"
+          v-for="item in essay"
+          :key="item.id"
+          @click="$router.push({ name: 'detail', params: { postId: item.id } })"
+        >
           <div class="entry">
             <div class="meta-container">
-              <a href="#" class="user-message">
+              <div class="user-message">
                 <div class="user-popover">
                   {{ item.userInfo.nick }}
                 </div>
-              </a>
+              </div>
             </div>
             <div class="content-wrapper">
               <div class="content-main">
                 <div class="title-row">
-                  <a href="#" class="title"> {{ item.title }}</a>
+                  <div href="#" class="title">{{ item.title }}</div>
                 </div>
                 <div class="abstract">
-                  <a href="#" class="text-link">
+                  <div class="text-link">
                     <div class="text">
                       {{ item.content }}
                     </div>
-                  </a>
+                  </div>
                 </div>
               </div>
             </div>

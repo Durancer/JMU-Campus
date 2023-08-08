@@ -51,7 +51,7 @@
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 
-import { useRegisterStore } from '@/stores/register'
+// import { useRegisterStore } from '@/stores/register'
 
 const emits = defineEmits(['close'])
 
@@ -102,13 +102,13 @@ const registerRules = reactive<FormRules<APIResigerForm>>({
   ]
 })
 
-const requestCode = (val: string) => {
-  console.log(val)
-  try {
-    useRegisterStore().requestCodeFn({ email: val })
-    emits('close')
-  } catch (err) {}
-}
+// const requestCode = (val: string) => {
+//   console.log(val)
+//   try {
+//     useRegisterStore().requestCodeFn({ email: val })
+//     emits('close')
+//   } catch (err) {}
+// }
 
 const handleBtn = (str: string) => {
   if (str === 'register') {
@@ -116,7 +116,7 @@ const handleBtn = (str: string) => {
     registerFlag.value = true
   } else if (str === 'registerForm') {
     console.log(registerForm)
-    useRegisterStore().registerFn(registerForm)
+    // useRegisterStore().registerFn(registerForm)
   }
 }
 

@@ -1,9 +1,9 @@
 import { LOGIN_TOKEN } from '@/global/constants'
 import { localCache } from '@/utils/cache'
 // import { BASE_URL, TIME_OUT } from './config'
-import HYRequest from './request'
+import Request from './request'
 
-const hyRequest = new HYRequest({
+const request = new Request({
   baseURL: '/Api',
   // baseURL: 'http://60.204.139.75/api',
   interceptors: {
@@ -24,4 +24,4 @@ const hyRequest = new HYRequest({
   }
 })
 
-export default hyRequest
+export default request

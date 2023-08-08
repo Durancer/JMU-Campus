@@ -25,7 +25,7 @@
 import { reactive, ref } from 'vue'
 import type { emitChangeFn, FormInstance, FormRules } from 'element-plus'
 
-import { useLoginStore } from '@/stores/login'
+import { useUserStore } from '@/stores/userStore.ts'
 
 const emits = defineEmits(['close'])
 

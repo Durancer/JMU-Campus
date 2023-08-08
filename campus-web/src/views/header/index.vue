@@ -5,6 +5,7 @@
         <div>
           <img class="logo-img" src="@/assets/img/logo.jpg" alt="" />
         </div>
+        <div @click="$router.push({ name: 'admin' })">admin</div>
         <div>
           <input type="text" placeholder="搜索" class="searcher" />
         </div>
@@ -30,7 +31,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { useLoginStore } from '@/stores/login/index'
+// import { useLoginStore } from '@/stores/login/index'
 import login from './cpn/login.vue'
 import register from './cpn/register.vue'
 import { ElMessage } from 'element-plus'
@@ -51,18 +52,10 @@ const handleBtn = (str: string) => {
   }
 }
 
-const loginStore = useLoginStore()
+// const loginStore = useLoginStore()
 const router = useRouter()
 const handlePublish = () => {
   router.push({ name: 'publish' })
-  //   if (!loginStore.token) {
-  //     ElMessage({
-  //       message: '请先登录',
-  //       type: 'error'
-  //     })
-  //   } else {
-  //     router.push({ name: 'publish' })
-  //   }
 }
 
 const close = (str: string) => {

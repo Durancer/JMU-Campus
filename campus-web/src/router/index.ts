@@ -17,8 +17,18 @@ const router = createRouter({
           path: '/publish',
           name: 'publish',
           component: () => import('@/components/publish.vue')
+        },
+        {
+          path: '/detail/:postId',
+          name: 'detail',
+          component: () => import('@/views/detail/index.vue')
         }
       ]
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/views/admin/index.vue')
     }
   ]
 })

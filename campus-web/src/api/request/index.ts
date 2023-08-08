@@ -14,7 +14,7 @@ import type { HYRequestConfig } from './type'
  *  2.响应结果的类型处理(泛型)
  */
 
-class HYRequest {
+class Request {
   instance: AxiosInstance
 
   // request实例 => axios的实例
@@ -93,4 +93,4 @@ class HYRequest {
   }
 }
 
-export default HYRequest
+export default Request
