@@ -1,7 +1,7 @@
 package com.xueyu.user.service.impl;
 
 import com.xueyu.user.exception.UserException;
-import com.xueyu.user.pojo.domain.Mail;
+import com.xueyu.user.pojo.bo.Mail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailSendException;

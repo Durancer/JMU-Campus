@@ -24,11 +24,6 @@ public class UserView {
 	Integer id;
 
 	/**
-	 * 微信openid
-	 */
-	String openid;
-
-	/**
 	 * 用户名
 	 */
 	String username;

@@ -8,10 +8,11 @@ import com.xueyu.user.mapper.UserMapper;
 import com.xueyu.user.mapper.UserViewMapper;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.domain.UserGeneral;
+import com.xueyu.user.pojo.enums.UserGenderEnum;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.util.JwtUtil;
-import com.xueyu.user.util.WxOpenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import static com.xueyu.user.constant.MailConstant.CODE_KEY_PREFIX;
  * @author durance
  */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 	@Resource
@@ -43,18 +45,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public Boolean registerUser(User user, Integer idencode) {
+		log.info("邮箱 -> {} 用户进行注册", user.getEmail());
 		// 判断验证码是否相同
 		String key = CODE_KEY_PREFIX + user.getEmail();
-		Integer authcode = redisTemplate.opsForValue().get(key);
-		if (authcode == null) {
-			throw new UserException("验证码已过期，请重新发送");
-		}
-		if (!authcode.equals(idencode)) {
-			throw new UserException("验证码错误");
-		}
-		if (user.getUsername() == null || user.getPassword() == null) {
-			throw new UserException("账号和密码不能为空");
-		}
+		Integer checkCode = redisTemplate.opsForValue().get(key);
+		verifyIdencode(idencode, checkCode);
+		// 检查用户注册参数
+		verifyUserInfo(user);
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getPhone, user.getPhone()).or().eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
@@ -67,6 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
 		userMapper.insert(user);
+		log.info("用户id -> {}, 邮箱 -> {}, 注册成功", user.getId(), user.getEmail());
 		// 创建数据统计表行数据
 		UserGeneral userGeneral = new UserGeneral();
 		userGeneral.setUserId(user.getId());
@@ -105,9 +103,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 查询验证码是否正确
 		String key = CODE_KEY_PREFIX + email;
 		Integer checkCode = redisTemplate.opsForValue().get(key);
-		if (checkCode == null || !checkCode.equals(idencode)) {
-			throw new UserException("验证码错误");
-		}
+		// 效验验证码正确性
+		verifyIdencode(idencode, checkCode);
 		// 签发jwt
 		String token = JwtUtil.createJwt("userId", userView.getId());
 		// 封装响应体
@@ -118,33 +115,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		return res;
 	}
 
-	@Override
-	public Map<String, Object> authUserByMinApp(User user, String code) {
-		if (code == null) {
-			throw new UserException("code码不能为空");
+	/**
+	 * 效验 验证码
+	 *
+	 * @param idencode 用户传入验证码
+	 * @param checkCode 系统生成验证码
+	 */
+	public void verifyIdencode(Integer idencode, Integer checkCode){
+		if (checkCode == null) {
+			throw new UserException("验证码已过期，请重新发送");
 		}
-		// 获取用户openid
-		String openid = WxOpenUtil.getOpenid(code);
-		LambdaQueryWrapper<UserView> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(UserView::getOpenid, openid);
-		UserView userView = userViewMapper.selectOne(wrapper);
-		Map<String, Object> res = new HashMap<>(2);
-		if (userView != null) {
-			// 不为空则已经注册过，签发jwt
-			String token = JwtUtil.createJwt("userId", userView.getId());
-			res.put("token", token);
-			res.put("userInfo", userView);
-			return res;
+		if (!checkCode.equals(idencode)) {
+			throw new UserException("验证码错误");
 		}
-		// 否则，执行注册操作
-		user.setCreateTime(new Timestamp(System.currentTimeMillis()));
-		userMapper.insert(user);
-		UserView userInfo = userViewMapper.selectById(user.getId());
-		// 签发jwt，设置用户id
-		String token = JwtUtil.createJwt("userId", userView.getId());
-		res.put("token", token);
-		res.put("userInfo", userInfo);
-		return res;
+	}
+
+	/**
+	 * 检查用户参数是否合规
+	 * @param user 用户信息
+	 */
+	public void verifyUserInfo(User user){
+		if (user.getUsername() == null || user.getPassword() == null) {
+			throw new UserException("账号和密码不能为空");
+		}
+		if (!UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
+				!UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
+				!UserGenderEnum.GIRL.getCode().equals(user.getSex())){
+			throw new UserException("不合规的用户性别参数");
+		}
 	}
 
 }

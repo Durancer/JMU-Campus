@@ -1,7 +1,7 @@
 package com.xueyu.user.controller;
 
 import com.xueyu.common.core.result.RestResult;
-import com.xueyu.user.pojo.domain.Mail;
+import com.xueyu.user.pojo.bo.Mail;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.service.impl.MailServiceImpl;
@@ -68,18 +68,6 @@ public class UserController {
 	public RestResult<Map<String, Object>> loginUserByEmail(@Email String email, @NotNull Integer idencode) {
 		Map<String, Object> result = userService.loginUserByCode(email, idencode);
 		return RestResult.ok(result, "登录成功");
-	}
-
-	/**
-	 * 小程序授权登录用户
-	 *
-	 * @param user 用户信息
-	 * @param code 前端接口code
-	 * @return token和用户信息
-	 */
-	@PostMapping("auth")
-	public RestResult<Map<String, Object>> authUserByminApp(User user, String code) {
-		return RestResult.ok(userService.authUserByMinApp(user, code));
 	}
 
 	/**

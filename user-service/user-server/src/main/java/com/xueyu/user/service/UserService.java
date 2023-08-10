@@ -28,15 +28,6 @@ public interface UserService extends IService<User> {
 	Map<String, Object> loginUser(User user);
 
 	/**
-	 * 小程序授权登录用户
-	 *
-	 * @param user 用户信息
-	 * @param code 前端接口code
-	 * @return token和用户信息
-	 */
-	Map<String, Object> authUserByMinApp(User user, String code);
-
-	/**
 	 * 使用邮箱验证码登录
 	 *
 	 * @param email    用户邮箱
