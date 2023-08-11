@@ -12,8 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * jwt 认证过滤器
@@ -26,17 +32,23 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 
 	public static final String AUTHORIZE_TOKEN = "token";
 
+	private Set<String> matchersCheck;
+
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = exchange.getRequest();
 		ServerHttpResponse response = exchange.getResponse();
 		// 进行请求路径判度，放行不需要认证的接口
 		String path = request.getURI().getPath();
-		String[] matchers = JwtProperties.matchers;
-		for (String matcher : matchers) {
-			if (path.contains(matcher)) {
-				return chain.filter(exchange);
-			}
+		//将不需要认证的接口存储在 Set中，减少判断是否为非鉴权接口的时间复杂度
+		if(CollectionUtils.isEmpty(matchersCheck)){
+			matchersCheck = new HashSet<>();
+			String[] matchers = JwtProperties.matchers;
+			matchersCheck.addAll(Arrays.asList(matchers));
+		}
+		// 为非鉴权接口直接跳过
+		if(matchersCheck.contains(path)){
+			return chain.filter(exchange);
 		}
 		// 拿到jwt的值
 		String jwt = request.getHeaders().getFirst(AUTHORIZE_TOKEN);

@@ -1,6 +1,7 @@
 package com.xueyu.gateway.filter;
 
 import com.xueyu.gateway.util.RequestUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author durance
  */
 @Component
+@Slf4j
 public class AccessLimitFilter implements GlobalFilter, Ordered {
 
 	@Resource
@@ -42,7 +44,7 @@ public class AccessLimitFilter implements GlobalFilter, Ordered {
 
 	/**
 	 * 核对ip地址是否超出访问限制
-	 * 当前限流策略为 10s最多访问 30次
+	 * 当前限流策略为单ip 10s最多访问 30次
 	 *
 	 * @param ipAddress ip地址
 	 * @return 是否超限
@@ -54,6 +56,7 @@ public class AccessLimitFilter implements GlobalFilter, Ordered {
 		Integer hasLimit = redisTemplate.opsForValue().get(key);
 		if (hasLimit != null) {
 			if (hasLimit == 0) {
+				log.warn("ip 地址为 ->{}, 触发限流告警", ipAddress);
 				return true;
 			}
 			redisTemplate.opsForValue().decrement(key);
