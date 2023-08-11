@@ -5,6 +5,7 @@ import com.xueyu.user.exception.UserException;
 import com.xueyu.user.mapper.UserMapper;
 import com.xueyu.user.mapper.UserViewMapper;
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.enums.UserGenderEnum;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.PersonCenterService;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,18 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 
 	@Override
 	public Boolean updateUserInfo(User user) {
-		if (user.getPassword() != null || user.getAvatar() != null || user.getUsername() != null || user.getCreateTime() != null || user.getOpenid() != null) {
+		// 不合法参数拦截
+		if (user.getPassword() != null ||
+				user.getAvatar() != null ||
+				user.getUsername() != null ||
+				user.getCreateTime() != null ||
+				user.getEmail() != null ) {
 			throw new UserException("不合法的参数传入");
+		}
+		if (!UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
+				!UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
+				!UserGenderEnum.GIRL.getCode().equals(user.getSex())){
+			throw new UserException("不合规的用户性别参数");
 		}
 		int i = userMapper.updateById(user);
 		if (i != 1) {

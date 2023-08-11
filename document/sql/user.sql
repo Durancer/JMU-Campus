@@ -46,7 +46,6 @@ CREATE TABLE `item`  (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `openid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '微信openid',
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
   `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户密码',
@@ -93,6 +92,6 @@ CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_item_view` AS selec
 -- View structure for user_view
 -- ----------------------------
 DROP VIEW IF EXISTS `user_view`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_view` AS select `user`.`id` AS `id`,`user`.`username` AS `username`,`user`.`nickname` AS `nickname`,concat(convert(`config`.`result` using utf8mb4),`user`.`avatar`) AS `avatar_url`,`user`.`introduce` AS `introduce`,`user`.`sex` AS `sex`,`user`.`phone` AS `phone`,`user`.`create_time` AS `create_time`,`user`.`openid` AS `openid` from (`user` join `config`) where (`config`.`param` = 'img_url');
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_view` AS select `user`.`id` AS `id`,`user`.`username` AS `username`,`user`.`nickname` AS `nickname`,concat(convert(`config`.`result` using utf8mb4),`user`.`avatar`) AS `avatar_url`,`user`.`introduce` AS `introduce`,`user`.`sex` AS `sex`,`user`.`phone` AS `phone`,`user`.`create_time` AS `create_time` from (`user` join `config`) where (`config`.`param` = 'img_url');
 
 SET FOREIGN_KEY_CHECKS = 1;

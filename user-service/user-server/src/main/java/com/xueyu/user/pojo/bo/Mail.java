@@ -1,4 +1,4 @@
-package com.xueyu.user.pojo.domain;
+package com.xueyu.user.pojo.bo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

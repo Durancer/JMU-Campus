@@ -38,7 +38,6 @@
     "data": {
         "userInfo": {
             "id": 1,
-            "openid": "",
             "username": "lucy",
             "nickname": "lucy",
             "avatarUrl": "http://xxx/default.jpg",
@@ -221,7 +220,6 @@
     "data": {
         "userInfo": {
             "id": 1,
-            "openid": "",
             "username": "lucy",
             "nickname": "lucy",
             "avatarUrl": "http://xxx/default.jpg",
