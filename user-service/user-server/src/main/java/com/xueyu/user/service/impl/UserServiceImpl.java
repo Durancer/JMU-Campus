@@ -138,9 +138,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (user.getUsername() == null || user.getPassword() == null) {
 			throw new UserException("账号和密码不能为空");
 		}
-		if (!UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
-				!UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
-				!UserGenderEnum.GIRL.getCode().equals(user.getSex())){
+		if (!(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
+				UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
+				UserGenderEnum.GIRL.getCode().equals(user.getSex()))){
 			throw new UserException("不合规的用户性别参数");
 		}
 	}
