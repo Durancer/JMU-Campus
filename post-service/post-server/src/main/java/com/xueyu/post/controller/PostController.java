@@ -142,4 +142,10 @@ public class PostController {
 		return RestResult.ok(postDTO);
 	}
 
+	@GetMapping("status/list")
+	public RestResult<ListVO<PostListVO>> getStatusPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader(required = false) Integer userId) {
+		ListVO<PostListVO> postListByPage = postService.getStatusPostListByPage(current, size, userId);
+		return RestResult.ok(postListByPage);
+	}
+
 }

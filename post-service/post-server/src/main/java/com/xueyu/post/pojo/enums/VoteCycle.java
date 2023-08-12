@@ -1,4 +1,4 @@
-package com.xueyu.post.pojo.domain;
+package com.xueyu.post.pojo.enums;
 
 /**
  * 投票周期

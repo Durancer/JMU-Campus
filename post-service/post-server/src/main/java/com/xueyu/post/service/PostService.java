@@ -82,4 +82,6 @@ public interface PostService extends IService<Post> {
 	 * @return {@link List}<{@link PostListVO}>
 	 */
 	List<PostListVO> queryByList(List<PostView> list, Integer userId);
+
+	ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId);
 }
