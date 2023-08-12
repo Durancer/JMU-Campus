@@ -10,6 +10,7 @@ import com.xueyu.post.exception.PostException;
 import com.xueyu.post.mapper.*;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.*;
+import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
@@ -224,6 +225,20 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		return postData;
 	}
 
+	@Override
+	public ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId) {
+		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(PostView::getStatus, PostStatus.EXAMINE.getValue());
+		IPage<PostView> page = new Page<>(current, size);
+		postViewMapper.selectPage(page, wrapper);
+		ListVO<PostListVO> result = new ListVO<>();
+		// 将除具体记录外的分页数据赋值
+		BeanUtils.copyProperties(page, result);
+		List<PostView> records = page.getRecords();
+		result.setRecords(queryByList(records, userId));
+		return result;
+	}
+
 
 	@Override
 	public PostDetailVO getPostDetailInfo(Integer postId, Integer userId) {
@@ -299,6 +314,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
 		ListVO<PostListVO> result = new ListVO<>();
