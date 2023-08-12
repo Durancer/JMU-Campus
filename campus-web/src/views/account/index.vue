@@ -1,11 +1,12 @@
 <template>
   <el-card>
     <div class="avatar">
-      头像：<el-avatar :src="avatar"></el-avatar>
+      <div class="pre-avatar">
+        头像：<el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
+      </div>
       <el-upload
         ref="upload"
         :action="action"
-        list-type="picture"
         :limit="1"
         :on-exceed="handleExceed"
         :on-success="handleAvatarSuccess"
@@ -15,7 +16,7 @@
       >
         <el-button type="primary">点击上传图片</el-button>
         <template #tip>
-          <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+          <div class="el-upload__tip">头像文件限jpg、jpeg、png、webp格式</div>
         </template>
       </el-upload>
     </div>
@@ -55,7 +56,6 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
 const userStore = useUserStore()
 const options = reactive([0, 1, 2])
-const avatar = ref('')
 let updateForm = reactive({
   nickname: '',
   introduce: '',
@@ -63,7 +63,6 @@ let updateForm = reactive({
   phone: ''
 })
 const handleUpdate = () => {
-  console.log(updateForm)
   userStore.updateUserinfoFn(updateForm)
 }
 // 上传图片
@@ -80,15 +79,14 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 // 上传成功
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
-  //   imageUrl.value = URL.createObjectURL(uploadFile.raw!)
-  console.log(response, uploadFile)
+  // 获取新的用户信息
+  userStore.getUserDetailFn(userStore.userInfo.id)
 }
 
 // todo ：验证表单
 onMounted(() => {
-  const { nickname, sex, introduce, phone, avatarUrl } = userStore.userInfo
+  const { nickname, sex, introduce, phone } = userStore.userInfo
   updateForm = reactive({ nickname, sex, introduce, phone })
-  avatar.value = avatarUrl
 })
 </script>
 
@@ -104,6 +102,11 @@ onMounted(() => {
 }
 .avatar {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  .pre-avatar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5em;
+  }
 }
 </style>
