@@ -3,15 +3,15 @@ import http from '../index.ts'
 /**
  *
  {id: 1, userInfo: {id: 1, nickname: "lucy",…}, title: "帖子标题", content: "测试", viewNum: 1,…}
-id: 1
-userInfo: {id: 1, nickname: "lucy",…}
-title: "帖子标题"
-content: "测试"
-viewNum: 1
-imgList: [{id: 3, parentId: 1, imgUrl: "http://60.204.139.75/image/e08e9fa091b94dcab6137e58280e3ed2.png"}]
-voteMessage: null
-userLikeBOList: [{id: 1, nickname: "lucy",…},…]
-createTime: "2023-02-04T13:10:35.000+00:00"
+    id: 1
+    userInfo: {id: 1, nickname: "lucy",…}
+    title: "帖子标题"
+    content: "测试"
+    viewNum: 1
+    imgList: [{id: 3, parentId: 1, imgUrl: "http://60.204.139.75/image/e08e9fa091b94dcab6137e58280e3ed2.png"}]
+    voteMessage: null
+    userLikeBOList: [{id: 1, nickname: "lucy",…},…]
+    createTime: "2023-02-04T13:10:35.000+00:00"
  */
 
 interface getAllPostsParams {
@@ -20,8 +20,23 @@ interface getAllPostsParams {
 }
 // 分页获取所有帖子,获取的为审核通过的帖子
 export function getAllPosts(params?: getAllPostsParams) {
-  return http.get({
+  return http.request({
     url: '/post/list/all',
+    params
+  })
+}
+
+// 分页获取我的帖子
+export function getSelfPost() {
+  return http.request({
+    url: '/post/user/self'
+  })
+}
+
+// 分页获取用户帖子
+export function getUserPost(params: string) {
+  return http.request({
+    url: '/post/user',
     params
   })
 }
@@ -41,11 +56,14 @@ export function addPost(data: addPostParams) {
     method: 'post',
     url: '/post/add',
     data: {
-      ...data,
-      topic: '测试话题1',
-      type: 'radio',
-      cycle: 'day',
-      options: [1, 2, 3]
+      ...data
+      // topic: '测试话题1',
+      // type: 'radio',
+      // cycle: 'day',
+      // options: ['1', '2', '3']
+    },
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
   })
 }
@@ -68,6 +86,9 @@ export function checkPost(postId: number, decision: number) {
     data: {
       postId,
       decision
+    },
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
   })
 }

@@ -8,16 +8,22 @@ const request = new Request({
   // baseURL: 'http://60.204.139.75/api',
   interceptors: {
     requestSuccessFn: (config) => {
+      /**/
       // 每一个请求都自动携带token
-      const token = localCache.getCache(LOGIN_TOKEN)
+      const token = localCache.getCache('login').token
+      // const userStore = useUserStore()
+      // const token = userStore.token
+      // console.log('token', token.value)
+      // config.headers['Content-Type'] = 'multipart/form-data'
       if (config.headers && token) {
         // 类型缩小
         // config.headers.Authorization = 'Bearer ' + token
         config.headers['token'] = token || '0'
-        if (config.method === 'post' || config.method === 'put') {
-          config.data['token'] = token
-        }
-        config.headers['Content-Type'] = 'application/json;charset=UTF-8'
+        // if (config.method === 'post' || config.method === 'put') {
+        //   config.data['token'] = token
+        // }
+        config.headers['Content-Type'] =
+          'multipart/form-data; boundary=----WebKitFormBoundarykJbrPyNSEAef7e5h'
       }
       return config
     }

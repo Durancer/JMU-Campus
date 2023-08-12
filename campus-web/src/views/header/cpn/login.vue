@@ -27,6 +27,7 @@ import type { emitChangeFn, FormInstance, FormRules } from 'element-plus'
 
 import { useUserStore } from '@/stores/userStore.ts'
 
+const userStore = useUserStore()
 const emits = defineEmits(['close'])
 
 interface APILoginForm {
@@ -38,8 +39,8 @@ interface APILoginForm {
 const loginFormRef = ref<FormInstance>()
 
 const loginForm = reactive<APILoginForm>({
-  username: '',
-  password: ''
+  username: '简单点',
+  password: '123456'
 })
 
 const loginRules = reactive<FormRules<APILoginForm>>({
@@ -53,12 +54,7 @@ const handleBtn = async (str: string) => {
   if (str === 'loginForm') {
     console.log(loginForm)
     try {
-      await useLoginStore().loginFn(loginForm)
-      console.log('5555555555555')
-      // ElMessage({
-      //     message: '登录成功',
-      //     type: 'success'
-      // })
+      await userStore.loginFn(loginForm)
       emits('close')
     } catch (err) {}
   }

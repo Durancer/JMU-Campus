@@ -22,6 +22,16 @@ const router = createRouter({
           path: '/detail/:postId',
           name: 'detail',
           component: () => import('@/views/detail/index.vue')
+        },
+        {
+          path: '/account',
+          name: 'account',
+          component: () => import('@/views/account/index.vue')
+        },
+        {
+          path: '/history/:userId',
+          name: 'history',
+          component: () => import('@/views/history/index.vue')
         }
       ]
     },
@@ -32,5 +42,5 @@ const router = createRouter({
     }
   ]
 })
-
+// todo : 路由鉴权
 export default router

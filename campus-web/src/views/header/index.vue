@@ -3,17 +3,50 @@
     <header class="header">
       <div class="header_nav">
         <div>
-          <img class="logo-img" src="@/assets/img/logo.jpg" alt="" />
+          <RouterLink :to="{ name: 'index' }">
+            <img class="logo-img" src="@/assets/img/logo.jpg" alt="" />
+          </RouterLink>
         </div>
         <div @click="$router.push({ name: 'admin' })">admin</div>
         <div>
           <input type="text" placeholder="搜索" class="searcher" />
         </div>
-        <div class="login">
-          <button type="button" class="btn" @click="handleBtn('loginBtn')">登录</button>
-          <div class="line"></div>
-          <button type="button" class="btn" @click="handleBtn('register')">注册</button>
-        </div>
+        <template v-if="!userStore.userInfo?.id">
+          <div class="login">
+            <template v-if="userStore.userInfo">
+              <button type="button" class="btn" @click="handleBtn('loginBtn')">登录</button>
+            </template>
+            <div class="line"></div>
+            <button type="button" class="btn" @click="handleBtn('register')">注册</button>
+          </div>
+        </template>
+        <template v-else>
+          <div style="display: inline-flex; align-items: center">
+            <el-dropdown>
+              <el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
+              <!--todo 为啥放到这里不行 -->
+              <el-icon><arrow-down /></el-icon>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="$router.push({ name: 'account' })"
+                    >修改信息</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    @click="
+                      $router.push({ name: 'history', params: { userId: userStore.userInfo.id } })
+                    "
+                    >我的历史记录</el-dropdown-item
+                  >
+                  <el-dropdown-item @click="userStore.logoutFn">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <div class="intro">
+              <span>昵称: {{ userStore.userInfo?.nickname }}</span>
+              <span>自我介绍: {{ userStore.userInfo?.introduce }}</span>
+            </div>
+          </div>
+        </template>
         <div class="publish" @click="handlePublish">发布</div>
       </div>
     </header>
@@ -31,12 +64,14 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-// import { useLoginStore } from '@/stores/login/index'
 import login from './cpn/login.vue'
 import register from './cpn/register.vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore.ts'
+import { ArrowDown } from '@element-plus/icons-vue'
 
+const userStore = useUserStore()
 const loginFormRef = ref<FormInstance>()
 const registerFormRef = ref<FormInstance>()
 
@@ -122,6 +157,12 @@ const close = (str: string) => {
         height: 12px;
         width: 1px;
       }
+    }
+
+    .intro {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
     }
     .publish {
       background: linear-gradient(135deg, #00dcc2, #00dc93);
