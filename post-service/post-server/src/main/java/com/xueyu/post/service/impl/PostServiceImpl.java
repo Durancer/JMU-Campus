@@ -228,7 +228,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	public ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(PostView::getStatus, PostStatus.EXAMINE);
+		wrapper.eq(PostView::getStatus, PostStatus.EXAMINE.getValue());
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
 		ListVO<PostListVO> result = new ListVO<>();
@@ -314,7 +314,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC);
+		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
 		ListVO<PostListVO> result = new ListVO<>();
