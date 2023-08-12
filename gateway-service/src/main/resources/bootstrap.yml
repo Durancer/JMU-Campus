@@ -3,14 +3,10 @@ spring:
     name: gateway-server
   cloud:
     nacos:
-      server-addr: 60.204.139.75:8848
+      server-addr: 127.0.0.1:8848
       config:
         shared-configs:
           - data-id: public-security.yaml
             refresh: true
           - data-id: default-redis.yaml
             refresh: true
-      username: nacos
-      password: JMUcampus123654
-      discovery:
-        ip: 60.204.139.75

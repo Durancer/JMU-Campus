@@ -39,9 +39,9 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 				user.getEmail() != null ) {
 			throw new UserException("不合法的参数传入");
 		}
-		if (!UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
-				!UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
-				!UserGenderEnum.GIRL.getCode().equals(user.getSex())){
+		if (!(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
+				UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
+				UserGenderEnum.GIRL.getCode().equals(user.getSex()))){
 			throw new UserException("不合规的用户性别参数");
 		}
 		int i = userMapper.updateById(user);
