@@ -2,8 +2,6 @@ server:
   port: 8001
 
 spring:
-  redis:
-    host: 47.120.2.95
   # 邮箱相关
   mail:
     # 账号密码端口等配置在nacos上
