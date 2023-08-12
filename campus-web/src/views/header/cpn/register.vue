@@ -16,7 +16,19 @@
         <template v-if="item.prop === 'email'">
           <div style="display: flex; flex-direction: row">
             <el-input class="input-width" v-model="registerForm[item.prop]" autocomplete="off" />
-            <el-button @click="requestCode(registerForm[item.prop])">请求验证码</el-button>
+            <el-button @click="requestCodeFn">
+              <template v-if="registerEmailFlag"> 已发送</template>
+              <template v-else> 请求验证码 </template>
+            </el-button>
+          </div>
+        </template>
+        <template v-else-if="item.prop === 'idencode'">
+          <div style="display: flex; flex-direction: row">
+            123<el-input
+              class="input-width"
+              v-model.number="registerForm[item.prop]"
+              autocomplete="off"
+            />
           </div>
         </template>
         <template v-else-if="item.prop === 'sex'">
@@ -38,7 +50,7 @@
             class="input-width"
             type="primary"
             style="width: 100%"
-            @click="handleBtn('registerForm')"
+            @click="handleRegister(registerFormRef)"
             >注册</el-button
           >
         </el-form-item>
@@ -50,80 +62,75 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-
-import { useRegisterStore } from '@/stores/register'
+import { register, requestCode } from '@/api/user/index.ts'
+import type { userinfo } from '@/api/user/type.ts'
 
 const emits = defineEmits(['close'])
 
-interface APIResigerForm {
-  nickName: string
-  username: string
-  password: string
-  userName: string
-  email: string
-  idencode: string
-  introduce: string
-  sex: number
-  phone: string
-  [key: string]: string | number
-}
-
-const registerFlag = ref(false)
+const registerEmailFlag = ref(false)
 const registerFormRef = ref<FormInstance>()
 
-const registerForm = reactive<APIResigerForm>({
-  nickname: '',
-  username: '',
-  password: '',
-  email: '',
-  idencode: '',
-  introduce: '',
-  sex: 0,
-  phone: ''
+const registerForm = reactive<userinfo>({
+  username: '活得简单点',
+  password: '123456',
+  idencode: 514861,
+  email: '1547025615@qq.com',
+  nickname: 'be simple'
 })
-const registerRules = reactive<FormRules<APIResigerForm>>({
-  nickName: [],
-  userName: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 8, message: '请输入长度3-5的用户名', trigger: 'blur' }
-  ],
+
+const registerRules = reactive<FormRules>({
   username: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 3, max: 8, message: '请输入长度3-5的账号', trigger: 'blur' }
+    { required: true, message: '请输入用户账号', trigger: 'blur' },
+    { min: 1, max: 10, message: '请输入长度1-10的用户账号', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 3, max: 8, message: '请输入长度3-5的密码', trigger: 'blur' }
+    { min: 6, max: 16, message: '请输入长度6-16的密码', trigger: 'blur' }
   ],
+  idencode: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
   email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
-  idencode: [
-    { required: true, message: '请输入验证码', trigger: 'blur' },
-    { min: 3, max: 8, message: '请输入长度3-5的验证码', trigger: 'blur' }
+  nickname: [
+    { required: true, message: '请输入用户名称', trigger: 'blur' },
+    { min: 1, max: 10, message: '请输入长度1-10的用户名称', trigger: 'blur' }
   ]
 })
 
-const requestCode = (val: string) => {
-  console.log(val)
-  try {
-    useRegisterStore().requestCodeFn({ email: val })
-    emits('close')
-  } catch (err) {}
+async function requestCodeFn() {
+  console.log(registerForm.email)
+  const res = await requestCode(registerForm.email)
+  console.log(res)
+  if (res && res.status) {
+    registerEmailFlag.value = true
+  }
 }
-
-const handleBtn = (str: string) => {
-  if (str === 'register') {
-    registerFormRef.value?.resetFields()
-    registerFlag.value = true
-  } else if (str === 'registerForm') {
-    console.log(registerForm)
-    useRegisterStore().registerFn(registerForm)
+async function registerFn(data: any) {
+  const res = await register(data)
+  if (res.status) {
+    ElMessage({
+      message: '注册成功',
+      type: 'success'
+    })
   }
 }
 
+const handleRegister = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      registerFn(registerForm)
+      emits('close')
+    } else {
+      ElMessage({
+        message: '注册失败',
+        type: 'success'
+      })
+    }
+  })
+}
 const registerFromSetting = reactive([
   {
-    label: '名称',
-    prop: 'nickName',
+    label: '用户名称',
+    prop: 'nickname',
     inputArr: {
       type: 'text',
       placeholder: '请输入用户名称',
@@ -132,11 +139,11 @@ const registerFromSetting = reactive([
     }
   },
   {
-    label: '账户',
+    label: '用户账号',
     prop: 'username',
     inputArr: {
       type: 'text',
-      placeholder: '请输入账户',
+      placeholder: '请输入用户账号',
       'show-password': false,
       autocomplete: 'off'
     }
@@ -167,36 +174,6 @@ const registerFromSetting = reactive([
     inputArr: {
       type: 'text',
       placeholder: '请输入验证码',
-      'show-password': false,
-      autocomplete: 'off'
-    }
-  },
-  {
-    label: '个人介绍',
-    prop: 'introduce',
-    inputArr: {
-      type: 'text',
-      placeholder: '请输入账户',
-      'show-password': false,
-      autocomplete: 'off'
-    }
-  },
-  {
-    label: '性别',
-    prop: 'sex',
-    inputArr: {
-      type: 'text',
-      placeholder: '请输入性别',
-      'show-password': false,
-      autocomplete: 'off'
-    }
-  },
-  {
-    label: '电话',
-    prop: 'phone',
-    inputArr: {
-      type: 'text',
-      placeholder: '请输入电话',
       'show-password': false,
       autocomplete: 'off'
     }
