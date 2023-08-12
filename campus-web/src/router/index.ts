@@ -5,12 +5,20 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/index'
-    },
-    {
-      path: '/index',
-      name: 'index',
-      component: () => import('../views/index.vue')
+      redirect: '/index',
+      component: () => import('../views/index.vue'),
+      children: [
+        {
+          path: '/index',
+          name: 'index',
+          component: () => import('@/views/main/index.vue')
+        },
+        {
+          path: '/publish',
+          name: 'publish',
+          component: () => import('@/components/publish.vue')
+        }
+      ]
     }
   ]
 })

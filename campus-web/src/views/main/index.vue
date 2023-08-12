@@ -1,80 +1,56 @@
 <template>
-    <div>
-        <main class="main-container">
-            <div class="main">
-                <div class="left-container" :class="{ 'left-top': isHidden }">
-                    <left-cpn :leftTabsList="leftTabsList" />
-                </div>
-                <main-cpn />
-                <div class="right-container" :class="{ 'right-top': isHidden }">
-                    <right-cpn />
-                </div>
-            </div>
-        </main>
-    </div>
+  <div class="left-container" :class="{ 'left-top': isHidden }">
+    <left-cpn :leftTabsList="leftTabsList" />
+  </div>
+  <main-cpn />
+  <div class="right-container" :class="{ 'right-top': isHidden }">
+    <right-cpn />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-
 
 import leftCpn from './leftCpn/index.vue'
 import mainCpn from './mainCpn/index.vue'
 import rightCpn from './rightCpn/index.vue'
 
 const { isHidden } = defineProps({
-    isHidden: Boolean
+  isHidden: Boolean
 })
 
 const leftTabsList = reactive([
-    { lable: '推荐', value: 1 },
-    { lable: '热榜', value: 2 },
-    { lable: 'tab', value: 3 },
+  { lable: '推荐', value: 1 },
+  { lable: '热榜', value: 2 },
+  { lable: 'tab', value: 3 }
 ])
-
 </script>
 
 <style scoped lang="less">
-.main-container {
-    position: relative;
-    max-width: 1200px;
-    margin: auto;
-    width: 100%;
+.left-top.left-container,
+.right-top.right-container {
+  top: 20px;
+  max-height: calc(100vh - 40px);
+}
 
-    .main {
-        margin-top: 8px;
-        display: flex;
-        flex-direction: row;
-        margin-top: 18px;
-        justify-content: space-between;
+& > .left-container,
+& > .right-container {
+  position: sticky;
+  top: 80px;
+}
 
-        .left-top.left-container,
-        .right-top.right-container {
-            top: 20px;
-            max-height: calc(100vh - 40px);
-        }
+.left-container,
+.right-container {
+  width: 180px;
+  // margin-right: 20px;
+  height: fit-content;
+  border-radius: 4px;
+  background-color: #fff;
+  max-height: calc(100vh - 101px);
+  overflow-x: hidden;
+}
 
-        &>.left-container,
-        &>.right-container {
-            position: sticky;
-            top: 80px;
-        }
-
-        .left-container,
-        .right-container {
-            width: 180px;
-            // margin-right: 20px;
-            height: fit-content;
-            border-radius: 4px;
-            background-color: #fff;
-            max-height: calc(100vh - 101px);
-            overflow-x: hidden;
-        }
-
-        .right-container {
-            width: 260px;
-        }
-    }
-
+.right-container {
+  width: 260px;
 }
 </style>

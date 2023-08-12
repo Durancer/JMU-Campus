@@ -10,3 +10,4 @@ spring:
             refresh: true
           - data-id: default-redis.yaml
             refresh: true
+
