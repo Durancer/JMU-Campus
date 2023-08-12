@@ -3,13 +3,12 @@ package com.xueyu.user.controller;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.pojo.bo.Mail;
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.UserService;
+import com.xueyu.user.service.UserViewService;
 import com.xueyu.user.service.impl.MailServiceImpl;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Email;
@@ -27,6 +26,20 @@ public class UserController {
 
 	@Resource
 	MailServiceImpl mailService;
+
+	@Resource
+	UserViewService userViewService;
+
+	/**
+	 * 获取单个用户信息
+	 *
+	 * @param userId 用户id
+	 * @return 用户信息
+	 */
+	@GetMapping("detail")
+	public RestResult<UserView> getUserDetailInfo(@RequestParam Integer userId) {
+		return RestResult.ok(userViewService.getUserInfo(userId));
+	}
 
 	/**
 	 * 注册用户
