@@ -2,7 +2,7 @@
   <div>
     <div class="enty-list-wrap">
       <ul class="entry-list" v-infinite-scroll="toBottom">
-        <li class="item" v-for="item in essay" :key="item.id">
+        <li class="item" v-for="item in records" :key="item.id">
           <PostItem v-bind="item" />
         </li>
       </ul>
@@ -12,11 +12,14 @@
 
 <script setup lang="ts">
 import PostItem from '@/components/PostItem.vue'
-const props = defineProps(['essay'])
+import _ from 'lodash'
+const props = defineProps(['records'])
 const emit = defineEmits(['to-bottom'])
-const toBottom = () => {
+// TODO：bug一开始就会翻到第二页
+const toBottom = _.debounce(() => {
+  console.log('emit-to-bottom')
   emit('to-bottom')
-}
+}, 1000)
 </script>
 
 <style scoped lang="less">

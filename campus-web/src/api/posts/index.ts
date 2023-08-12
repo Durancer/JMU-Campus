@@ -29,14 +29,14 @@ export function getAllPosts(params?: getAllPostsParams) {
 // 分页获取我的帖子
 export function getSelfPost() {
   return http.request({
-    url: '/post/user/self'
+    url: '/post/list/user/self'
   })
 }
 
 // 分页获取用户帖子
 export function getUserPost(params: string) {
   return http.request({
-    url: '/post/user',
+    url: '/post/list/user',
     params
   })
 }
