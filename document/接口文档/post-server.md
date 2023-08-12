@@ -34,7 +34,7 @@
 #### 分页获取我的帖子
 
 ```
-请求地址：/post/user/self
+请求地址：/post/list/user/self
 请求方法：GET
 ```
 
@@ -62,7 +62,7 @@
 获取的为审核通过的帖子
 
 ```
-请求地址：/post/user
+请求地址：/post/list/user
 请求方法：GET
 ```
 

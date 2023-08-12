@@ -4,6 +4,7 @@ import com.xueyu.common.core.result.RestResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,7 @@ public interface ResourceClient {
 	 * @return 删除结果
 	 */
 	@PostMapping(value = "/resource/delete")
-	RestResult<?> deleteFileByFileName(String fileName);
+	RestResult<?> deleteFileByFileName(@RequestBody String fileName);
 
 	/**
 	 * 批量删除文件接口
@@ -39,7 +40,7 @@ public interface ResourceClient {
 	 * @param fileNames 文件列表
 	 * @return 删除结果
 	 */
-	@PostMapping(value = "/resource/delete")
-	RestResult<?> deleteFilesListByFileName(String[] fileNames);
+	@PostMapping(value = "/resource/delete/list")
+	RestResult<?> deleteFilesListByFileName(@RequestBody String[] fileNames);
 
 }

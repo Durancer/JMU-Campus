@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * 帖子详情页面显示实体类
@@ -27,6 +26,11 @@ public class PostDetailVO {
 	 * 用户信息
 	 */
 	UserSimpleVO userInfo;
+
+	/**
+	 * 帖子标题
+	 */
+	String title;
 
 	/**
 	 * 发布文本内容

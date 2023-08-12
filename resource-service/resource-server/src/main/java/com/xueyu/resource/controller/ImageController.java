@@ -6,6 +6,7 @@ import com.xueyu.resource.util.FileCheckUtil;
 import io.minio.errors.MinioException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,7 +57,7 @@ public class ImageController {
 	 * @throws MinioException
 	 */
 	@PostMapping("/delete")
-	public RestResult<?> deleteFile(String fileName) throws MinioException {
+	public RestResult<?> deleteFile(@RequestBody String fileName) throws MinioException {
 		log.debug("deleteFile, fileName->{}", fileName);
 		imageService.removeFile(fileName, "image");
 		return RestResult.ok();
@@ -70,7 +71,7 @@ public class ImageController {
 	 * @throws MinioException
 	 */
 	@PostMapping("/delete/list")
-	public RestResult<?> deleteFile(String[] fileNames) throws MinioException {
+	public RestResult<?> deleteFile(@RequestBody String[] fileNames) throws MinioException {
 		log.debug("deleteFiles, file nums->{}", fileNames.length);
 		imageService.removeFileList(fileNames, "image");
 		return RestResult.ok();
