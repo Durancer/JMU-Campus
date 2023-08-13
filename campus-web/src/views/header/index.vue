@@ -23,6 +23,7 @@
         <template v-else>
           <div style="display: inline-flex; align-items: center">
             <el-dropdown>
+              <!-- 失去了响应性 -->
               <el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
               <!--todo 为啥放到这里不行 -->
               <el-icon><arrow-down /></el-icon>

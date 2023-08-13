@@ -22,7 +22,7 @@ export const useUserStore = defineStore(
       }
     }
     async function getUserDetailFn(userId: number) {
-      const res = getUserDetail(userId)
+      const res = await getUserDetail(userId)
       if (res.status) {
         userInfo.value = res.data
       }

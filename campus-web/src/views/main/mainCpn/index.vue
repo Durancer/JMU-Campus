@@ -3,7 +3,7 @@
     <div class="main-container">
       <div class="main-content">
         <header-cpn />
-        <entry-list :essay="essay" @to-bottom="handleToBottom" />
+        <PostList :records="records" @to-bottom="handleToBottom" />
         <div :class="{ hidden: isHidden }">还在加载中....</div>
       </div>
     </div>
@@ -13,10 +13,10 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive, watch, watchEffect } from 'vue'
 import headerCpn from './cpn/headerCpn.vue'
-import entryList from './cpn/entryList.vue'
+import PostList from './cpn/PostList.vue'
 // import asideCpn from './cpn/asideCpn.vue'
 import { getAllPosts } from '@/api/posts/index.ts'
-const essay = reactive([])
+const records = reactive([])
 const current = ref<number>(1) // 当前是第几页
 const size = ref<number>(10) // 多少页
 const pages = ref<number>(1) // 总共有多少页
@@ -25,7 +25,8 @@ const getAllPostsFn = async ({ current, size }) => {
   isHidden.value = false
   const res = await getAllPosts({ current, size })
   if (res.data) {
-    essay.push(...res.data.records)
+    console.log('现在是第几页', current)
+    records.push(...res.data.records)
     pages.value = res.data.pages
     isHidden.value = true
   }

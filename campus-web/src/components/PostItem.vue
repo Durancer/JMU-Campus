@@ -24,6 +24,7 @@
       <span>{{ viewNum }}</span>
     </div>
   </div>
+  <!-- TODO  根据首页和详情页信息变动 -->
 </template>
 
 <script setup lang="ts">
@@ -38,13 +39,17 @@ interface postItemUserInfo {
 interface Props {
   id: number
   userInfo: postItemUserInfo
-  title: string
+  title?: string // 后期补一下title属性
   content: string
   viewNum: number
   imgList?: null | string[]
   voteMessage?: null | string
   userLikeBOList?: null | postItemUserInfo[]
   createTime: string
+  commentNum?: number // detail
+  likeNum?: number
+  commentList?: []
+  isLike?: boolean
 }
 const props = defineProps<Props>()
 const likeNum = computed(() => props.userLikeBOList?.length ?? 0)

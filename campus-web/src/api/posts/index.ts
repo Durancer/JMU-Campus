@@ -14,12 +14,12 @@ import http from '../index.ts'
     createTime: "2023-02-04T13:10:35.000+00:00"
  */
 
-interface getAllPostsParams {
+interface getPostsParams {
   current: number
   size: number
 }
 // 分页获取所有帖子,获取的为审核通过的帖子
-export function getAllPosts(params?: getAllPostsParams) {
+export function getAllPosts(params?: getPostsParams) {
   return http.request({
     url: '/post/list/all',
     params
@@ -29,14 +29,14 @@ export function getAllPosts(params?: getAllPostsParams) {
 // 分页获取我的帖子
 export function getSelfPost() {
   return http.request({
-    url: '/post/user/self'
+    url: '/post/list/user/self'
   })
 }
 
 // 分页获取用户帖子
 export function getUserPost(params: string) {
   return http.request({
-    url: '/post/user',
+    url: '/post/list/user',
     params
   })
 }
@@ -75,6 +75,14 @@ export function getPostDetail(postId: string) {
     params: {
       postId
     }
+  })
+}
+
+// 获取需要审核的帖子
+export function getNotCheckedPosts(params?: getPostsParams) {
+  return http.request({
+    url: '/post/status/list',
+    params
   })
 }
 
