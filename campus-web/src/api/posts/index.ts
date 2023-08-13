@@ -100,3 +100,14 @@ export function checkPost(postId: number, decision: number) {
     }
   })
 }
+
+// 删除帖子
+export function deletePost(postId: string) {
+  return http.request({
+    method: 'post',
+    url: '/post/delete',
+    data: {
+      postId
+    }
+  })
+}

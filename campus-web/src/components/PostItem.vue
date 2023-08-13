@@ -24,7 +24,7 @@
       <span>{{ viewNum }}</span>
     </div>
   </div>
-  <!-- TODO  根据首页和详情页信息变动 -->
+  <!-- TODO  根据首页和详情页信息进行变动 -->
 </template>
 
 <script setup lang="ts">
@@ -39,7 +39,7 @@ interface postItemUserInfo {
 interface Props {
   id: number
   userInfo: postItemUserInfo
-  title?: string // 后期补一下title属性
+  title: string // 后期补一下title属性
   content: string
   viewNum: number
   imgList?: null | string[]
