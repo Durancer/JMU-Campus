@@ -23,6 +23,12 @@
             <el-button type="danger">删除这篇帖子</el-button>
           </template>
         </el-popconfirm>
+        <el-button
+          type="danger"
+          @click="deleteVoteFn(post.voteMessage?.voteId)"
+          v-if="post.voteMessage?.voteId"
+          >删除投票</el-button
+        >
       </div>
     </template>
   </template>
@@ -31,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { getPostDetail, deletePost } from '@/api/posts/index.ts'
+import { getPostDetail, deletePost, deleteVote } from '@/api/posts/index.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PostItem from '@/components/PostItem.vue'
@@ -45,6 +51,13 @@ const route = useRoute()
 const getPostDetailFn = async (postId: string) => {
   const res = await getPostDetail(postId)
   post.value = res.data
+}
+const deleteVoteFn = async (voteId) => {
+  const res = await deleteVote(voteId)
+  if (res.status) {
+    sucMessage('删除投票成功')
+    getPostDetailFn(route.params.postId as string)
+  }
 }
 const router = useRouter()
 const userStore = useUserStore()

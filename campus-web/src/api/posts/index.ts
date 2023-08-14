@@ -55,13 +55,7 @@ export function addPost(data: addPostParams) {
   return http.request({
     method: 'post',
     url: '/post/add',
-    data: {
-      ...data
-      // topic: '测试话题1',
-      // type: 'radio',
-      // cycle: 'day',
-      // options: ['1', '2', '3']
-    },
+    data,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -108,6 +102,32 @@ export function deletePost(postId: string) {
     url: '/post/delete',
     data: {
       postId
+    }
+  })
+}
+interface voteParams {
+  postId: number
+  voteId: number
+  optionIds: number | number[]
+}
+// 用户投票
+export function vote(data: voteParams, userId: number) {
+  return http.request({
+    url: '/post/vote/record/add',
+    method: 'post',
+    data,
+    headers: {
+      userId
+    }
+  })
+}
+// 删除投票
+export function deleteVote(voteId: number) {
+  return http.request({
+    url: '/post/vote/delete',
+    method: 'post',
+    data: {
+      voteId
     }
   })
 }

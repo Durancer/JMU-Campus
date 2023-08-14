@@ -17,23 +17,35 @@
         此刻你想和大家分享什么
       </div>
     </div>
-    <el-button type="success" style="float: right" @click="totast">测试</el-button>
-    <el-button type="success" style="float: right" @click="publish">发布</el-button>
+  </div>
+  <div class="wrapper" v-show="isShow">
+    <Vote ref="voteRef"></Vote>
+  </div>
+  <div class="wrapper">
+    <div>
+      是否增加投票
+      <el-switch v-model="isShow" />
+    </div>
+    <el-button type="success" @click="publish">发布</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { login } from '@/api/user'
 import { ref, computed, reactive } from 'vue'
 import { addPost } from '@/api/posts/index.ts'
 import { sucMessage, failMessage } from '@/utils/common.ts'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import Vote from '@/components/Vote.vue'
 
 const contentRef = ref(null)
 const post = reactive({
   title: '',
   content: ''
 })
+const isShow = ref(false)
+const voteRef = ref(null)
 const handleInput = (event) => {
   post.content = event.target.innerText
 }
@@ -56,7 +68,21 @@ const router = useRouter()
 const publish = () => {
   post.content = contentRef.value?.innerText
   if (valid()) {
-    addPost(post).then((res) => {
+    let data = {}
+    if (isShow.value) {
+      // 增加投票选项
+      const voteContent = JSON.parse(JSON.stringify(voteRef.value.voteForm)) //TODO 之后得优化
+      console.log(voteContent)
+      data = { ...voteContent, ...post }
+      console.log(data)
+    } else {
+      data = { ...post }
+    }
+    let formData = new FormData()
+    for (let key in data) {
+      formData.append(key, data[key])
+    }
+    addPost(formData).then((res) => {
       if (res.status) {
         sucMessage('发布成功')
         router.push({ name: 'index' })
@@ -82,6 +108,7 @@ const totast = () => {
   margin: auto;
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 1);
+  overflow: auto;
   .edit-input {
     background-color: transparent;
     border: none;
@@ -118,5 +145,9 @@ const totast = () => {
       display: none;
     }
   }
+}
+.wrapper {
+  width: 930px;
+  margin: 20px auto;
 }
 </style>
