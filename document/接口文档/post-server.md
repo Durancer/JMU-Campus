@@ -120,16 +120,16 @@
 
 **入参字段**
 
-| 字段    | 类型    | 含义                                                  | 必填 |
-| ------- | ------- | ----------------------------------------------------- | ---- |
-| title   | String  | 帖子标题                                              | 是   |
-| content | String  | 帖子内容                                              | 是   |
-| files   | file    | 帖子附件图片（限jpg、jpeg、png、webp格式，最大 9 张） | 否   |
-| token   | String  | 请求头添加                                            | 是   |
-| topic   | String  | 投票内容                                              | 是   |
-| type    | String  | 投票类型                                              | 是   |
-| cycle   | String  | 投票周期                                              | 是   |
-| options | Integer | 投票选项                                              |      |
+| 字段    | 类型    | 含义                                                       | 必填 |
+| ------- | ------- | ---------------------------------------------------------- | ---- |
+| title   | String  | 帖子标题                                                   | 是   |
+| content | String  | 帖子内容                                                   | 是   |
+| files   | file    | 帖子附件图片（限jpg、jpeg、png、webp格式，最大 9 张）      | 否   |
+| token   | String  | 请求头添加                                                 | 是   |
+| topic   | String  | 投票内容                                                   | 是   |
+| type    | String  | 投票类型  radio 单选 \| multiple 多选                      | 是   |
+| cycle   | String  | 投票周期  day 一天 \| week 一周 \| month 一月 \| year 一年 | 是   |
+| options | Integer | 投票选项                                                   |      |
 
 **出参**
 
@@ -365,6 +365,35 @@
     "code": 200,
     "message": data,
     "data": null,
+    "status": true
+}
+```
+
+
+
+#### 分页获取审核帖子
+
+获取的为审核通过的帖子
+
+```
+请求地址：/post/status/list
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段    | 类型    | 含义                           | 必填 |
+| ------- | ------- | ------------------------------ | ---- |
+| current | Integer | 分页需要获取的当前页，默认为 1 | 否   |
+| size    | Integer | 每页帖子的数量，默认为 10      | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
     "status": true
 }
 ```
