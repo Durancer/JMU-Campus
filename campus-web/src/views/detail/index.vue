@@ -49,7 +49,8 @@ import { InfoFilled } from '@element-plus/icons-vue'
 const post = ref({})
 const route = useRoute()
 const getPostDetailFn = async (postId: string) => {
-  const res = await getPostDetail(postId)
+  const userId = userStore.userInfo?.id
+  const res = await getPostDetail(postId, userId)
   post.value = res.data
 }
 const deleteVoteFn = async (voteId) => {

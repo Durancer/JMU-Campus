@@ -18,9 +18,11 @@
       </p>
     </div>
     <div class="footer">
-      <Position style="width: 1em; height: 1em; margin-right: 8px" />
-      <span>{{ likeNum }}</span>
-      <View style="width: 1em; height: 1em; margin-right: 8px" />
+      <!-- 点赞 -->
+      <Position class="myicon" :class="{ active: isActive }" @click="likeFn(id)" />
+      <span :class="{ active: isActive }">{{ likeNum }}</span>
+      <!-- 浏览量 -->
+      <View class="myicon" />
       <span>{{ viewNum }}</span>
     </div>
   </div>
@@ -64,7 +66,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { vote } from '@/api/posts/index.ts'
+import { vote, like } from '@/api/posts/index.ts'
 import { useUserStore } from '@/stores/userStore'
 import { failMessage, sucMessage } from '@/utils/common'
 interface postItemUserInfo {
@@ -152,6 +154,15 @@ const voteFn = async () => {
     res.status && sucMessage('投票成功')
   }
 }
+
+const isActive = ref(props.isLike)
+const likeFn = async (postId) => {
+  const res = await like(postId)
+  if (res.status) {
+    sucMessage(res.message)
+    isActive.value = !isActive.value
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -194,6 +205,15 @@ const voteFn = async () => {
     align-items: center;
     span {
       margin-right: 5px;
+    }
+    .myicon {
+      width: 1em;
+      height: 1em;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    .active {
+      color: red;
     }
   }
 }

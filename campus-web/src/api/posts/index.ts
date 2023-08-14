@@ -63,11 +63,14 @@ export function addPost(data: addPostParams) {
 }
 
 // 获取帖子详细信息
-export function getPostDetail(postId: string) {
+export function getPostDetail(postId: string, userId?: number) {
   return http.request({
     url: '/post/detail',
     params: {
       postId
+    },
+    headers: {
+      userId
     }
   })
 }
@@ -128,6 +131,16 @@ export function deleteVote(voteId: number) {
     method: 'post',
     data: {
       voteId
+    }
+  })
+}
+// 点赞 | 取消点赞用户帖子
+export function like(postId: number) {
+  return http.request({
+    url: '/post/operate/like',
+    method: 'post',
+    data: {
+      postId
     }
   })
 }
