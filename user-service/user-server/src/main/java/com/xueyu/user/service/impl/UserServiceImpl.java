@@ -88,6 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		res.put("token", token);
 		UserView userView = userViewMapper.selectById(check.getId());
 		res.put("userInfo", userView);
+		log.info("用户 id -> {}, 进行了登录操作", user.getId());
 		return res;
 	}
 

@@ -83,6 +83,7 @@ public class ActivityServiceImpl implements ActivityService {
 			// 预减派发数量
 			redisTemplate.opsForValue().decrement(STOCK_KEY);
 			// 添加用户票券
+			log.info("用户id -> {}, 抢到流量券", userId);
 			LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<>();
 			wrapper.eq(Item::getName, "流量券");
 			Item item = itemMapper.selectOne(wrapper);

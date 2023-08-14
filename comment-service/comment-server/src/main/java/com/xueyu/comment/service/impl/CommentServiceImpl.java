@@ -16,6 +16,7 @@ import com.xueyu.post.client.PostClient;
 import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import static com.xueyu.comment.sdk.constant.CommentMqContants.*;
 /**
  * @author durance
  */
+@Slf4j
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
@@ -46,6 +48,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
 	@Override
 	public Boolean sendUserComment(Comment comment) {
+		log.info("用户 id -> {}, 发送评论报文 -> {}", comment.getUserId(), comment);
 		PostDTO postInfo = postClient.getPostInfo(comment.getPostId()).getData();
 		if (postInfo == null) {
 			throw new CommentException("不存在该帖子信息");
@@ -75,6 +78,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
 	@Override
 	public Boolean deleteUserComment(Integer userId, Integer commentId) {
+		log.info("用户id -> {} 执行操作删除 评论 id -> {}", userId, commentId);
 		Comment comment = lambdaQuery().eq(Comment::getId, commentId).eq(Comment::getUserId, userId).one();
 		if (comment == null) {
 			throw new CommentException("评论与用户不匹配");
@@ -85,8 +89,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 			wrapper.eq(Comment::getRootId, commentId);
 			deleteNum = query().getBaseMapper().delete(wrapper);
+			log.info("根评论 id -> {} 被删除，连同子评论，共删除 {} 条评论", commentId, deleteNum);
 		} else {
 			deleteNum = query().getBaseMapper().deleteById(commentId);
+			log.info("子评论 id -> {} 被删除", commentId);
 		}
 		// 发送mq消息
 		CommentDTO commentDTO = new CommentDTO();
