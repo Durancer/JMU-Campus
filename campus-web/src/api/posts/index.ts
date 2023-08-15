@@ -55,13 +55,7 @@ export function addPost(data: addPostParams) {
   return http.request({
     method: 'post',
     url: '/post/add',
-    data: {
-      ...data
-      // topic: '测试话题1',
-      // type: 'radio',
-      // cycle: 'day',
-      // options: ['1', '2', '3']
-    },
+    data,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -69,11 +63,14 @@ export function addPost(data: addPostParams) {
 }
 
 // 获取帖子详细信息
-export function getPostDetail(postId: string) {
+export function getPostDetail(postId: string, userId?: number) {
   return http.request({
     url: '/post/detail',
     params: {
       postId
+    },
+    headers: {
+      userId
     }
   })
 }
@@ -97,6 +94,53 @@ export function checkPost(postId: number, decision: number) {
     },
     headers: {
       'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 删除帖子
+export function deletePost(postId: string) {
+  return http.request({
+    method: 'post',
+    url: '/post/delete',
+    data: {
+      postId
+    }
+  })
+}
+interface voteParams {
+  postId: number
+  voteId: number
+  optionIds: number | number[]
+}
+// 用户投票
+export function vote(data: voteParams, userId: number) {
+  return http.request({
+    url: '/post/vote/record/add',
+    method: 'post',
+    data,
+    headers: {
+      userId
+    }
+  })
+}
+// 删除投票
+export function deleteVote(voteId: number) {
+  return http.request({
+    url: '/post/vote/delete',
+    method: 'post',
+    data: {
+      voteId
+    }
+  })
+}
+// 点赞 | 取消点赞用户帖子
+export function like(postId: number) {
+  return http.request({
+    url: '/post/operate/like',
+    method: 'post',
+    data: {
+      postId
     }
   })
 }

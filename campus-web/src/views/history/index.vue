@@ -2,6 +2,7 @@
   <!-- <template v-for="post in postList" :key="post.id">
     <PostItem v-bind="post"></PostItem>
   </template> -->
+  <!-- TODO: 增加删除帖子功能 -->
   <template v-if="records.length > 0">
     <PostList :records="records" />
   </template>
