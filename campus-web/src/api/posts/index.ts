@@ -1,19 +1,5 @@
 import http from '../index.ts'
 
-/**
- *
- {id: 1, userInfo: {id: 1, nickname: "lucy",…}, title: "帖子标题", content: "测试", viewNum: 1,…}
-    id: 1
-    userInfo: {id: 1, nickname: "lucy",…}
-    title: "帖子标题"
-    content: "测试"
-    viewNum: 1
-    imgList: [{id: 3, parentId: 1, imgUrl: "http://60.204.139.75/image/e08e9fa091b94dcab6137e58280e3ed2.png"}]
-    voteMessage: null
-    userLikeBOList: [{id: 1, nickname: "lucy",…},…]
-    createTime: "2023-02-04T13:10:35.000+00:00"
- */
-
 interface getPostsParams {
   current: number
   size: number

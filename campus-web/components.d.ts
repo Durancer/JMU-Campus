@@ -15,6 +15,7 @@ declare module 'vue' {
     ElCheckout: typeof import('element-plus/es')['ElCheckout']
     ElCheckoutGroup: typeof import('element-plus/es')['ElCheckoutGroup']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
@@ -31,10 +32,13 @@ declare module 'vue' {
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    Like: typeof import('./src/components/Like.vue')['default']
     PostItem: typeof import('./src/components/PostItem.vue')['default']
     Publish: typeof import('./src/components/Publish.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
+    UserInfo: typeof import('./src/components/UserInfo.vue')['default']
     Vote: typeof import('./src/components/Vote.vue')['default']
   }
   export interface ComponentCustomProperties {
