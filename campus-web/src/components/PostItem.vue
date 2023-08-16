@@ -152,17 +152,10 @@ const voteFn = async () => {
 }
 
 const isActive = ref(props.isLike)
-const likeNumCopy = ref(props.viewNum)
 const likeFn = async (postId) => {
   const res = await like(postId)
   if (res.status) {
     sucMessage(res.message)
-    isActive.value = !isActive.value
-    if (res.message === '点赞成功') {
-      likeNumCopy.value++
-    } else {
-      likeNumCopy.value--
-    }
   }
 }
 </script>

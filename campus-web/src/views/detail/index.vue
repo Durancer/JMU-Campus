@@ -23,8 +23,23 @@
           <div class="comment-content">{{ comment.content }}</div>
           <div class="footer" :class="{ active: comment.isLike === true }">
             <!-- 点赞 -->
-            <Like></Like>
+            <Like
+              :likeNum="comment.hot"
+              :isLike="comment.isLike"
+              @like-click="commentLikeFn(comment.id)"
+            ></Like>
             <span @click="reply(comment)">{{ isReplying ? '取消回复' : '回复TA' }}</span>
+            <el-popconfirm
+              confirm-button-text="确定"
+              width="240"
+              cancel-button-text="取消"
+              title="真的要删除这条评论吗?"
+              @confirm="deleteCommentFn(comment.id)"
+            >
+              <template #reference>
+                <span>删除</span>
+              </template>
+            </el-popconfirm>
           </div>
           <div v-show="isReplying">
             <el-input v-model="subCommentContent" :placeholder="subPlaceholder"></el-input>
@@ -45,11 +60,28 @@
                     {{ subComment.userInfo.nickname }} > {{ subComment.answerUserInfo.nickname }}
                   </div>
                   <div class="sub-comment-content-content">{{ subComment.content }}</div>
-                  <div class="sub-comment-content-createTime">
+
+                  <div class="sub-comment-content-footer">
                     {{ subComment.createTime }}
+                    <Like
+                      :likeNum="subComment.hot"
+                      :isLike="subComment.isLike"
+                      @like-click="commentLikeFn(subComment.id)"
+                    ></Like>
                     <span @click="reply(subComment, false)">{{
                       isSubReplying ? '取消回复' : '回复TA'
                     }}</span>
+                    <el-popconfirm
+                      width="240"
+                      confirm-button-text="确定"
+                      cancel-button-text="取消"
+                      title="真的要删除这条评论吗?"
+                      @confirm="deleteCommentFn(subComment.id)"
+                    >
+                      <template #reference>
+                        <span class="comment-delete-btn">删除</span>
+                      </template>
+                    </el-popconfirm>
                   </div>
                   <div v-show="isSubReplying && subComment.id === isSubReplyingId">
                     <el-input v-model="subCommentContent" :placeholder="subPlaceholder"></el-input>
@@ -97,7 +129,7 @@
 
 <script setup lang="ts">
 import { getPostDetail, deletePost, deleteVote } from '@/api/posts/index.ts'
-import { addComment } from '@/api/comments/index.ts'
+import { addComment, likeComment, deleteComment } from '@/api/comments/index.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PostItem from '@/components/PostItem.vue'
@@ -194,9 +226,25 @@ const reply = (comment, status = true) => {
     isSubReplyingId.value = comment.id
   }
 }
+// 提交子评论
 const submitSubComment = () => {
   subCommentData.value.content = subCommentContent.value
   addCommentCommon(subCommentData.value)
+}
+// 评论点赞点踩
+const commentLikeFn = async (commentId) => {
+  const userId = userStore.userInfo?.id
+  const res = await likeComment(commentId, userId)
+  if (res.status) {
+    sucMessage(res.message)
+  }
+}
+// 删除评论
+const deleteCommentFn = async (commentId) => {
+  const res = await deleteComment(commentId)
+  if (res.status) {
+    sucMessage(res.message)
+  }
 }
 </script>
 
@@ -251,7 +299,17 @@ const submitSubComment = () => {
 .sub-comment-content-content {
   margin: 5px 0;
 }
+.sub-comment-content-footer {
+  display: flex;
+  align-items: center;
+}
 .comment-content {
   margin: 5px 0;
+}
+.comment-delete-btn {
+  cursor: pointer;
+}
+.comment-delete-btn:hover {
+  color: red;
 }
 </style>

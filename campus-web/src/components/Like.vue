@@ -1,5 +1,5 @@
 <template>
-  <div class="like" @click="clickFn" :class="{ isLike: isLike }">
+  <div class="like" @click="clickFn" :class="{ isLike: isLike || tmpIsLike }">
     <SvgIcon name="like"></SvgIcon>
     <span class="likeNum">{{ tmpLikeNum }}</span>
   </div>
