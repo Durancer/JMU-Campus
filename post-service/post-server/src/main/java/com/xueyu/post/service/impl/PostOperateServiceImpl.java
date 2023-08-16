@@ -9,6 +9,7 @@ import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.PostOperateService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import static com.xueyu.post.sdk.constant.PostMqContants.*;
  * @author durance
  */
 @Service
+@Slf4j
 public class PostOperateServiceImpl implements PostOperateService {
 
 	@Resource
@@ -58,6 +60,7 @@ public class PostOperateServiceImpl implements PostOperateService {
 			likePost.setTime(new Timestamp(System.currentTimeMillis()));
 			likePostMapper.insert(likePost);
 			postGeneralMapper.updateLikeNumByPostId(postId, 1);
+			log.info("用户 id -> {} 点赞了 帖子 postId ->{}", userId, postId);
 			// 发送点赞帖子事件消息
 			rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_LIKE_KEY, postOperateDTO);
 			return true;
@@ -65,6 +68,7 @@ public class PostOperateServiceImpl implements PostOperateService {
 		// 取消点赞
 		likePostMapper.delete(wrapper);
 		postGeneralMapper.updateLikeNumByPostId(postId, -1);
+		log.info("用户 id -> {} 取消点赞了 帖子 postId ->{}", userId, postId);
 		// 发送取消点赞帖子事件消息
 		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_LIKE_CANCEL_KEY, postOperateDTO);
 		return false;

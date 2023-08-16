@@ -1,5 +1,5 @@
 ## 帖子服务接口文档
-请求 BaseUrl：http://www.jmucampus.top/api/
+请求 BaseUrl：http://127.0.0.1/
 
 
 #### 分页获取所有帖子
@@ -112,11 +112,12 @@
 
 
 #### 添加帖子
-
 ```
 请求地址：/post/add
 请求方法：POST
 ```
+
+投票相关内容，当该帖子添加投票功能时为必填，否则可不填
 
 **入参字段**
 
@@ -127,9 +128,9 @@
 | files   | file    | 帖子附件图片（限jpg、jpeg、png、webp格式，最大 9 张）      | 否   |
 | token   | String  | 请求头添加                                                 | 是   |
 | topic   | String  | 投票内容                                                   | 是   |
-| type    | String  | 投票类型  radio 单选 \| multiple 多选                      | 是   |
-| cycle   | String  | 投票周期  day 一天 \| week 一周 \| month 一月 \| year 一年 | 是   |
-| options | Integer | 投票选项                                                   |      |
+| type    | String  | 投票类型  radio 单选 \ multiple 多选                      | 是   |
+| cycle   | String  | 投票周期  day 一天 \ week 一周 \ month 一月 \ year 一年 | 是   |
+| options | Integer | 投票选项                                                   |  是   |
 
 **出参**
 

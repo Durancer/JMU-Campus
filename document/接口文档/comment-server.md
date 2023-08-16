@@ -1,5 +1,5 @@
 ## 评论服务接口文档
-请求 BaseUrl：http://www.jmucampus.top/api/
+请求 BaseUrl：http://127.0.0.1/
 
 
 #### 添加评论
@@ -34,7 +34,7 @@
 
 
 #### 删除评论
-
+当删除的评论为根评论时，会将所有子评论一同删除
 ```
 请求地址：/comment/delete
 请求方法：POST
@@ -58,9 +58,37 @@
 }
 ```
 
+#### 更新评论
+
+```
+请求地址：/comment/delete
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段      | 类型    | 含义       | 必填 |
+| --------- | ------- | ---------- | ---- |
+| commentId | Integer | 帖子id     | 是   |
+| content | String | 更新内容     | 是   |
+| token     | String  | 请求头添加 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "更新成功",
+    "data": null,
+    "status": true
+}
+```
 
 
-#### 获取我的评论
+
+
+#### 获取用户的评论
+
 
 ```
 请求地址：/comment/user/list
@@ -69,9 +97,12 @@
 
 **入参字段**
 
+以下入参字段至少一个必填，当查询他人评论时，传递 otherUserId 即可，查询自己的评论时有 token就行
+
 | 字段  | 类型   | 含义       | 必填 |
 | ----- | ------ | ---------- | ---- |
-| token | String | 请求头添加 | 是   |
+| token | String | 请求头添加 | 否   |
+| otherUserId | Integer | 要查询的用户id | 否   |
 
 **出参**
 

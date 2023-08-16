@@ -125,6 +125,7 @@ public class MailServiceImpl {
 		mail.setSubject("欢迎进入 i集大校园，快来开启校园生活吧！");
 		mail.setText("【i集大校园】您正在注册/登录 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。");
 		redisTemplate.opsForValue().set(key, idenCode, 60, TimeUnit.SECONDS);
+		log.info("用户邮箱 -> {}, 发送邮箱验证码", mail.getTo());
 		sendMail(mail);
 	}
 

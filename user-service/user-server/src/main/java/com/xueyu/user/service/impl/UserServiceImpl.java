@@ -88,6 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		res.put("token", token);
 		UserView userView = userViewMapper.selectById(check.getId());
 		res.put("userInfo", userView);
+		log.info("用户 id -> {}, 进行了登录操作", user.getId());
 		return res;
 	}
 
@@ -135,14 +136,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 * @param user 用户信息
 	 */
 	public void verifyUserInfo(User user){
-		if (user.getUsername() == null || user.getPassword() == null) {
-			throw new UserException("账号和密码不能为空");
-		}
-		if (!(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
-				UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
-				UserGenderEnum.GIRL.getCode().equals(user.getSex()))){
-			throw new UserException("不合规的用户性别参数");
-		}
-	}
+        if (user.getUsername() == null || user.getPassword() == null) {
+            throw new UserException("账号和密码不能为空");
+        }
+        if (user.getSex() != null && !(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
+                UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
+                UserGenderEnum.GIRL.getCode().equals(user.getSex()))) {
+            throw new UserException("不合规的用户性别参数");
+        }
+    }
 
 }

@@ -11,11 +11,13 @@ import com.xueyu.comment.pojo.vo.LikeVO;
 import com.xueyu.comment.service.LikeService;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements LikeService {
 
@@ -49,11 +51,13 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
             like = new Like(null,userId,commentId,null);
             likeMapper.insert(like);
             commentMapper.updateLikeNum(commentId,1);
+            log.info("用户 id -> {}, 点赞 评论 id -> {}", userId, commentId);
             return true;
         }
         //点赞数据不为空，说明已经点赞，则进行取消点赞
         likeMapper.delete(queryWrapper);
         commentMapper.updateLikeNum(commentId,-1);
+        log.info("用户 id -> {}, 取消点赞 评论 id -> {}", userId, commentId);
         return false;
     }
 

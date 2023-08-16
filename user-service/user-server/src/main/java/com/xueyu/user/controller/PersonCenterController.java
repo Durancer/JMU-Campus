@@ -2,6 +2,7 @@ package com.xueyu.user.controller;
 
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.PersonCenterService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -48,12 +49,10 @@ public class PersonCenterController {
 	 * @return 更新结果
 	 */
 	@PostMapping("update/userInfo")
-	public RestResult<?> updateUserInfo(User user, @RequestHeader Integer userId) {
+	public RestResult<UserView> updateUserInfo(User user, @RequestHeader Integer userId) {
 		user.setId(userId);
-		if (!personCenterService.updateUserInfo(user)) {
-			return RestResult.fail("更新失败");
-		}
-		return RestResult.ok(null, "更新成功");
+		UserView userView = personCenterService.updateUserInfo(user);
+		return RestResult.ok(userView, "更新成功");
 	}
 
 }

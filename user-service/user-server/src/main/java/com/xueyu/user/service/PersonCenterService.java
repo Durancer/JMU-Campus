@@ -1,6 +1,7 @@
 package com.xueyu.user.service;
 
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.vo.UserView;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -10,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface PersonCenterService {
 
-	/**
-	 * 修改用户各个信息
-	 *
-	 * @param user 用户信息
-	 * @return 影响行数
-	 */
-	Boolean updateUserInfo(User user);
+    /**
+     * 修改用户各个信息
+     *
+     * @param user 用户信息
+     * @return 更新后的用户信息
+     */
+    UserView updateUserInfo(User user);
 
 	/**
 	 * 修改用户头像
