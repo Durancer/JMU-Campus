@@ -44,4 +44,13 @@ public interface UserGeneralMapper extends BaseMapper<UserGeneral> {
 	 */
 	Integer updateFansNumByUserId(@Param("userId") Integer userId, @Param("num") Integer num);
 
+	/**
+	 * 在原数据的基础上更新用户帖子数
+	 *
+	 * @param userId 用户id
+	 * @param num    修改的量
+	 * @return 影响行数
+	 */
+	Integer updatePostNumByUserId(@Param("userId") Integer userId, @Param("num") Integer num);
+
 }

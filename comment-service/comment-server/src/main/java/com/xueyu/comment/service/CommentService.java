@@ -61,4 +61,11 @@ public interface CommentService extends IService<Comment> {
 	 */
 	List<CommentAnswerVO> commentConvertAnswerVO(List<Comment> commentList);
 
+	/**
+	 * 更新评论
+	 *
+	 * @param comment 更新评论内容
+	 */
+	void updateComment(Comment comment);
+
 }

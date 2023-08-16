@@ -33,7 +33,7 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 
 	@Override
 	public UserView updateUserInfo(User user) {
-		log.info("用户id -> {} , 更新个人信息", user.getId());
+		log.info("用户id -> {} , 更新个人信息, 更新内容报文 -> {}", user.getId(), user);
 		// 不合法参数拦截
 		if (user.getPassword() != null ||
 				user.getAvatar() != null ||
@@ -58,6 +58,7 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 
 	@Override
 	public String updateUserAvatar(Integer userId, MultipartFile file) {
+		log.info("用户 id -> {} , 更新用户头像", userId);
 		User check = userMapper.selectById(userId);
 		if (check == null) {
 			throw new UserException("不存在的用户id");

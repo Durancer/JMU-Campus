@@ -25,4 +25,9 @@
 		set fans_num = fans_num + #{num} where user_id = #{userId}
 	</update>
 
+	<update id="updatePostNumByUserId" parameterType="com.xueyu.user.pojo.domain.UserGeneral">
+		update user_general
+		set post_num = post_num + #{num} where user_id = #{userId}
+	</update>
+
 </mapper>

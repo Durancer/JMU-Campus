@@ -23,6 +23,7 @@ import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ import static com.xueyu.post.sdk.constant.PostMqContants.*;
 /**
  * @author durance
  */
+@Slf4j
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements PostService {
 
@@ -86,6 +88,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setContent(HtmlUtils.htmlEscapeHex(post.getContent()));
 		// 存入帖子数据，获得主键值
 		query().getBaseMapper().insert(post);
+		log.info("用户 id -> {}, 上传了帖子到审核列表", post.getUserId());
 		// 添加数据统计表行数据
 		PostGeneral postGeneral = new PostGeneral();
 		postGeneral.setPostId(post.getId());
@@ -95,6 +98,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			for (MultipartFile file : files) {
 				// 将存入的图片名称存入集合
 				ImageAnnex imageAnnex = new ImageAnnex();
+				// todo 一次性上传所有图片，减少服务调用次数
 				imageAnnex.setFileName(resourceClient.uploadImageFile(file).getData().get("fileName"));
 				imageAnnex.setParentId(post.getId());
 				images.add(imageAnnex);
@@ -107,11 +111,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			vote.setPostId(post.getId());
 			voteService.launchVote(vote,options);
 		}
+		// 发送mq消息
+		PostOperateDTO postOperateDTO = new PostOperateDTO();
+		postOperateDTO.setUserId(post.getUserId());
+		postOperateDTO.setPostId(post.getId());
+		postOperateDTO.setAuthorId(post.getUserId());
+		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postOperateDTO);
 		return true;
 	}
 
 	@Override
 	public Boolean deletePost(Integer postId, Integer userId) {
+		log.info("用户 id -> {}, 删除 帖子 id -> {}", userId, postId);
 		LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Post::getId, postId).eq(Post::getUserId, userId);
 		Post post = query().getBaseMapper().selectOne(wrapper);
@@ -298,17 +309,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setId(postId);
 		post.setStatus(desicion);
 		postMapper.updateById(post);
-		//发送mq信息
-		if(desicion==1){
-			PostView postView = postViewMapper.selectById(postId);
-			UserSimpleVO userSimpleVO = userClient.getUserInfo(postView.getUserId()).getData();
-			PostDTO postDTO = new PostDTO();
-			BeanUtils.copyProperties(postView,postDTO);
-			//html转码
-			postDTO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
-			postDTO.setNickname(userSimpleVO.getNickname());
-			rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postDTO);
-		}
 	}
 
 	@Override
