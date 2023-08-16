@@ -1,14 +1,6 @@
 <template>
   <div class="post-item">
-    <div class="user">
-      <div class="user-image">
-        <el-avatar :src="userInfo.avatarUrl"></el-avatar>
-      </div>
-      <div class="user-info">
-        <div>{{ userInfo.nickname }}</div>
-        <div>{{ createTime }}</div>
-      </div>
-    </div>
+    <UserInfo v-bind="userInfo" :create-time="createTime"></UserInfo>
     <div class="title" @click="jumpPostDetail">
       {{ title }}
     </div>
@@ -19,8 +11,9 @@
     </div>
     <div class="footer">
       <!-- 点赞 -->
-      <Position class="myicon" :class="{ active: isActive }" @click="likeFn(id)" />
-      <span :class="{ active: isActive }">{{ likeNum }}</span>
+      <!-- <Position class="myicon" :class="{ active: isActive }" @click="likeFn(id)" />
+      <span :class="{ active: isActive }">{{ likeNumCopy }}</span> -->
+      <Like :likeNum="likeNum" :isLike="isLike" @like-click="likeFn(id)"></Like>
       <!-- 浏览量 -->
       <View class="myicon" />
       <span>{{ viewNum }}</span>
@@ -69,6 +62,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { vote, like } from '@/api/posts/index.ts'
 import { useUserStore } from '@/stores/userStore'
 import { failMessage, sucMessage } from '@/utils/common'
+import UserInfo from '@/components/UserInfo.vue'
+import Like from '@/components/Like.vue'
+
 interface postItemUserInfo {
   id: number
   nickname: string
@@ -156,11 +152,17 @@ const voteFn = async () => {
 }
 
 const isActive = ref(props.isLike)
+const likeNumCopy = ref(props.viewNum)
 const likeFn = async (postId) => {
   const res = await like(postId)
   if (res.status) {
     sucMessage(res.message)
     isActive.value = !isActive.value
+    if (res.message === '点赞成功') {
+      likeNumCopy.value++
+    } else {
+      likeNumCopy.value--
+    }
   }
 }
 </script>
@@ -171,21 +173,7 @@ const likeFn = async (postId) => {
   flex-direction: column;
   padding: 20px;
   border-bottom: 1px solid #f1f1f1;
-  .user {
-    display: flex;
-    align-items: center;
-    .user-image {
-      margin-right: 0.5em;
-      &:deep(.el-avatar) {
-        vertical-align: bottom;
-      }
-    }
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-  }
+
   .title {
     white-space: nowrap;
     overflow: hidden;
