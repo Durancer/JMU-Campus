@@ -2,8 +2,11 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.user.mapper.UserGeneralMapper;
 import com.xueyu.user.mapper.UserItemViewMapper;
 import com.xueyu.user.mapper.UserViewMapper;
+import com.xueyu.user.pojo.domain.UserGeneral;
+import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserItemList;
 import com.xueyu.user.pojo.vo.UserItemView;
 import com.xueyu.user.pojo.vo.UserView;
@@ -29,6 +32,9 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 
 	@Resource
 	UserViewMapper userViewMapper;
+
+	@Resource
+	UserGeneralMapper userGeneralMapper;
 
 	@Override
 	public List<UserSimpleVO> getUserInfoList(List<Integer> userIdList) {
@@ -119,4 +125,14 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		return res;
 	}
 
+	@Override
+	public UserGeneralVO getUserGeneralInfo(Integer userId) {
+		// 查询除对应内容
+		UserView userInfo = getUserInfo(userId);
+		UserGeneral userGeneral = userGeneralMapper.selectById(userId);
+		UserGeneralVO userGeneralVO = new UserGeneralVO();
+		userGeneralVO.setUserGeneral(userGeneral);
+		userGeneralVO.setUserView(userInfo);
+		return userGeneralVO;
+	}
 }

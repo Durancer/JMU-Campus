@@ -1,5 +1,6 @@
 package com.xueyu.comment.controller;
 
+import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.service.CommentService;
@@ -37,7 +38,13 @@ public class CommentController {
 	 * @return 用户发送的评论列表
 	 */
 	@GetMapping("user/list")
-	public RestResult<List<CommentAnswerVO>> getUserCommentList(@RequestHeader Integer userId) {
+	public RestResult<List<CommentAnswerVO>> getUserCommentList(@RequestHeader(required = false) Integer userId, Integer otherUserId) {
+		if(otherUserId != null){
+			return RestResult.ok(commentService.getUserComments(otherUserId));
+		}
+		if(userId == null){
+			throw new CommentException("参数异常");
+		}
 		return RestResult.ok(commentService.getUserComments(userId));
 	}
 
@@ -81,6 +88,24 @@ public class CommentController {
 			return RestResult.ok(null, "删除成功");
 		}
 		return RestResult.fail("删除失败");
+	}
+
+	/**
+	 * 更新用户评论
+	 *
+	 * @param userId 用户id
+	 * @param commentId 评论id
+	 * @param content 更新内容
+	 * @return
+	 */
+	@PostMapping("update")
+	public RestResult<?> updateUserComment(@RequestHeader Integer userId, @NotNull Integer commentId, String content){
+		Comment comment = new Comment();
+		comment.setId(commentId);
+		comment.setContent(content);
+		comment.setUserId(userId);
+		commentService.updateComment(comment);
+		return RestResult.ok(null, "更新成功");
 	}
 
 }

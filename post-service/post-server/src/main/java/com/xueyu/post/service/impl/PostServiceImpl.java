@@ -111,6 +111,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			vote.setPostId(post.getId());
 			voteService.launchVote(vote,options);
 		}
+		// 发送mq消息
+		PostOperateDTO postOperateDTO = new PostOperateDTO();
+		postOperateDTO.setUserId(post.getUserId());
+		postOperateDTO.setPostId(post.getId());
+		postOperateDTO.setAuthorId(post.getUserId());
+		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postOperateDTO);
 		return true;
 	}
 
@@ -303,17 +309,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setId(postId);
 		post.setStatus(desicion);
 		postMapper.updateById(post);
-		//发送mq信息
-		if(desicion==1){
-			PostView postView = postViewMapper.selectById(postId);
-			UserSimpleVO userSimpleVO = userClient.getUserInfo(postView.getUserId()).getData();
-			PostDTO postDTO = new PostDTO();
-			BeanUtils.copyProperties(postView,postDTO);
-			//html转码
-			postDTO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
-			postDTO.setNickname(userSimpleVO.getNickname());
-			rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_INSERT_KEY, postDTO);
-		}
 	}
 
 	@Override

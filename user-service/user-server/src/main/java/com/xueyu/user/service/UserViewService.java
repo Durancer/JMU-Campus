@@ -1,6 +1,7 @@
 package com.xueyu.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserItemList;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
@@ -62,5 +63,13 @@ public interface UserViewService extends IService<UserView> {
 	 * @return 用户物品信息
 	 */
 	List<UserItemList> getUserListStuff(List<Integer> userIds);
+
+	/**
+	 * 获取用户统计数据 VO
+	 *
+	 * @param userId 用户id
+	 * @return 用户统计数据
+	 */
+	UserGeneralVO getUserGeneralInfo(Integer userId);
 
 }

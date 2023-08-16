@@ -1,8 +1,10 @@
 package com.xueyu.user.controller;
 
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.user.exception.UserException;
 import com.xueyu.user.pojo.bo.Mail;
 import com.xueyu.user.pojo.domain.User;
+import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.service.UserViewService;
@@ -95,6 +97,24 @@ public class UserController {
 		mail.setTo(email);
 		mailService.sendVerificationCode(mail);
 		return RestResult.ok(null, "发送成功");
+	}
+
+	/**
+	 * 获取用户统计数据接口
+	 *
+	 * @param userId 用户id
+	 * @param otherUserId 其它用户id
+	 * @return 用户统计数据
+	 */
+	@GetMapping("general")
+	public RestResult<UserGeneralVO> getUserGeneralInfo(@RequestHeader(required = false) Integer userId, Integer otherUserId){
+		if(otherUserId != null){
+			return RestResult.ok(userViewService.getUserGeneralInfo(otherUserId));
+		}
+		if(userId == null){
+			throw new UserException("参数异常");
+		}
+		return RestResult.ok(userViewService.getUserGeneralInfo(userId));
 	}
 
 }
