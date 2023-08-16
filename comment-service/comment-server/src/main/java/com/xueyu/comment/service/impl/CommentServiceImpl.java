@@ -44,6 +44,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	LikeMapper likeMapper;
 
 	@Resource
+	CommentMapper commentMapper;
+
+	@Resource
 	PostClient postClient;
 
 	@Override
@@ -93,10 +96,21 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		if (comment.getType().equals(CommentType.ROOT.getValue())) {
 			LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 			wrapper.eq(Comment::getRootId, commentId);
+			List<Comment> commentList = commentMapper.selectList(wrapper);
 			deleteNum = query().getBaseMapper().delete(wrapper);
+			List<Integer> ids = new ArrayList<>();
+			for(Comment c : commentList){
+				ids.add(c.getId());
+			}
+			LambdaQueryWrapper<Like> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+			lambdaQueryWrapper.in(Like::getCommentId, ids);
+			likeMapper.delete(lambdaQueryWrapper);
 			log.info("根评论 id -> {} 被删除，连同子评论，共删除 {} 条评论", commentId, deleteNum);
 		} else {
 			deleteNum = query().getBaseMapper().deleteById(commentId);
+			LambdaQueryWrapper<Like> likeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			likeLambdaQueryWrapper.eq(Like::getCommentId, commentId);
+			likeMapper.delete(likeLambdaQueryWrapper);
 			log.info("子评论 id -> {} 被删除", commentId);
 		}
 		// 发送mq消息
