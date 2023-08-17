@@ -3,6 +3,7 @@ package com.xueyu.comment.client;
 import com.xueyu.common.core.result.RestResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -18,6 +19,6 @@ public interface CommentClient {
 	 * @return 帖子评论集合
 	 */
 	@GetMapping("comment/post/list")
-	RestResult<Object> getPostCommentList(@RequestParam Integer postId);
+	RestResult<Object> getPostCommentList(@RequestParam Integer userId, @RequestParam Integer postId);
 
 }

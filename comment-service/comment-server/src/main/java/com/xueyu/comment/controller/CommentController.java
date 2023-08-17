@@ -27,7 +27,7 @@ public class CommentController {
 	 * @return 评论集合
 	 */
 	@GetMapping("post/list")
-	public RestResult<Object> getPostCommentList(@RequestHeader(required = false) Integer userId, @RequestParam Integer postId) {
+	public RestResult<Object> getPostCommentList(@RequestParam(required = false) Integer userId, @RequestParam Integer postId) {
 		return RestResult.ok(commentService.getPostComments(userId,postId));
 	}
 
