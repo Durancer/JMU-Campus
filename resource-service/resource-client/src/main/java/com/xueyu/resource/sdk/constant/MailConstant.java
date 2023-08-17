@@ -1,4 +1,4 @@
-package com.xueyu.user.constant;
+package com.xueyu.resource.sdk.constant;
 
 /**
  * @author durance

@@ -131,8 +131,8 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		UserView userInfo = getUserInfo(userId);
 		UserGeneral userGeneral = userGeneralMapper.selectById(userId);
 		UserGeneralVO userGeneralVO = new UserGeneralVO();
-		userGeneralVO.setUserGeneral(userGeneral);
-		userGeneralVO.setUserView(userInfo);
+		userGeneralVO.setUserData(userGeneral);
+		userGeneralVO.setUserInfo(userInfo);
 		return userGeneralVO;
 	}
 }

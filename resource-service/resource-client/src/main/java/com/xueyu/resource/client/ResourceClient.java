@@ -1,6 +1,7 @@
 package com.xueyu.resource.client;
 
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.resource.sdk.bo.Mail;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +43,14 @@ public interface ResourceClient {
 	 */
 	@PostMapping(value = "/resource/delete/list")
 	RestResult<?> deleteFilesListByFileName(@RequestBody String[] fileNames);
+
+	/**
+	 * 发送系统邮件
+	 *
+	 * @param mail 邮件信息
+	 * @return 发送结果
+	 */
+	@PostMapping(value = "/resource/mail/send")
+	RestResult<?> sendSystemMail(Mail mail);
 
 }

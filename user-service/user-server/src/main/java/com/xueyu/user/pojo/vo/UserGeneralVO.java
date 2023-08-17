@@ -13,8 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserGeneralVO {
 
-    UserView userView;
+    /**
+     * 用户信息
+     */
+    UserView userInfo;
 
-    UserGeneral userGeneral;
+    /**
+     * 用户统计数据
+     */
+    UserGeneral userData;
 
 }

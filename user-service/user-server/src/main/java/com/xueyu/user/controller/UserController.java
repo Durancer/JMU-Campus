@@ -2,13 +2,11 @@ package com.xueyu.user.controller;
 
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.exception.UserException;
-import com.xueyu.user.pojo.bo.Mail;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.service.UserViewService;
-import com.xueyu.user.service.impl.MailServiceImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +23,6 @@ public class UserController {
 
 	@Resource
 	UserService userService;
-
-	@Resource
-	MailServiceImpl mailService;
 
 	@Resource
 	UserViewService userViewService;
@@ -93,9 +88,7 @@ public class UserController {
 	 */
 	@PostMapping("send/code")
 	public RestResult<?> sendUserMail(String email) {
-		Mail mail = new Mail();
-		mail.setTo(email);
-		mailService.sendVerificationCode(mail);
+		userService.sendUserVerifyCode(email);
 		return RestResult.ok(null, "发送成功");
 	}
 

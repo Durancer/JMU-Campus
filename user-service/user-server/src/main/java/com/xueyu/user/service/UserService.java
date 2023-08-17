@@ -36,4 +36,11 @@ public interface UserService extends IService<User> {
 	 */
 	Map<String, Object> loginUserByCode(String email, Integer idencode);
 
+	/**
+	 * 向用户发送验证码邮件
+	 *
+	 * @param email 用户邮箱
+	 */
+	void sendUserVerifyCode(String email);
+
 }
