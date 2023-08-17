@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "comment-server", fallback = CommentClientResolver.class)
 public interface CommentClient {
 
+
 	/**
-	 * 获取帖子评论集合
+	 * 得到邮报评论列表
 	 *
-	 * @param postId 帖子id
-	 * @return 帖子评论集合
+	 * @param userId 用户id
+	 * @param postId post id
+	 * @return {@link RestResult}<{@link Object}>
 	 */
 	@GetMapping("comment/post/list")
 	RestResult<Object> getPostCommentList(@RequestParam Integer userId, @RequestParam Integer postId);

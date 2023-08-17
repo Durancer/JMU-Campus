@@ -281,7 +281,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 查询并设置作者信息
 		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
 		// 查询评论信息
-		postDetailVO.setCommentList(commentClient.getPostCommentList(postId, userId).getData());
+		postDetailVO.setCommentList(commentClient.getPostCommentList(userId, postId).getData());
 		// 设置投票信息
 		VoteVO voteVO;
 		if(userId!=null){
