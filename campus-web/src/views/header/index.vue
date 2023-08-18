@@ -14,10 +14,12 @@
         <template v-if="!userStore.userInfo?.id">
           <div class="login">
             <template v-if="userStore.userInfo">
-              <button type="button" class="btn" @click="handleBtn('loginBtn')">登录</button>
+              <!-- <button type="button" class="btn" @click="handleBtn('loginBtn')">登录</button> -->
+              <RouterLink :to="{ name: 'login' }">登录</RouterLink>
             </template>
             <div class="line"></div>
-            <button type="button" class="btn" @click="handleBtn('register')">注册</button>
+            <!-- <button type="button" class="btn" @click="handleBtn('register')">注册</button> -->
+            <RouterLink :to="{ name: 'register' }">注册</RouterLink>
           </div>
         </template>
         <template v-else>
@@ -52,13 +54,13 @@
       </div>
     </header>
 
-    <el-dialog v-model="loginFlag" title="登录" width="320px" center>
+    <!-- <el-dialog v-model="loginFlag" title="登录" width="320px" center>
       <login @close="close('login')" />
-    </el-dialog>
+    </el-dialog> -->
 
-    <el-dialog v-model="registerFlag" title="注册" width="400px" center>
+    <!-- <el-dialog v-model="registerFlag" title="注册" width="400px" center>
       <register @close="close('register')" />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -73,20 +75,6 @@ import { useUserStore } from '@/stores/userStore.ts'
 import { ArrowDown } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
-const loginFormRef = ref<FormInstance>()
-const registerFormRef = ref<FormInstance>()
-
-const loginFlag = ref(false)
-const registerFlag = ref(false)
-const handleBtn = (str: string) => {
-  if (str === 'loginBtn') {
-    loginFormRef.value?.resetFields()
-    loginFlag.value = true
-  } else if (str === 'register') {
-    registerFormRef.value?.resetFields()
-    registerFlag.value = true
-  }
-}
 
 // const loginStore = useLoginStore()
 const router = useRouter()
@@ -94,15 +82,15 @@ const handlePublish = () => {
   router.push({ name: 'publish' })
 }
 
-const close = (str: string) => {
-  if (str === 'register') {
-    registerFlag.value = false
-  } else if (str === 'login') {
-    console.log('44')
+// const close = (str: string) => {
+//   if (str === 'register') {
+//     registerFlag.value = false
+//   } else if (str === 'login') {
+//     console.log('44')
 
-    loginFlag.value = false
-  }
-}
+//     loginFlag.value = false
+//   }
+// }
 </script>
 
 <style scoped lang="less">

@@ -8,7 +8,9 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
 import _ from 'lodash'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useUserStore } from '@/stores/userStore'
+import { failMessage } from '@/utils/common'
 const props = defineProps({
   likeNum: {
     required: false,
@@ -30,9 +32,16 @@ const emitClickFn = _.debounce(() => {
   }
 }, 1000)
 
+const userStore = useUserStore()
+const isLogin = computed(() => userStore.token)
+
 // 点赞或者取消点赞都需要及时更新颜色和数字
 // 但是只有最后一次才发送http请求
 const clickFn = () => {
+  if (!isLogin.value) {
+    failMessage('请先登录')
+    return
+  }
   // 之前点过赞
   if (tmpIsLike.value) {
     tmpLikeNum.value -= 1

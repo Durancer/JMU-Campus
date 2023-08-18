@@ -21,7 +21,7 @@
   </div>
   <!-- TODO  根据首页和详情页信息进行变动(主要是内容是否完全展示出来) -->
   <template v-if="isDetailPage && voteMessage?.voteId">
-    <el-card>
+    <el-card style="margin-left: 20px">
       <!-- TODO 根据isVote展示是否已经投完票了 -->
       <template #header>
         投票：{{ voteMessage.topic }}{{ voteMessage.type === 'multiple' ? '(多选)' : '(单选)' }}
