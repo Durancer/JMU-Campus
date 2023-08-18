@@ -26,7 +26,7 @@ public interface PostService extends IService<Post> {
 	 * @param options 选项
 	 * @return {@link Boolean}
 	 */
-	Boolean publishPost(Post post, MultipartFile[] files, Vote vote ,String[] options);
+	Boolean publishPost(Post post, MultipartFile[] files, Vote vote ,String[] options,List<Integer> topicIds);
 
 	/**
 	 * 删除帖子
@@ -84,4 +84,6 @@ public interface PostService extends IService<Post> {
 	List<PostListVO> queryByList(List<PostView> list, Integer userId);
 
 	ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId);
+	//通过话题id查询其对应的帖子
+	List<PostDetailVO>  getPostDetailInfoByTopiIds(Integer topicId);
 }

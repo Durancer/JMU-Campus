@@ -78,10 +78,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	CommentClient commentClient;
-
+	@Resource
+	TopicMapper topicMapper;
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options) {
+	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options,List<Integer> topicIds) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
 		//html标签转码
@@ -89,6 +90,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 存入帖子数据，获得主键值
 		query().getBaseMapper().insert(post);
 		log.info("用户 id -> {}, 上传了帖子到审核列表", post.getUserId());
+		//		绑定帖子和话题
+		if(!topicIds.isEmpty()){
+			for (Integer topicId : topicIds) {
+				HashMap<String, Integer> map = new HashMap<>();
+				map.put("topicId",topicId);
+				map.put("postId",post.getId());
+				topicMapper.insertPostTopic(map);
+			}
+		}
 		// 添加数据统计表行数据
 		PostGeneral postGeneral = new PostGeneral();
 		postGeneral.setPostId(post.getId());
@@ -250,6 +260,20 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		return result;
 	}
 
+
+	@Override
+	public List<PostDetailVO>  getPostDetailInfoByTopiIds(Integer topicId) {
+		List<Integer> postIds = postMapper.getPostDetailInfoByTopiId(topicId);
+		ArrayList<PostDetailVO> postDetailVOS = new ArrayList<>();
+		if(!postIds.isEmpty()){
+			for (Integer postId : postIds) {
+				Post post = postMapper.selectById(postId);
+				PostDetailVO postDetailInfo = getPostDetailInfo(postId, post.getUserId());
+				postDetailVOS.add(postDetailInfo);
+			}
+		}
+		return postDetailVOS;
+	}
 
 	@Override
 	public PostDetailVO getPostDetailInfo(Integer postId, Integer userId) {

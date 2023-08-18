@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 帖子服务接口
@@ -33,16 +34,20 @@ public class PostController {
 	 * @param post   帖子信息
 	 * @param files  图片文件
 	 * @param userId 用户id
+	 * @param topicIds 话题id集合
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options) {
+	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<Integer> topicIds) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
+		if(topicIds!=null&&topicIds.size()>3){
+			throw new PostException("最多携带三个话题");
+		}
 		post.setUserId(userId);
-		Boolean sendStatus = postService.publishPost(post, files, vote, options);
+		Boolean sendStatus = postService.publishPost(post, files, vote, options,topicIds);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
 		}
@@ -146,6 +151,17 @@ public class PostController {
 	public RestResult<ListVO<PostListVO>> getStatusPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader(required = false) Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getStatusPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
+	}
+	/**
+	 * 通过话题获取帖子详细信息
+	 *
+	 * @param topicId 话题id
+	 * @return 所有帖子详细信息
+	 */
+	@GetMapping("getdetails")
+	public RestResult<List<PostDetailVO>> get(Integer topicId){
+		List<PostDetailVO> postDetailVOS = postService.getPostDetailInfoByTopiIds(topicId);
+		return RestResult.ok(postDetailVOS);
 	}
 
 }
