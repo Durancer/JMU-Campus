@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class CommentClientResolver implements CommentClient {
 
 	@Override
-	public RestResult<Object> getPostCommentList(Integer postId) {
+	public RestResult<Object> getPostCommentList(Integer userId, Integer postId) {
 		log.error("comment 服务异常：getPostCommentList 请求失败");
 		return new RestResult<>(503, "fail");
 	}
