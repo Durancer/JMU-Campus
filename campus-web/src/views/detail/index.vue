@@ -19,32 +19,9 @@
       <template v-for="comment in post.commentList" :key="comment.id">
         <!-- 根评论 -->
         <div class="comment-item">
-          <UserInfo v-bind="post.userInfo" :create-time="post.createTime"></UserInfo>
+          <UserInfo v-bind="comment.userInfo" :create-time="comment.createTime"></UserInfo>
           <div class="comment-content">{{ comment.content }}</div>
-          <div class="footer" :class="{ active: comment.isLike === true }">
-            <!-- 点赞 -->
-            <Like
-              :likeNum="comment.hot"
-              :isLike="comment.isLike"
-              @like-click="commentLikeFn(comment.id)"
-            ></Like>
-            <span @click="reply(comment)">{{ isReplying ? '取消回复' : '回复TA' }}</span>
-            <el-popconfirm
-              confirm-button-text="确定"
-              width="240"
-              cancel-button-text="取消"
-              title="真的要删除这条评论吗?"
-              @confirm="deleteCommentFn(comment.id)"
-            >
-              <template #reference>
-                <span>删除</span>
-              </template>
-            </el-popconfirm>
-          </div>
-          <div v-show="isReplying">
-            <el-input v-model="subCommentContent" :placeholder="subPlaceholder"></el-input>
-            <el-button type="primary" @click="submitSubComment">提交子评论</el-button>
-          </div>
+          <CommentFooter v-bind="comment"></CommentFooter>
         </div>
         <!-- 子评论 -->
         <div class="sub-comment" v-if="comment.answerCommentList?.length > 0">
@@ -60,33 +37,7 @@
                     {{ subComment.userInfo.nickname }} > {{ subComment.answerUserInfo.nickname }}
                   </div>
                   <div class="sub-comment-content-content">{{ subComment.content }}</div>
-
-                  <div class="sub-comment-content-footer">
-                    {{ subComment.createTime }}
-                    <Like
-                      :likeNum="subComment.hot"
-                      :isLike="subComment.isLike"
-                      @like-click="commentLikeFn(subComment.id)"
-                    ></Like>
-                    <span @click="reply(subComment, false)">{{
-                      isSubReplying ? '取消回复' : '回复TA'
-                    }}</span>
-                    <el-popconfirm
-                      width="240"
-                      confirm-button-text="确定"
-                      cancel-button-text="取消"
-                      title="真的要删除这条评论吗?"
-                      @confirm="deleteCommentFn(subComment.id)"
-                    >
-                      <template #reference>
-                        <span class="comment-delete-btn">删除</span>
-                      </template>
-                    </el-popconfirm>
-                  </div>
-                  <div v-show="isSubReplying && subComment.id === isSubReplyingId">
-                    <el-input v-model="subCommentContent" :placeholder="subPlaceholder"></el-input>
-                    <el-button type="primary" @click="submitSubComment">提交子评论</el-button>
-                  </div>
+                  <CommentFooter v-bind="subComment"></CommentFooter>
                 </div>
               </div>
               <el-divider />
@@ -133,7 +84,7 @@ import { addComment, likeComment, deleteComment } from '@/api/comments/index.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PostItem from '@/components/PostItem.vue'
-import { failMessage, sucMessage } from '@/utils/common'
+import { failMessage, handleTime, sucMessage } from '@/utils/common'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
 import { InfoFilled } from '@element-plus/icons-vue'
@@ -180,7 +131,7 @@ const addCommentCommon = async (data) => {
     failMessage('请先登录在进行评论')
     return
   }
-  if (!comment.value && !subCommentContent.value) {
+  if (!comment.value) {
     failMessage('评论不能为空')
   } else {
     const res = await addComment(data)
@@ -194,58 +145,6 @@ const addCommentCommon = async (data) => {
   }
 }
 onMounted(() => getPostDetailFn(route.params.postId as string))
-// 回复帖子
-const subPlaceholder = ref('')
-const type = ref('root')
-let subCommentData = ref({})
-const subCommentContent = ref('')
-const isReplying = ref(false)
-const isSubReplying = ref(false)
-const isSubReplyingId = ref(0)
-const reply = (comment, status = true) => {
-  const {
-    postId,
-    rootId,
-    userInfo: { id: toUserId, nickname }
-  } = comment
-  let data = {
-    postId,
-    type: 'answer',
-    rootId,
-    toUserId
-  }
-  subPlaceholder.value = '回复:' + nickname
-  console.log(subPlaceholder.value)
-  subCommentData.value = data
-  if (status) {
-    // 根评论进行回复
-    isReplying.value = !isReplying.value
-  } else {
-    // 子评论进行回复
-    isSubReplying.value = !isSubReplying.value
-    isSubReplyingId.value = comment.id
-  }
-}
-// 提交子评论
-const submitSubComment = () => {
-  subCommentData.value.content = subCommentContent.value
-  addCommentCommon(subCommentData.value)
-}
-// 评论点赞点踩
-const commentLikeFn = async (commentId) => {
-  const userId = userStore.userInfo?.id
-  const res = await likeComment(commentId, userId)
-  if (res.status) {
-    sucMessage(res.message)
-  }
-}
-// 删除评论
-const deleteCommentFn = async (commentId) => {
-  const res = await deleteComment(commentId)
-  if (res.status) {
-    sucMessage(res.message)
-  }
-}
 </script>
 
 <style lang="less" scoped>
@@ -257,8 +156,8 @@ const deleteCommentFn = async (commentId) => {
 .footer {
   display: flex;
   align-items: center;
-  span {
-    margin-right: 5px;
+  .reply {
+    margin: 0 1em 0 0.5em;
   }
   .myicon {
     width: 1em;
@@ -311,5 +210,13 @@ const deleteCommentFn = async (commentId) => {
 }
 .comment-delete-btn:hover {
   color: red;
+}
+.reply,
+.comment-delete-btn {
+  cursor: pointer;
+}
+
+.reply:hover {
+  color: aqua;
 }
 </style>

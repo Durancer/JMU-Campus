@@ -2,8 +2,6 @@ import { ref, reactive, computed } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import router from '@/router'
 import 'element-plus/es/components/message/style/css'
-import { localCache } from '@/utils/cache.ts'
-import { LOGIN_TOKEN } from '@/global/constants'
 import { failMessage, sucMessage } from '@/utils/common.ts'
 import { login, updateUserinfo, getUserDetail } from '@/api/user/index.ts'
 
@@ -19,6 +17,7 @@ export const useUserStore = defineStore(
         token.value = res.data.token
         userInfo.value = res.data.userInfo
         sucMessage('登录成功')
+        router.push({ name: 'index' })
       }
     }
     async function getUserDetailFn(userId: number) {

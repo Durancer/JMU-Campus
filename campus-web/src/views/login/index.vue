@@ -53,12 +53,9 @@ const loginRules = reactive<FormRules<APILoginForm>>({
   password: [{ required: true, message: '请输入账号密码', trigger: 'blur' }]
 })
 
-const loginFlag = ref(false)
-
 const handleBtn = async (str: string) => {
   try {
     await userStore.loginFn(loginForm)
-    emits('close')
   } catch (err) {}
 }
 

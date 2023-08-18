@@ -5,12 +5,13 @@
     </div>
     <div class="user-info">
       <div>{{ nickname }}</div>
-      <div>{{ createTime }}</div>
+      <div>{{ handleTime(createTime) }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { handleTime } from '@/utils/common.ts'
 interface Props {
   avatarUrl: string
   nickname: string
