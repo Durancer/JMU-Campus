@@ -1,6 +1,5 @@
-package com.xueyu.user.pojo.bo;
+package com.xueyu.resource.sdk.bo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +54,7 @@ public class Mail {
 	/**
 	 * 邮件附件
 	 */
-	@JsonIgnore
+//	@JsonIgnore
 	private MultipartFile[] multipartFiles;
 
 }

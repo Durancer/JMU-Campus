@@ -2,6 +2,10 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.common.core.result.RestResult;
+import com.xueyu.resource.client.ResourceClient;
+import com.xueyu.resource.sdk.bo.Mail;
+import com.xueyu.resource.sdk.constant.MailConstant;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.mapper.UserGeneralMapper;
 import com.xueyu.user.mapper.UserMapper;
@@ -21,8 +25,9 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import static com.xueyu.user.constant.MailConstant.CODE_KEY_PREFIX;
+import static com.xueyu.resource.sdk.constant.MailConstant.CODE_KEY_PREFIX;
 
 /**
  * @author durance
@@ -42,6 +47,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Resource
 	RedisTemplate<String, Integer> redisTemplate;
+
+	@Resource
+	ResourceClient resourceClient;
 
 	@Override
 	public Boolean registerUser(User user, Integer idencode) {
@@ -101,6 +109,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		res.put("userInfo", userView);
 		log.info("用户 id -> {}, 进行了登录操作", user.getId());
 		return res;
+	}
+
+	@Override
+	public void sendUserVerifyCode(String email) {
+		// todo 限制单ip邮箱发送量
+		// 判断当前待发送邮箱是否已经有验证码
+		String key = MailConstant.CODE_KEY_PREFIX + email;
+		Integer code = redisTemplate.opsForValue().get(key);
+		if (code != null) {
+			throw new UserException("当前邮箱已经发送验证码");
+		}
+		// 生成随机 6位验证码
+		int idenCode = (int) ((Math.random() * 9 + 1) * 100000);
+		// 封装邮件内容
+		String subject = "欢迎进入 i集大校园，快来遇见校友吧！";
+		String content = "【i集大校园】您正在注册/登录 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。";
+		redisTemplate.opsForValue().set(key, idenCode, 60, TimeUnit.SECONDS);
+		// 发送邮件
+		Mail mail = new Mail();
+		mail.setTo(email);
+		mail.setSubject(subject);
+		mail.setText(content);
+		RestResult<?> restResult = resourceClient.sendSystemMail(mail);
+		// todo 将响应码在公共模块构建枚举类记录
+		if(!restResult.getCode().equals(200)){
+			// 如果发送失败删除redis验证码数据
+			redisTemplate.delete(key);
+			throw new UserException(restResult.getMessage());
+		}
 	}
 
 	@Override
