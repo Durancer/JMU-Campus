@@ -1,5 +1,6 @@
 package com.xueyu.user.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.pojo.bo.Mail;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Email;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +56,7 @@ public class UserController {
 		if (userService.registerUser(user, idencode)) {
 			return RestResult.ok(null, "注册成功");
 		}
-		return RestResult.fail("已存在相同的的用户名或电话");
+		return RestResult.fail("已存在相同的的用户名或电话或邮箱");
 	}
 
 	/**
@@ -107,14 +109,60 @@ public class UserController {
 	 * @return 用户统计数据
 	 */
 	@GetMapping("general")
-	public RestResult<UserGeneralVO> getUserGeneralInfo(@RequestHeader(required = false) Integer userId, Integer otherUserId){
-		if(otherUserId != null){
+	public RestResult<UserGeneralVO> getUserGeneralInfo(@RequestHeader(required = false) Integer userId, Integer otherUserId) {
+		if (otherUserId != null) {
 			return RestResult.ok(userViewService.getUserGeneralInfo(otherUserId));
 		}
-		if(userId == null){
+		if (userId == null) {
 			throw new UserException("参数异常");
 		}
 		return RestResult.ok(userViewService.getUserGeneralInfo(userId));
+	}
+
+	/**
+	 * 核对是否已存在该邮箱
+	 *
+	 * @param email 邮箱
+	 * @return 核对结果
+	 */
+	@GetMapping("check/email")
+	public RestResult<Boolean> checkUserEmail(@NotNull String email) {
+		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(User::getEmail, email);
+		User check = userService.getOne(wrapper);
+		if (check == null) {
+			return RestResult.ok(false);
+		}
+		return RestResult.ok(true, "已存在相同的邮箱");
+	}
+
+	/**
+	 * 核对是否已存在该用户名
+	 *
+	 * @param username 邮箱
+	 * @return 核对结果
+	 */
+	@GetMapping("check/username")
+	public RestResult<Boolean> checkUsername(@NotNull String username) {
+		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(User::getUsername, username);
+		User check = userService.getOne(wrapper);
+		if (check == null) {
+			return RestResult.ok(false);
+		}
+		return RestResult.ok(true, "已存在相同的用户名");
+	}
+
+	/**
+	 * 根据用户名和名称搜索用户
+	 *
+	 * @param username 用户名
+	 * @return 用户列表
+	 */
+	@GetMapping("search")
+	public RestResult<List<UserView>> getUserBySearch(@NotNull String username) {
+		List<UserView> userViewList = userViewService.getUserListBySearch(username);
+		return RestResult.ok(userViewList);
 	}
 
 }

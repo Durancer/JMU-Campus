@@ -296,7 +296,105 @@
 }
 ```
 
+#### 查看邮箱是否已注册
 
+```
+请求地址：/user/check/email
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段  | 类型   | 含义     | 必填 |
+| ----- | ------ | -------- | ---- |
+| email | String | 用户邮箱 | 是   |
+
+**出参**
+
+已存在
+
+```json
+{
+    "code": 200,
+    "message": "已存在相同的邮箱",
+    "data": true,
+    "status": true
+}
+```
+
+不存在
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": false,
+    "status": true
+}
+```
+
+#### 查看用户名是否已注册
+
+```
+请求地址：/user/check/username
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段     | 类型   | 含义   | 必填 |
+| -------- | ------ | ------ | ---- |
+| username | String | 用户名 | 是   |
+
+**出参**
+
+已存在
+
+```json
+{
+    "code": 200,
+    "message": "已存在相同的用户名",
+    "data": true,
+    "status": true
+}
+```
+
+不存在
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": false,
+    "status": true
+}
+```
+
+#### 搜索用户列表
+
+将把用户名 和 名称包含的结果搜索出来
+
+```
+请求地址：/user/search
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段     | 类型   | 含义         | 必填 |
+| -------- | ------ | ------------ | ---- |
+| username | String | 账号 or 名称 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
 
 
 

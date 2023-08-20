@@ -135,4 +135,11 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		userGeneralVO.setUserView(userInfo);
 		return userGeneralVO;
 	}
+
+	@Override
+	public List<UserView> getUserListBySearch(String username) {
+		LambdaQueryWrapper<UserView> wrapper = new LambdaQueryWrapper<>();
+		wrapper.like(UserView::getUsername, username).or().like(UserView::getNickname, username);
+		return query().getBaseMapper().selectList(wrapper);
+	}
 }

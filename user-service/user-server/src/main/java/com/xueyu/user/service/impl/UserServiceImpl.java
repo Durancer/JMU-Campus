@@ -53,7 +53,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 检查用户注册参数
 		verifyUserInfo(user);
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(User::getPhone, user.getPhone()).or().eq(User::getUsername, user.getUsername());
+		wrapper.eq(User::getPhone, user.getPhone())
+				.or().eq(User::getUsername, user.getUsername())
+				.or().eq(User::getEmail, user.getEmail());
 		User check = userMapper.selectOne(wrapper);
 		// 不为null说明已经创建改用户
 		if (check != null) {
@@ -63,6 +65,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		user.setCreateTime(time);
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
+		// 判断头像
+		if (user.getSex() == null) {
+			user.setSex(UserGenderEnum.HIDE.getCode());
+		}
+		if (user.getSex().equals(UserGenderEnum.BOY.getCode())) {
+			user.setAvatar("default_boy.png");
+		} else if (user.getSex().equals(UserGenderEnum.GIRL.getCode())) {
+			user.setAvatar("default_girl.png");
+		}
 		userMapper.insert(user);
 		log.info("用户id -> {}, 邮箱 -> {}, 注册成功", user.getId(), user.getEmail());
 		// 创建数据统计表行数据

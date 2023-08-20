@@ -72,4 +72,12 @@ public interface UserViewService extends IService<UserView> {
 	 */
 	UserGeneralVO getUserGeneralInfo(Integer userId);
 
+	/**
+	 * 根据用户名搜索用户列表
+	 *
+	 * @param username 用户名
+	 * @return 用户列表
+	 */
+	List<UserView> getUserListBySearch(String username);
+
 }

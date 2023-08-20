@@ -65,7 +65,10 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 		}
 		// 如果不为默认头像，删除原来的头像文件
 		String originName = check.getAvatar();
-		if (!"default.jpg".equals(originName)) {
+		if (!("default.jpg".equals(originName) ||
+				"default_boy.png".equals(originName) ||
+				"default_girl.png".equals(originName)
+		)) {
 			resourceClient.deleteFileByFileName(originName);
 		}
 		// 进行头像保存，获取文件名
