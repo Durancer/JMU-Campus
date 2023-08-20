@@ -24,7 +24,7 @@ i集大校园软件服务端
 - QQ交流群：294590170 
 - 欢迎加入参与贡献！🌹
 
-<img src="https://user-images.githubusercontent.com/102197880/218965642-d4e4643b-1f01-4b8c-9e1e-124f6b99f993.png" alt="" align="center"/>
+<img src="https://user-images.githubusercontent.com/102197880/261830919-5d54c286-6ac5-418a-895e-8d2c23b1c7e3.jpg" alt="" align="center" style="width: 300px"/>
 
 ### 项目模块
 本项目基于 **SpringCloud Alibaba** 实现微服务架构项目。
