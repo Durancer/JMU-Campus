@@ -4,100 +4,79 @@
       <div class="header_nav">
         <div>
           <RouterLink :to="{ name: 'index' }">
-            <img class="logo-img" src="@/assets/img/logo.jpg" alt="" />
+            <SvgIcon name="logo" size="3em"></SvgIcon>
           </RouterLink>
         </div>
         <div @click="$router.push({ name: 'admin' })">admin</div>
         <div>
           <input type="text" placeholder="搜索" class="searcher" />
         </div>
-        <template v-if="!userStore.userInfo?.id">
-          <div class="login">
-            <template v-if="userStore.userInfo">
-              <!-- <button type="button" class="btn" @click="handleBtn('loginBtn')">登录</button> -->
+        <div class="header-right">
+          <template v-if="!userStore.userInfo?.id">
+            <div class="login">
               <RouterLink :to="{ name: 'login' }">登录</RouterLink>
-            </template>
-            <div class="line"></div>
-            <!-- <button type="button" class="btn" @click="handleBtn('register')">注册</button> -->
-            <RouterLink :to="{ name: 'register' }">注册</RouterLink>
-          </div>
-        </template>
-        <template v-else>
-          <div style="display: inline-flex; align-items: center">
-            <el-dropdown>
-              <!-- 失去了响应性 -->
-              <el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
-              <!--todo 为啥放到这里不行 -->
-              <el-icon><arrow-down /></el-icon>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="$router.push({ name: 'account' })"
-                    >修改信息</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    @click="
-                      $router.push({ name: 'history', params: { userId: userStore.userInfo.id } })
-                    "
-                    >我的历史记录</el-dropdown-item
-                  >
-                  <el-dropdown-item @click="userStore.logoutFn">退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-            <div class="intro">
-              <span>昵称: {{ userStore.userInfo?.nickname }}</span>
-              <span>自我介绍: {{ userStore.userInfo?.introduce }}</span>
             </div>
-          </div>
-        </template>
-        <div class="publish" @click="handlePublish">发布</div>
+            <div class="registr">
+              <RouterLink :to="{ name: 'register' }">注册</RouterLink>
+            </div>
+          </template>
+          <template v-else>
+            <div style="display: inline-flex; align-items: center">
+              <el-dropdown>
+                <!-- 失去了响应性 -->
+                <el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
+                <!--todo 为啥放到这里不行 -->
+                <el-icon><arrow-down /></el-icon>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="$router.push({ name: 'account' })"
+                      >修改信息</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      @click="
+                        $router.push({ name: 'history', params: { userId: userStore.userInfo.id } })
+                      "
+                      >我的历史记录</el-dropdown-item
+                    >
+                    <el-dropdown-item @click="userStore.logoutFn">退出登录</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <div class="intro">
+                <span>昵称: {{ userStore.userInfo?.nickname }}</span>
+                <span>自我介绍: {{ userStore.userInfo?.introduce }}</span>
+              </div>
+            </div>
+          </template>
+          <div class="publish" @click="handlePublish">发布</div>
+        </div>
       </div>
     </header>
-
-    <!-- <el-dialog v-model="loginFlag" title="登录" width="320px" center>
-      <login @close="close('login')" />
-    </el-dialog> -->
-
-    <!-- <el-dialog v-model="registerFlag" title="注册" width="400px" center>
-      <register @close="close('register')" />
-    </el-dialog> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import login from './cpn/login.vue'
-import register from './cpn/register.vue'
-import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
 import { ArrowDown } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 
 const userStore = useUserStore()
 
-// const loginStore = useLoginStore()
 const router = useRouter()
 const handlePublish = () => {
   router.push({ name: 'publish' })
 }
-
-// const close = (str: string) => {
-//   if (str === 'register') {
-//     registerFlag.value = false
-//   } else if (str === 'login') {
-//     console.log('44')
-
-//     loginFlag.value = false
-//   }
-// }
 </script>
 
 <style scoped lang="less">
 .header {
+  background-color: #fff;
+  box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent, 0 1px 4px 0 rgba(0, 0, 0, 0.02),
+    0 2px 12px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.02);
   .header_nav {
     max-width: 1122px;
-    height: 100%;
+    height: 56px;
     margin: auto;
     display: flex;
     align-items: center;
@@ -106,46 +85,6 @@ const handlePublish = () => {
     .logo-img {
       padding: 10px;
       width: 40px;
-    }
-
-    .login {
-      position: relative;
-      color: #007fff;
-      padding: 0;
-      cursor: default;
-      font-size: 14px;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(30, 128, 255, 0.05);
-      border: 1px solid rgba(30, 128, 255, 0.3);
-      border-radius: 4px;
-      line-height: 26px;
-      font-weight: 400;
-      overflow: hidden;
-
-      .btn {
-        outline: none;
-        border: none;
-        padding: 3px 12px;
-        color: #007fff;
-        line-height: 1.9rem;
-        font-size: 14px;
-        font-weight: 400;
-        height: 36px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .line {
-        background-color: #abcdff;
-        height: 12px;
-        width: 1px;
-      }
     }
 
     .intro {
@@ -167,6 +106,13 @@ const handlePublish = () => {
       justify-content: center;
       line-height: 14px;
       width: 60px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      div {
+        margin-right: 30px;
+      }
     }
   }
 }
