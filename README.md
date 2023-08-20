@@ -28,12 +28,16 @@ i集大校园软件服务端
 
 ### 项目模块
 本项目基于 **SpringCloud Alibaba** 实现微服务架构项目。
-预估服务包含：**网关服务**、**资源服务**、**聊天服务**、**帖子服务**、**留言服务**、**用户服务**等再继续进行拓展
-![image](https://user-images.githubusercontent.com/102197880/214082236-c481fa90-1ef7-4aca-82a1-a0816684b36e.png)
+服务包含：**网关服务**、**资源服务**、**聊天服务**、**帖子服务**、**评论服务**、**用户服务** 等将再继续进行拓展
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/102197880/261855760-9e080e89-6fc7-4030-8372-9e3f8c4422d7.png" alt="" align="middle" style="width: 80%"/>
+</p>
+
 
 ### 项目技术架构图
 <p align="center">
-<img src="https://user-images.githubusercontent.com/102197880/217150800-47d82bca-c18a-4093-a021-b1a4e6555ae1.png" style="width: 80%"/>
+<img src="https://github.com/Durancer/JMU-Campus/assets/102197880/90f4cdbb-86b8-4493-86d0-0f753e99aeb6" style="width: 80%"/>
 </p>
 
 ### 技术选型
