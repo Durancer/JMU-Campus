@@ -41,6 +41,7 @@ declare module 'vue' {
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
     UserInfo: typeof import('./src/components/UserInfo.vue')['default']
     Vote: typeof import('./src/components/Vote.vue')['default']
+    VoteCard: typeof import('./src/components/VoteCard.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']

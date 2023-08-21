@@ -12,67 +12,71 @@
       />
       <el-button type="primary" @click="addCommentFn" style="margin-top: 10px">增加评论</el-button>
     </div>
-    <el-divider content-position="center">评论</el-divider>
-    <!-- 评论 -->
-    <template v-if="post.commentList?.length >= 1">
-      <!-- 评论列表 -->
-      <template v-for="comment in post.commentList" :key="comment.id">
-        <!-- 根评论 -->
-        <div class="comment-item">
-          <UserInfo v-bind="comment.userInfo" :create-time="comment.createTime"></UserInfo>
-          <div class="comment-content">{{ comment.content }}</div>
-          <CommentFooter v-bind="comment"></CommentFooter>
-        </div>
-        <!-- 子评论 -->
-        <div class="sub-comment" v-if="comment.answerCommentList?.length > 0">
-          <el-card>
-            <div v-for="subComment in comment.answerCommentList" :key="subComment.id">
-              <!-- 子评论卡片 -->
-              <div class="sub-comment-card">
-                <div class="sub-comment-item">
-                  <el-avatar :src="subComment.userInfo.avatarUrl" :size="20"></el-avatar>
-                </div>
-                <div class="sub-comment-content">
-                  <div class="sub-comment-content-title">
-                    {{ subComment.userInfo.nickname }} > {{ subComment.answerUserInfo.nickname }}
+    <div style="margin-left: 20px">
+      <el-divider content-position="center">评论</el-divider>
+      <!-- 评论 -->
+      <template v-if="post.commentList?.length >= 1">
+        <!-- 评论列表 -->
+        <template v-for="comment in post.commentList" :key="comment.id">
+          <!-- 根评论 -->
+          <div class="comment-item">
+            <UserInfo v-bind="comment.userInfo" :create-time="comment.createTime"></UserInfo>
+            <div class="comment-content">{{ comment.content }}</div>
+            <CommentFooter v-bind="comment"></CommentFooter>
+          </div>
+          <!-- 子评论 -->
+          <div class="sub-comment" v-if="comment.answerCommentList?.length > 0">
+            <el-card>
+              <div v-for="(subComment, idx) in comment.answerCommentList" :key="subComment.id">
+                <!-- 子评论卡片 -->
+                <div class="sub-comment-card">
+                  <div class="sub-comment-item">
+                    <el-avatar :src="subComment.userInfo.avatarUrl" :size="20"></el-avatar>
                   </div>
-                  <div class="sub-comment-content-content">{{ subComment.content }}</div>
-                  <CommentFooter v-bind="subComment"></CommentFooter>
+                  <div class="sub-comment-content">
+                    <div class="sub-comment-content-title">
+                      {{ subComment.userInfo.nickname }}
+                      <span class="reply_text">回复</span>
+                      {{ subComment.answerUserInfo.nickname }}
+                    </div>
+                    <div class="sub-comment-content-content">{{ subComment.content }}</div>
+                    <CommentFooter v-bind="subComment"></CommentFooter>
+                  </div>
                 </div>
+                <el-divider v-if="idx !== comment.answerCommentList?.length - 1" />
               </div>
-              <el-divider />
-            </div>
-          </el-card>
-        </div>
-        <el-divider />
+            </el-card>
+          </div>
+          <el-divider />
+        </template>
       </template>
-    </template>
-    <template v-else>暂时还没有评论</template>
+      <template v-else>暂时还没有评论</template>
 
-    <!-- 删除帖子 -->
-    <template v-if="isDelete">
-      <div>
-        <el-popconfirm
-          width="220"
-          confirm-button-text="确定"
-          cancel-button-text="取消"
-          :icon="InfoFilled"
-          icon-color="#626AEF"
-          title="是否要删除这篇帖子?"
-          @confirm="deletePostFn(post.id)"
-        >
-          <template #reference>
-            <el-button type="danger">删除这篇帖子</el-button>
-          </template>
-        </el-popconfirm>
-        <el-button
-          type="danger"
-          @click="deleteVoteFn(post.voteMessage?.voteId)"
-          v-if="post.voteMessage?.voteId"
-          >删除投票</el-button
-        >
-      </div>
-    </template>
+      <!-- 删除帖子 -->
+      <template v-if="isDelete">
+        <div class="delete-btn">
+          <el-popconfirm
+            width="220"
+            confirm-button-text="确定"
+            cancel-button-text="取消"
+            :icon="InfoFilled"
+            icon-color="#626AEF"
+            title="是否要删除这篇帖子?"
+            @confirm="deletePostFn(post.id)"
+          >
+            <template #reference>
+              <el-button type="danger">删除这篇帖子</el-button>
+            </template>
+          </el-popconfirm>
+          <el-button
+            type="danger"
+            @click="deleteVoteFn(post.voteMessage?.voteId)"
+            v-if="post.voteMessage?.voteId"
+            >删除投票</el-button
+          >
+        </div>
+      </template>
+    </div>
   </template>
   <template v-else>还在加载中...</template>
   <!-- 后面优化 -->
@@ -173,12 +177,27 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
   padding: 0 20px;
   .el-card {
     margin-left: 20px;
-    background-color: rgb(248, 248, 248);
+  }
+  &:deep(.el-card) {
+    background-color: #f8f8f8;
+    border-radius: 12px;
+    // margin-top: 16px;
+    border: none;
+    // padding: 4px 0;
+  }
+  &:deep(.el-card__body) {
+    padding: 0;
+  }
+  &:deep(.el-divider) {
+    margin: 5px 0;
   }
 }
 .sub-comment-card {
-  margin-left: ;
+  // margin-left: ; background: ;
   display: flex;
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-top: 12px;
   .sub-comment-content {
     display: flex;
     flex-direction: column;
@@ -186,14 +205,24 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
   }
   .sub-comment-content-title {
     display: flex;
-    // align-items: center;
+    align-items: center;
     height: 20px;
     line-height: 20px;
     font-size: 1.2em;
+    .reply_text {
+      color: #888;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
   }
 }
 .comment-root-wrapper {
-  padding: 20px;
+  padding: 20px 0 20px 20px;
+  .el-input {
+    width: 100%;
+  }
 }
 .sub-comment-content-content {
   margin: 5px 0;
@@ -218,5 +247,11 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
 
 .reply:hover {
   color: aqua;
+}
+.el-divider {
+  margin: 20px 0 0;
+}
+.delete-btn {
+  margin-top: 20px;
 }
 </style>

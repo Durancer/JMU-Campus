@@ -19,7 +19,11 @@
     </el-popconfirm>
   </div>
   <div v-show="isReplying && isReplyingId === id">
-    <el-input v-model="subCommentContent" :placeholder="subPlaceholder"></el-input>
+    <el-input
+      class="sub-input"
+      v-model="subCommentContent"
+      :placeholder="subPlaceholder"
+    ></el-input>
     <el-button type="primary" @click="submitSubComment">提交子评论</el-button>
   </div>
 </template>
@@ -121,6 +125,7 @@ const deleteCommentFn = async () => {
   align-items: center;
   .reply {
     margin: 0 1em 0 0.5em;
+    cursor: pointer;
   }
   .myicon {
     width: 1em;
@@ -131,5 +136,11 @@ const deleteCommentFn = async () => {
   .active {
     color: red;
   }
+}
+.el-tooltip__trigger {
+  cursor: pointer;
+}
+.sub-input {
+  margin: 10px 0;
 }
 </style>
