@@ -2,6 +2,7 @@ package com.xueyu.post.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.post.exception.PostException;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -17,9 +19,9 @@ import java.util.List;
  * 话题服务接口
  */
 @RestController
-@RequestMapping("topic")
+@RequestMapping("post/topic")
 public class TopicController {
-    @Autowired
+    @Resource
     private TopicService topicService;
     /**
      * 查看所有话题
@@ -27,7 +29,7 @@ public class TopicController {
      * @return 所有话题详细信息
      */
     @GetMapping("list")
-    public RestResult list(){
+    public RestResult<List> list(){
         List<Topic> list = topicService.list();
         return RestResult.ok(list);
 
@@ -39,7 +41,7 @@ public class TopicController {
      * @return 话题信息
      */
     @GetMapping("listByName")
-    public RestResult  listByName(String name){
+    public RestResult<List>  listByName(String name){
         LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(Topic::getName,name);
         List<Topic> topicList = topicService.list(wrapper);
@@ -53,19 +55,15 @@ public class TopicController {
      * @return 添加结果
      */
     @PostMapping("add")
-    public RestResult add(Topic topic){
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        topic.setCreateTime(now);
+    public RestResult<?> add(Topic topic){
         int TOPIC_LENGTH=15;
-        int topic_length = topic.getName().length();
-        if(topic_length>TOPIC_LENGTH){
-            return RestResult.fail("话题长度不能超过15个字");
+        if(topic.getName().length()>TOPIC_LENGTH){
+            throw new PostException("话题长度不能超过15个字");
         }
-        int topicNumber = topicService.listByNamenumber(topic.getName());
-        if(topicNumber==0){
-            topicService.save(topic);
-            return RestResult.ok(200,"创建成功");
+        Boolean result = topicService.creatTopic(topic);
+        if(!result){
+            return RestResult.fail("创建失败");
         }
-        return RestResult.fail("该话题已经被创建");
+        return RestResult.ok(null,"创建成功");
     }
 }

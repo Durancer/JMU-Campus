@@ -34,20 +34,20 @@ public class PostController {
 	 * @param post   帖子信息
 	 * @param files  图片文件
 	 * @param userId 用户id
-	 * @param topicIds 话题id集合
+	 * @param names 话题名称集合
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<Integer> topicIds) {
+	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<String> names) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
-		if(topicIds!=null&&topicIds.size()>3){
+		if(names!=null&&names.size()>3){
 			throw new PostException("最多携带三个话题");
 		}
 		post.setUserId(userId);
-		Boolean sendStatus = postService.publishPost(post, files, vote, options,topicIds);
+		Boolean sendStatus = postService.publishPost(post, files, vote, options,names);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
 		}
@@ -159,9 +159,9 @@ public class PostController {
 	 * @return 所有帖子详细信息
 	 */
 	@GetMapping("getdetails")
-	public RestResult<List<PostDetailVO>> get(Integer topicId){
-		List<PostDetailVO> postDetailVOS = postService.getPostDetailInfoByTopiIds(topicId);
-		return RestResult.ok(postDetailVOS);
+	public RestResult<List<PostListVO>> get(Integer topicId){
+		List<PostListVO> postDetailInfoByTopiIds = postService.getPostDetailInfoByTopiIds(topicId);
+		return RestResult.ok(postDetailInfoByTopiIds);
 	}
 
 }
