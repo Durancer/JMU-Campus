@@ -1,6 +1,7 @@
 package com.xueyu.post.pojo.vo;
 
 import com.xueyu.post.pojo.bo.ImageAnnexView;
+import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.Data;
 
@@ -49,6 +50,11 @@ public class PostListVO {
 	 * 投票信息
 	 */
 	VoteVO voteMessage;
+
+	/**
+	 * 帖子话题
+	 */
+	List<Topic> topics;
 
 	/**
 	 * 点赞用户列表

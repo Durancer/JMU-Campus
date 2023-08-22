@@ -7,6 +7,7 @@ import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -82,9 +83,25 @@ public interface PostService extends IService<Post> {
 	 * @param userId 用户id
 	 * @return {@link List}<{@link PostListVO}>
 	 */
-	List<PostListVO> queryByList(List<PostView> list, Integer userId);
+	List<PostListVO> queryPostList(List<PostView> list, Integer userId);
 
+	/**
+	 * 分页获取未审核的帖子
+	 *
+	 * @param current 当前页
+	 * @param size 页大小
+	 * @param userId 用户id
+	 * @return 帖子信息
+	 */
 	ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId);
-	//通过话题id查询其对应的帖子详情
-	List<PostListVO>  getPostDetailInfoByTopiIds(Integer topicId);
+
+	/**
+	 * 通过话题id查询其对应的帖子详情
+	 *
+	 * @param topicName 话题名称
+	 * @param userId 用户id
+	 * @return 帖子列表
+	 */
+	List<PostListVO>  getPostListByTopicIds(String topicName, Integer userId);
+
 }

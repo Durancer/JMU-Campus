@@ -19,10 +19,12 @@ public class Topic {
     @TableId
     Integer id;
 
+    /**
+     * 话题名称
+     */
     String name;
 
     /**
-     *
      *  话题创建时间
      */
     Timestamp createTime;

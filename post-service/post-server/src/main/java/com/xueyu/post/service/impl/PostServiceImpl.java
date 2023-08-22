@@ -15,10 +15,10 @@ import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.pojo.vo.VoteVO;
-import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
+import com.xueyu.post.service.TopicService;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.user.client.UserClient;
@@ -28,6 +28,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 import javax.annotation.Resource;
@@ -78,8 +79,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	CommentClient commentClient;
+
 	@Resource
 	TopicMapper topicMapper;
+
+	@Resource
+	TopicService topicService;
+
+	@Resource
+	PostTopicMapper postTopicMapper;
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options,List<String> names) {
@@ -89,9 +98,20 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setContent(HtmlUtils.htmlEscapeHex(post.getContent()));
 		// 存入帖子数据，获得主键值
 		query().getBaseMapper().insert(post);
-		log.info("用户 id -> {}, 上传了帖子到审核列表", post.getUserId());
-		//		绑定帖子和话题
-		if(!names.isEmpty()){
+		// 添加数据统计表行数据
+		PostGeneral postGeneral = new PostGeneral();
+		postGeneral.setPostId(post.getId());
+		postGeneralMapper.insert(postGeneral);
+		// 添加投票
+		if(vote.getType()!=null & vote.getCycle()!=null & vote.getTopic()!=null){
+			vote.setPostId(post.getId());
+			voteService.launchVote(vote,options);
+		}
+		// 绑定帖子和话题
+		if(!CollectionUtils.isEmpty(names)){
+			// 添加话题数据
+			topicService.createTopic(names);
+			// 插入关联数据
 			ArrayList<HashMap> maps = new ArrayList<>();
 			LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
 			wrapper.in(Topic::getName,names);
@@ -106,10 +126,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			}
 			topicMapper.insertPostTopics(maps);
 		}
-		// 添加数据统计表行数据
-		PostGeneral postGeneral = new PostGeneral();
-		postGeneral.setPostId(post.getId());
-		postGeneralMapper.insert(postGeneral);
+		// 图片是分布式存储的，放最后执行，确保前面业务有异常能够正常回滚
 		if (files != null) {
 			List<ImageAnnex> images = new ArrayList<>();
 			for (MultipartFile file : files) {
@@ -123,11 +140,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			// 将文件名存入帖子服务的图片附件表
 			imageAnnexService.saveBatch(images);
 		}
-		//添加投票
-		if(vote.getType()!=null & vote.getCycle()!=null & vote.getTopic()!=null){
-			vote.setPostId(post.getId());
-			voteService.launchVote(vote,options);
-		}
+		log.info("用户 id -> {}, 上传了帖子到审核列表, 包含 {} 张图片， {} 个话题", post.getUserId(), files == null ? 0 : files.length, names.size());
 		// 发送mq消息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
 		postOperateDTO.setUserId(post.getUserId());
@@ -152,7 +165,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		imgWrapper.eq(ImageAnnex::getParentId, postId);
 		List<ImageAnnex> imgList = imageAnnexService.list(imgWrapper);
 		// 如果帖子有图片则进行图片删除
-		if (imgList.size() != 0) {
+		if (!CollectionUtils.isEmpty(imgList)) {
 			String[] fileList = new String[imgList.size()];
 			for (int i = 0; i < fileList.length; i++) {
 				fileList[i] = imgList.get(i).getFileName();
@@ -187,70 +200,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		if (userId != null) {
 			wrapper.eq(PostView::getUserId, userId);
 		}
-		IPage<PostView> page = new Page<>(current, size);
-		postViewMapper.selectPage(page, wrapper);
-		ListVO<PostListVO> result = new ListVO<>();
-		// 将除具体记录外的分页数据赋值
-		BeanUtils.copyProperties(page, result);
-		List<PostView> records = page.getRecords();
-		result.setRecords(queryByList(records, userId));
-		return result;
-	}
 
-	public List<PostListVO> queryByList(List<PostView> records, Integer userId){
-		// 统计postId, userId
-		List<Integer> postIds = new ArrayList<>();
-		List<Integer> authors = new ArrayList<>();
-		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
-		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
-		for (PostView postView : records) {
-			postIds.add(postView.getId());
-			authors.add(postView.getUserId());
-		}
-		// 查询所有帖子的点赞信息，并按照帖子id进行分配
-		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
-		likeWrapper.in(LikePost::getPostId, postIds);
-		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
-		for (LikePost likePost : likePosts) {
-			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
-				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
-			} else {
-				List<Integer> userIds = new ArrayList<>();
-				userIds.add(likePost.getUserId());
-				likeUserIdsMap.put(likePost.getPostId(), userIds);
-			}
-		}
-		// 查询并设置帖子用户信息
-		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
-		// 查询所有图片信息
-		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
-		List<PostListVO> postData = new ArrayList<>();
-		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
-		for (PostView record : records) {
-			PostListVO postListVO = new PostListVO();
-			BeanUtils.copyProperties(record, postListVO);
-			// 设置帖子用户信息
-			postListVO.setUserInfo(userInfos.get(record.getUserId()));
-			// 设置该帖子图片信息
-			postListVO.setImgList(postListImgs.get(record.getId()));
-			// 设置点赞用户信息
-			if (likeUserIdsMap.get(record.getId()) != null) {
-				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
-				postListVO.setUserLikeBOList(userLikeInfos);
-			}
-			//html转码
-			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
-			// 设置投票信息
-			VoteVO voteVO;
-			if(userId!=null){
-				voteVO = voteService.getVoteDetail(record.getId(), userId);
-			}else {
-				voteVO = voteService.getVoteDetail(record.getId(), null);
-			}
-			postListVO.setVoteMessage(voteVO);
-			postData.add(postListVO);
-		}
-		return postData;
+		IPage<PostView> page = new Page<>(current, size);
+		// 查完将自动赋值记录到 page中
+		postViewMapper.selectPage(page, wrapper);
+		return queryPostListByPage(page, userId);
 	}
 
 	@Override
@@ -259,73 +213,33 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		wrapper.eq(PostView::getStatus, PostStatus.EXAMINE.getValue());
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
-		ListVO<PostListVO> result = new ListVO<>();
-		// 将除具体记录外的分页数据赋值
-		BeanUtils.copyProperties(page, result);
-		List<PostView> records = page.getRecords();
-		result.setRecords(queryByList(records, userId));
-		return result;
+		return queryPostListByPage(page, userId);
 	}
 
 	@Override
-	public List<PostListVO> getPostDetailInfoByTopiIds(Integer topicId) {
-		List<Integer> postIds = postMapper.getPostDetailInfoByTopiId(topicId);
-		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
-		wrapper.in(PostView::getId,postIds);
-		List<PostView> records = postViewMapper.selectList(wrapper);
-		List<Integer> authors = new ArrayList<>();
-		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
-		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
-		for (PostView postView : records) {
-			authors.add(postView.getUserId());
+	public List<PostListVO> getPostListByTopicIds(String topicName, Integer userId) {
+		LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
+		wrapper.like(Topic::getName, topicName);
+		List<Topic> topicList = topicService.list(wrapper);
+		List<Integer> topicIds = new ArrayList<>();
+		// 统计模糊的话题 相关id
+		for (Topic topic : topicList) {
+			topicIds.add(topic.getId());
 		}
-		// 查询所有帖子的点赞信息，并按照帖子id进行分配
-		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
-		likeWrapper.in(LikePost::getPostId, postIds);
-		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
-		for (LikePost likePost : likePosts) {
-			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
-				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
-			} else {
-				List<Integer> userIds = new ArrayList<>();
-				userIds.add(likePost.getUserId());
-				likeUserIdsMap.put(likePost.getPostId(), userIds);
-			}
+		LambdaQueryWrapper<PostTopic> linkWrapper = new LambdaQueryWrapper<>();
+		linkWrapper.in(PostTopic::getTopicId, topicIds);
+		// 查询所有相关的 帖子id
+		List<PostTopic> postTopics = postTopicMapper.selectList(linkWrapper);
+		List<Integer> postIds = new ArrayList<>();
+		for (PostTopic postTopic : postTopics) {
+			postIds.add(postTopic.getPostId());
 		}
-		// 查询并设置帖子用户信息
-		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
-		// 查询所有图片信息
-		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
-		List<PostListVO> postData = new ArrayList<>();
-		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
-		for (PostView record : records) {
-			PostListVO postListVO = new PostListVO();
-			BeanUtils.copyProperties(record, postListVO);
-			// 设置帖子用户信息
-			postListVO.setUserInfo(userInfos.get(record.getUserId()));
-			// 设置该帖子图片信息
-			postListVO.setImgList(postListImgs.get(record.getId()));
-			// 设置点赞用户信息
-			if (likeUserIdsMap.get(record.getId()) != null) {
-				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
-				postListVO.setUserLikeBOList(userLikeInfos);
-			}
-			//html转码
-			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
-			// 设置投票信息
-			VoteVO voteVO;
-				if(record.getUserId()!=null){
-					voteVO = voteService.getVoteDetail(record.getId(),record.getUserId());
-				}
-				else {
-					voteVO = voteService.getVoteDetail(record.getId(), null);
-				}
-				postListVO.setVoteMessage(voteVO);
-			    postData.add(postListVO);
-			}
-		  return postData;
+		// 查找帖子相关记录
+		LambdaQueryWrapper<PostView> postWrapper = new LambdaQueryWrapper<>();
+		postWrapper.in(PostView::getId, postIds);
+		List<PostView> records = postViewMapper.selectList(postWrapper);
+		return convertPostVOList(postIds, null, records);
 	}
-
 
 	@Override
 	public PostDetailVO getPostDetailInfo(Integer postId, Integer userId) {
@@ -358,6 +272,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
 		// 查询评论信息
 		postDetailVO.setCommentList(commentClient.getPostCommentList(userId, postId).getData());
+		// 查询携带的话题
+		postDetailVO.setTopics(topicMapper.selectByPostId(postId));
 		// 设置投票信息
 		VoteVO voteVO;
 		if(userId!=null){
@@ -393,12 +309,111 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
+		return queryPostListByPage(page, userId);
+	}
+
+	/**
+	 * 根据 帖子id列表，获取帖子列表信息，解耦合方法
+	 *
+	 * @param postIds 帖子id
+	 * @param authors 帖子用户id， (非必传) 如未传入将再方法里进行统计。
+	 *                   如果在统计帖子id时能够顺便统计，在方法里将跳过统计userId的流程
+	 * @param records 帖子信息列表
+	 * @return 帖子列表信息
+	 */
+	public List<PostListVO> convertPostVOList(List<Integer> postIds, List<Integer> authors, List<PostView> records){
+		// 传入的 userIds 如果不为空，无需进行再次统计，因为在外面可能提前统计好了
+		if(CollectionUtils.isEmpty(authors)){
+			authors = new ArrayList<>();
+			for (PostView postView : records) {
+				authors.add(postView.getUserId());
+			}
+		}
+		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
+		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
+		// 查询所有帖子的点赞信息，并按照帖子id进行分配
+		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
+		likeWrapper.in(LikePost::getPostId, postIds);
+		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
+		for (LikePost likePost : likePosts) {
+			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
+				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
+			} else {
+				List<Integer> userIds = new ArrayList<>();
+				userIds.add(likePost.getUserId());
+				likeUserIdsMap.put(likePost.getPostId(), userIds);
+			}
+		}
+		// 查询并设置帖子 用户信息
+		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
+		// 查询所有 图片信息
+		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
+		// 查询所有 话题信息
+		Map<Integer, List<Topic>> topicMap = topicService.getTopicByPostIds(postIds);
+		// 创建响应对象
+		List<PostListVO> postData = new ArrayList<>();
+		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
+		for (PostView record : records) {
+			PostListVO postListVO = new PostListVO();
+			BeanUtils.copyProperties(record, postListVO);
+			// 设置帖子用户信息
+			postListVO.setUserInfo(userInfos.get(record.getUserId()));
+			// 设置该帖子图片信息
+			postListVO.setImgList(postListImgs.get(record.getId()));
+			// 设置点赞用户信息
+			if (likeUserIdsMap.get(record.getId()) != null) {
+				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
+				postListVO.setUserLikeBOList(userLikeInfos);
+			}
+			// 设置帖子内容
+			postListVO.setTopics(topicMap.get(postListVO.getId()));
+			// html转码
+			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
+			// 设置投票信息
+			VoteVO voteVO;
+			if(record.getUserId() != null){
+				voteVO = voteService.getVoteDetail(record.getId(),record.getUserId());
+			}else {
+				voteVO = voteService.getVoteDetail(record.getId(), null);
+			}
+			postListVO.setVoteMessage(voteVO);
+			postData.add(postListVO);
+		}
+		return postData;
+	}
+
+	/**
+	 * 处理分页查询 帖子列表
+	 *
+	 * @param page 查询记录之后的 page 对象
+	 * @param userId 用户id
+	 * @return 分页帖子列表信息
+	 */
+	public ListVO<PostListVO> queryPostListByPage(IPage<PostView> page, Integer userId){
 		ListVO<PostListVO> result = new ListVO<>();
 		// 将除具体记录外的分页数据赋值
 		BeanUtils.copyProperties(page, result);
 		List<PostView> records = page.getRecords();
-		result.setRecords(queryByList(records, userId));
+		result.setRecords(queryPostList(records, userId));
 		return result;
+	}
+
+	/**
+	 * 封装 帖子列表信息，如 用户信息设置等
+	 *
+	 * @param records 需要处理的帖子列表
+	 * @param userId 用户id
+	 * @return 帖子列表信息
+	 */
+	public List<PostListVO> queryPostList(List<PostView> records, Integer userId){
+		// 统计postId, userId
+		List<Integer> postIds = new ArrayList<>();
+		List<Integer> authors = new ArrayList<>();
+		for (PostView postView : records) {
+			postIds.add(postView.getId());
+			authors.add(postView.getUserId());
+		}
+		return convertPostVOList(postIds, authors, records);
 	}
 
 }

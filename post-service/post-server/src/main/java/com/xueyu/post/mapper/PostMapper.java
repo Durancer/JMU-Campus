@@ -9,6 +9,7 @@ import java.util.List;
  * @author durance
  */
 public interface PostMapper extends BaseMapper<Post> {
-    List<Integer> getPostDetailInfoByTopiId(Integer topicId);
+    
+    List<Integer> getPostIdsByTopicId(Integer topicId);
 
 }

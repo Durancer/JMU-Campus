@@ -9,11 +9,13 @@ import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.post.service.PostService;
+import com.xueyu.post.service.TopicService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,6 +30,9 @@ public class PostController {
 	@Resource
 	PostService postService;
 
+	@Resource
+	TopicService topicService;
+
 	/**
 	 * 发布用户帖子
 	 *
@@ -38,16 +43,21 @@ public class PostController {
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<String> names) {
+	public RestResult<?> pushlishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, String[] names) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
-		if(names!=null&&names.size()>3){
+		List<String> topics = Arrays.asList(names);
+		// 核对话题数量及长度是否合规
+		if(names != null && topics.size() > 3){
 			throw new PostException("最多携带三个话题");
 		}
+		for (String name : topics) {
+			topicService.checkTopicLength(name);
+		}
 		post.setUserId(userId);
-		Boolean sendStatus = postService.publishPost(post, files, vote, options,names);
+		Boolean sendStatus = postService.publishPost(post, files, vote, options, topics);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
 		}
@@ -147,21 +157,18 @@ public class PostController {
 		return RestResult.ok(postDTO);
 	}
 
+	/**
+	 * 分页获取未审核的帖子
+	 *
+	 * @param current 当前页
+	 * @param size 页大小
+	 * @param userId 用户id
+	 * @return 帖子信息
+	 */
 	@GetMapping("status/list")
 	public RestResult<ListVO<PostListVO>> getStatusPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader(required = false) Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getStatusPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
-	}
-	/**
-	 * 通过话题获取帖子详细信息
-	 *
-	 * @param topicId 话题id
-	 * @return 所有帖子详细信息
-	 */
-	@GetMapping("getdetails")
-	public RestResult<List<PostListVO>> get(Integer topicId){
-		List<PostListVO> postDetailInfoByTopiIds = postService.getPostDetailInfoByTopiIds(topicId);
-		return RestResult.ok(postDetailInfoByTopiIds);
 	}
 
 }
