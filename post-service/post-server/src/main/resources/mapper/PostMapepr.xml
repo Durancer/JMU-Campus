@@ -4,6 +4,8 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xueyu.post.mapper.PostMapper">
-
+	<select id="getPostDetailInfoByTopiId" resultType="java.lang.Integer">
+		SELECT b.id from post_topic a,post b where a.post_id=b.id and a.topic_id= #{topicId}
+	</select>
 
 </mapper>
