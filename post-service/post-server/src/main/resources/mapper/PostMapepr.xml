@@ -5,5 +5,8 @@
 
 <mapper namespace="com.xueyu.post.mapper.PostMapper">
 
+	<select id="getPostIdsByTopicId" resultType="java.lang.Integer">
+		SELECT b.id from post_topic a,post b where a.post_id=b.id and a.topic_id= #{topicId}
+	</select>
 
 </mapper>

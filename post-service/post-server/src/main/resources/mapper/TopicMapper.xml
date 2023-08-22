@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xueyu.post.mapper.TopicMapper">
+
+    <insert id="insertPostTopics">
+        insert into post_topic(topic_id, post_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.topicId}, #{item.postId})
+        </foreach>
+    </insert>
+
+    <select id="listByNamenumber" resultType="java.lang.Integer">
+        select count(*) from topic where name=#{name}
+    </select>
+
+    <select id="selectByPostId" resultType="com.xueyu.post.pojo.domain.Topic">
+        select * from topic
+        <where>
+            `id` in
+            (select topic_id from post_topic
+            <where>
+                post_id = #{postId,javaType=Integer})
+            </where>
+        </where>
+
+    </select>
+
+</mapper>
