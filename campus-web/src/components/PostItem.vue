@@ -66,6 +66,7 @@ interface Props {
   commentNum?: number // detail
   likeNum?: number
   commentList?: []
+  topics?: string[]
   isLike?: boolean
 }
 const props = defineProps<Props>()
