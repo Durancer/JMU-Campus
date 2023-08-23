@@ -21,7 +21,7 @@ i集大校园软件服务端
 - 项目后端已经自动化部署在 服务器
 - 前端正在开发阶段，基本功能可用后将会部署上线
 - 项目地址：http://www.jmucampus.top
-- QQ交流群：294590170 
+- QQ交流群：294590170
 - 欢迎加入参与贡献！🌹
 
 <img src="https://user-images.githubusercontent.com/102197880/261830919-5d54c286-6ac5-418a-895e-8d2c23b1c7e3.jpg" alt="" align="center" style="width: 300px"/>
@@ -48,9 +48,11 @@ i集大校园软件服务端
 |  Vue-Router   |    前端路由    |     https://router.vuejs.org/zh/      |
 |    Pinia     |   状态管理库   |  https://pinia.vuejs.org/zh/  |
 |   Vite    |     构建工具      | https://vitejs.cn/vite3-cn/guide/ |
+|   Typescript    |     类型约束      | https://www.typescriptlang.org/zh/docs/ |
 |   Element-Plus    |     组件库      | https://element-plus.gitee.io/zh-CN/ |
 |   Prettier    |     代码风格      | https://www.prettier.cn/ |
 |   Eslint    |   代码质量检查    | https://eslint.org/ |
+|   wangEditor  |   富文本编辑器    | https://github.com/wangeditor-team/wangEditor/ |
 
 #### 后端及部署技术选型
 |      技术      |       说明       |                       官网                        |
