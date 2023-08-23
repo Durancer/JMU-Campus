@@ -142,7 +142,6 @@ const addCommentCommon = async (data) => {
     if (res.status) {
       sucMessage('添加评论成功')
       comment.value = ''
-      subCommentContent.value = ''
     } else {
       failMessage('添加评论失败')
     }

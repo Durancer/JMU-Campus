@@ -5,9 +5,7 @@
       {{ title }}
     </h2>
     <div class="content" :class="{ detail: isDetailPage }" @click="jumpPostDetail">
-      <p>
-        {{ content }}
-      </p>
+      <p v-html="content"></p>
     </div>
     <div class="footer">
       <!-- 点赞 -->
@@ -68,6 +66,7 @@ interface Props {
   commentNum?: number // detail
   likeNum?: number
   commentList?: []
+  topics?: string[]
   isLike?: boolean
 }
 const props = defineProps<Props>()

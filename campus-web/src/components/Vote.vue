@@ -18,6 +18,10 @@
           <el-option label="多选" value="multiple"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="增加投票选项">
+        <el-input v-model="option"></el-input>
+        <el-button type="info" @click="addOption" style="margin-left: 20px">增加</el-button>
+      </el-form-item>
       <template v-if="voteForm.options.length > 0">
         <template v-if="voteForm.type === 'radio'">
           <el-form-item>
@@ -36,10 +40,6 @@
           </el-form-item>
         </template>
       </template>
-      <el-form-item label="增加投票选项">
-        <el-input v-model="option"></el-input>
-        <el-button type="info" @click="addOption">增加</el-button>
-      </el-form-item>
     </el-form>
   </el-card>
 </template>

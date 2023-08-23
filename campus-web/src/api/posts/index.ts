@@ -130,3 +130,20 @@ export function like(postId: number) {
     }
   })
 }
+
+// 查看所有话题
+export function getAllTopic() {
+  return http.request({
+    url: '/post/topic/all'
+  })
+}
+
+// 根据话题区别帖子
+export function getTopicPost(topicName) {
+  return http.request({
+    url: '/post/topic/list',
+    params: {
+      name: topicName
+    }
+  })
+}
