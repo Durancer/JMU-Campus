@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
+
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -301,6 +302,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		post.setId(postId);
 		post.setStatus(desicion);
 		postMapper.updateById(post);
+		if (PostStatus.PUBLIC.getValue().equals(desicion)) {
+			log.info("帖子 id -> {}, 审核通过", postId);
+		} else {
+			log.info("帖子 id -> {}, 审核未通过", postId);
+		}
 	}
 
 	@Override

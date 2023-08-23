@@ -2,7 +2,6 @@ package com.xueyu.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.exception.PostException;
 import com.xueyu.post.mapper.PostTopicMapper;
 import com.xueyu.post.mapper.TopicMapper;
@@ -10,7 +9,6 @@ import com.xueyu.post.pojo.domain.PostTopic;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.service.TopicService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -83,8 +81,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         }
         // 查出所有涉及的 话题内容
         LambdaQueryWrapper<Topic> topicWrapper = new LambdaQueryWrapper<>();
-        topicWrapper.in(Topic::getId, topicIds);
+        if (!CollectionUtils.isEmpty(topicIds)) {
+            topicWrapper.in(Topic::getId, topicIds);
+        }
         List<Topic> topicList = query().getBaseMapper().selectList(topicWrapper);
+
         // 创建关联 map，减小查询复杂度  key : topicId, value : topic对象
         Map<Integer, Topic> topicMap = new HashMap<>();
         for (Topic topic : topicList) {

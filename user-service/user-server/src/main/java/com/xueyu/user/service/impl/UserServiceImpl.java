@@ -107,7 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		res.put("token", token);
 		UserView userView = userViewMapper.selectById(check.getId());
 		res.put("userInfo", userView);
-		log.info("用户 id -> {}, 进行了登录操作", user.getId());
+		log.info("用户 id -> {}, username -> {} 进行了登录操作", check.getId(), check.getUsername());
 		return res;
 	}
 
@@ -156,6 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		verifyIdencode(idencode, checkCode);
 		// 签发jwt
 		String token = JwtUtil.createJwt("userId", userView.getId());
+		log.info("用户 id -> {}, email -> {} 使用邮箱进行了登录操作", userView.getId(), userView.getEmail());
 		// 封装响应体
 		Map<String, Object> res = new HashMap<>(2);
 		res.put("token", token);
