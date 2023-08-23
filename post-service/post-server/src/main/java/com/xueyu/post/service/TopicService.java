@@ -35,4 +35,15 @@ public interface TopicService extends IService<Topic> {
      */
     Map<Integer, List<Topic>> getTopicByPostIds(List<Integer> postIds);
 
+//    /**
+//     * 按照话题分页查询帖子列表
+//     *
+//     * @param current 当前页
+//     * @param size    每页大小
+//     * @param userId  用户id
+//     * @param name  话题名称
+//     * @return 分页数据
+//     */
+//    ListVO<PostListVO> getPostListByTopic(Integer current, Integer size, Integer userId, String name);
+
 }

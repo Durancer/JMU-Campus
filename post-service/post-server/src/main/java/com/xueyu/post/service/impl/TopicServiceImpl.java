@@ -67,8 +67,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         }
     }
 
-
-
     @Override
     public Map<Integer, List<Topic>> getTopicByPostIds(List<Integer> postIds) {
         LambdaQueryWrapper<PostTopic> wrapper = new LambdaQueryWrapper<>();

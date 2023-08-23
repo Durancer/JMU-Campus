@@ -4,25 +4,24 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xueyu.comment.client.CommentClient;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
+import com.xueyu.post.facade.ConvertPostDetailFacade;
+import com.xueyu.post.facade.ConvertPostListFacade;
+import com.xueyu.post.facade.request.ConvertDetailReq;
+import com.xueyu.post.facade.request.ConvertPostReq;
 import com.xueyu.post.mapper.*;
-import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
-import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
 import com.xueyu.post.service.TopicService;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.resource.client.ResourceClient;
-import com.xueyu.user.client.UserClient;
-import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +36,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
@@ -64,12 +62,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	ResourceClient resourceClient;
 
 	@Resource
-	UserClient userClient;
-
-	@Resource
-	LikePostMapper likePostMapper;
-
-	@Resource
 	RabbitTemplate rabbitTemplate;
 
 	@Resource
@@ -77,9 +69,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Resource
 	PostMapper postMapper;
-
-	@Resource
-	CommentClient commentClient;
 
 	@Resource
 	TopicMapper topicMapper;
@@ -90,9 +79,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Resource
 	PostTopicMapper postTopicMapper;
 
+	@Resource
+	ConvertPostListFacade convertPostListFacade;
+
+	@Resource
+	ConvertPostDetailFacade convertPostDetailFacade;
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options,List<String> names) {
+	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options, List<String> names) {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		post.setCreateTime(now);
 		//html标签转码
@@ -239,7 +234,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		LambdaQueryWrapper<PostView> postWrapper = new LambdaQueryWrapper<>();
 		postWrapper.in(PostView::getId, postIds);
 		List<PostView> records = postViewMapper.selectList(postWrapper);
-		return convertPostVOList(postIds, null, records);
+		// 请求facade进行处理
+		ConvertPostReq convertPostReq = new ConvertPostReq();
+		convertPostReq.setPostIds(postIds);
+		convertPostReq.setRecords(records);
+		return convertPostListFacade.execBusiness(convertPostReq);
 	}
 
 	@Override
@@ -255,41 +254,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 				throw new PostException("未审核的帖子信息");
 			}
 		}
-		PostDetailVO postDetailVO = new PostDetailVO();
-		// 拷贝相同属性项
-		BeanUtils.copyProperties(postView, postDetailVO);
-		// html标签转码
-		postDetailVO.setContent(HtmlUtils.htmlUnescape(postView.getContent()));
-		// 查询并设置是否点赞
-		if (userId != null) {
-			LambdaQueryWrapper<LikePost> wrapper = new LambdaQueryWrapper<>();
-			wrapper.eq(LikePost::getPostId, postId).eq(LikePost::getUserId, userId);
-			LikePost likePost = likePostMapper.selectOne(wrapper);
-			postDetailVO.setIsLike(likePost != null);
-		} else {
-			postDetailVO.setIsLike(false);
-		}
-		// 查询并设置作者信息
-		postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
-		// 查询评论信息
-		postDetailVO.setCommentList(commentClient.getPostCommentList(userId, postId).getData());
-		// 查询携带的话题
-		postDetailVO.setTopics(topicMapper.selectByPostId(postId));
-		// 设置投票信息
-		VoteVO voteVO;
-		if(userId!=null){
-			voteVO = voteService.getVoteDetail(postId, userId);
-		}else {
-			voteVO = voteService.getVoteDetail(postId, null);
-		}
-		postDetailVO.setVoteMessage(voteVO);
-		// 发送mq信息
-		PostOperateDTO postOperateDTO = new PostOperateDTO();
-		postOperateDTO.setUserId(userId);
-		postOperateDTO.setPostId(postId);
-		postOperateDTO.setAuthorId(postView.getUserId());
-		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_VIEW_KEY, postOperateDTO);
-		return postDetailVO;
+		ConvertDetailReq convertDetailReq = new ConvertDetailReq();
+		convertDetailReq.setPostView(postView);
+		convertDetailReq.setUserId(userId);
+		return convertPostDetailFacade.execBusiness(convertDetailReq);
 	}
 
 	@Override
@@ -319,76 +287,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	/**
-	 * 根据 帖子id列表，获取帖子列表信息，解耦合方法
-	 *
-	 * @param postIds 帖子id
-	 * @param authors 帖子用户id， (非必传) 如未传入将再方法里进行统计。
-	 *                   如果在统计帖子id时能够顺便统计，在方法里将跳过统计userId的流程
-	 * @param records 帖子信息列表
-	 * @return 帖子列表信息
-	 */
-	public List<PostListVO> convertPostVOList(List<Integer> postIds, List<Integer> authors, List<PostView> records){
-		// 传入的 userIds 如果不为空，无需进行再次统计，因为在外面可能提前统计好了
-		if(CollectionUtils.isEmpty(authors)){
-			authors = new ArrayList<>();
-			for (PostView postView : records) {
-				authors.add(postView.getUserId());
-			}
-		}
-		// 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
-		Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
-		// 查询所有帖子的点赞信息，并按照帖子id进行分配
-		LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
-		likeWrapper.in(LikePost::getPostId, postIds);
-		List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
-		for (LikePost likePost : likePosts) {
-			if (likeUserIdsMap.containsKey(likePost.getPostId())) {
-				likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
-			} else {
-				List<Integer> userIds = new ArrayList<>();
-				userIds.add(likePost.getUserId());
-				likeUserIdsMap.put(likePost.getPostId(), userIds);
-			}
-		}
-		// 查询并设置帖子 用户信息
-		Map<Integer, UserSimpleVO> userInfos = userClient.getUserDeatilInfoMap(authors).getData();
-		// 查询所有 图片信息
-		Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
-		// 查询所有 话题信息
-		Map<Integer, List<Topic>> topicMap = topicService.getTopicByPostIds(postIds);
-		// 创建响应对象
-		List<PostListVO> postData = new ArrayList<>();
-		// todo 一次查询所有帖子的点赞用户信息，在循环中赋值
-		for (PostView record : records) {
-			PostListVO postListVO = new PostListVO();
-			BeanUtils.copyProperties(record, postListVO);
-			// 设置帖子用户信息
-			postListVO.setUserInfo(userInfos.get(record.getUserId()));
-			// 设置该帖子图片信息
-			postListVO.setImgList(postListImgs.get(record.getId()));
-			// 设置点赞用户信息
-			if (likeUserIdsMap.get(record.getId()) != null) {
-				List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
-				postListVO.setUserLikeBOList(userLikeInfos);
-			}
-			// 设置帖子内容
-			postListVO.setTopics(topicMap.get(postListVO.getId()));
-			// html转码
-			postListVO.setContent(HtmlUtils.htmlUnescape(record.getContent()));
-			// 设置投票信息
-			VoteVO voteVO;
-			if(record.getUserId() != null){
-				voteVO = voteService.getVoteDetail(record.getId(),record.getUserId());
-			}else {
-				voteVO = voteService.getVoteDetail(record.getId(), null);
-			}
-			postListVO.setVoteMessage(voteVO);
-			postData.add(postListVO);
-		}
-		return postData;
-	}
-
-	/**
 	 * 处理分页查询 帖子列表
 	 *
 	 * @param page 查询记录之后的 page 对象
@@ -411,7 +309,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	 * @param userId 用户id
 	 * @return 帖子列表信息
 	 */
-	public List<PostListVO> queryPostList(List<PostView> records, Integer userId){
+	@Override
+	public List<PostListVO> queryPostList(List<PostView> records, Integer userId) {
 		// 统计postId, userId
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();
@@ -419,7 +318,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			postIds.add(postView.getId());
 			authors.add(postView.getUserId());
 		}
-		return convertPostVOList(postIds, authors, records);
+		// 请求facade进行处理
+		ConvertPostReq convertPostReq = new ConvertPostReq();
+		convertPostReq.setPostIds(postIds);
+		convertPostReq.setRecords(records);
+		convertPostReq.setAuthors(authors);
+		return convertPostListFacade.execBusiness(convertPostReq);
 	}
 
 }
