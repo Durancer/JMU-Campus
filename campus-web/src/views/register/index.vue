@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <el-card class="register-card">
+    <template #header>
+      <h1 style="text-align: center">注册</h1>
+    </template>
     <el-form
       ref="registerFormRef"
       :model="registerForm"
@@ -8,55 +11,42 @@
       label-position="right"
     >
       <el-form-item
-        class="from-item"
+        class="form-item"
         v-for="item in registerFromSetting"
         :key="item.label"
-        v-bind="item"
+        :label="item.label"
+        :prop="item.prop"
       >
         <template v-if="item.prop === 'email'">
-          <div style="display: flex; flex-direction: row">
-            <el-input class="input-width" v-model="registerForm[item.prop]" autocomplete="off" />
-            <el-button @click="requestCodeFn">
-              <template v-if="registerEmailFlag"> 已发送</template>
-              <template v-else> 请求验证码 </template>
-            </el-button>
+          <div style="display: flex">
+            <el-input
+              class="input-width"
+              v-model="registerForm[item.prop]"
+              v-bind="item.inputArr"
+            />
+            <i style="font-size: 3rem">&nbsp;</i>
+            <template v-if="registerEmailFlag">
+              <el-button @click="requestCodeFn" disabled> 已发送({{ timeCount }}s) </el-button>
+            </template>
+            <template v-else><el-button @click="requestCodeFn"> 请求验证码 </el-button> </template>
           </div>
         </template>
         <template v-else-if="item.prop === 'idencode'">
-          <div style="display: flex; flex-direction: row">
-            123<el-input
-              class="input-width"
-              v-model.number="registerForm[item.prop]"
-              autocomplete="off"
-            />
-          </div>
+          <el-input v-model.number="registerForm[item.prop]" v-bind="item.inputArr" />
         </template>
-        <template v-else-if="item.prop === 'sex'">
-          <el-radio-group v-model="registerForm.sex" class="ml-4">
-            <el-radio label="1" size="large">男</el-radio>
-            <el-radio label="2" size="large">女</el-radio>
-          </el-radio-group>
+        <template v-else>
+          <el-input v-model="registerForm[item.prop]" v-bind="item.inputArr" />
         </template>
-        <el-input
-          v-else
-          class="input-width"
-          v-model="registerForm[item.prop]"
-          v-bind="item.inputArr"
-        />
       </el-form-item>
       <div style="border: none; background: none; display: flex; justify-content: center">
-        <el-form-item class="from-item" style="border: none; background: none">
-          <el-button
-            class="input-width"
-            type="primary"
-            style="width: 100%"
-            @click="handleRegister(registerFormRef)"
+        <el-form-item class="form-item" style="border: none; background: none">
+          <el-button type="primary" style="width: 100%" @click="handleRegister(registerFormRef)"
             >注册</el-button
           >
         </el-form-item>
       </div>
     </el-form>
-  </div>
+  </el-card>
 </template>
 
 <script setup lang="ts">
@@ -64,12 +54,12 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { register, requestCode } from '@/api/user/index.ts'
 import type { userinfo } from '@/api/user/type.ts'
+import { useCountDown } from '@/hooks/useCountDown .ts'
 
-const emits = defineEmits(['close'])
-
+const { timeCount, start } = useCountDown(() => (registerEmailFlag.value = false))
 const registerEmailFlag = ref(false)
 const registerFormRef = ref<FormInstance>()
-
+/**
 const registerForm = reactive<userinfo>({
   username: '活得简单点',
   password: '123456',
@@ -77,7 +67,15 @@ const registerForm = reactive<userinfo>({
   email: '1547025615@qq.com',
   nickname: 'be simple'
 })
+*/
 
+const registerForm = reactive<userinfo>({
+  username: '',
+  password: '',
+  idencode: '',
+  email: '',
+  nickname: ''
+})
 const registerRules = reactive<FormRules>({
   username: [
     { required: true, message: '请输入用户账号', trigger: 'blur' },
@@ -96,9 +94,9 @@ const registerRules = reactive<FormRules>({
 })
 
 async function requestCodeFn() {
-  console.log(registerForm.email)
+  registerEmailFlag.value = true
+  start(60) // 倒计时60秒钟
   const res = await requestCode(registerForm.email)
-  console.log(res)
   if (res && res.status) {
     registerEmailFlag.value = true
   }
@@ -182,11 +180,18 @@ const registerFromSetting = reactive([
 </script>
 
 <style scoped lang="less">
-.from-item {
-  width: 360px;
-
-  .input-width {
-    width: 170px;
+.form-item {
+  width: 480px;
+  margin: 20px auto;
+  .el-input {
+    width: 300px;
   }
+}
+.register-card {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 40%;
+  transform: translate(-50%, -50%);
 }
 </style>

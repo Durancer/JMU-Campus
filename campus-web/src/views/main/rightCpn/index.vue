@@ -1,85 +1,91 @@
 <template>
-    <div>
-        <aside class="aside-wrap">
-            <div class="aside-main">
-                <div class="aside-header">
-                    <div class="title">
-                        热搜榜单
-                    </div>
-                </div>
-                <div class="aside-content">
-                    <div class="main-item" v-for="i of 6" :key="i">
-                        <a href="#">
-                            <div class="item-box">
-                                <div class="title">
-                                    {{ `热搜事件名字${i}` }}
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </div>
+  <div>
+    <aside class="aside-wrap">
+      <div class="aside-header">
+        <h2 class="title">热搜话题</h2>
+      </div>
+      <div class="aside-content">
+        <ul class="main-item" v-for="(topic, idx) in topicList" :key="topic.key">
+          <li class="item-box">
+            <span class="order">
+              {{ idx + 1 }}
+            </span>
+            <span class="title">
+              {{ topic.name }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
-
+import { onMounted, ref } from 'vue'
+import { getAllTopic } from '@/api/posts/index.ts'
+const topicList = ref([])
+const getAllTopicFn = async () => {
+  const res = await getAllTopic()
+  if (res.data && res.data.length > 10) {
+    topicList.value = res.data.slice(0, 10)
+  } else {
+    topicList.value = res.data // TODO：话题太多怎么展示话题
+  }
+}
+onMounted(() => getAllTopicFn())
 </script>
 
 <style scoped lang="less">
 .aside-wrap {
-    width: 200px;
-    display: block;
-    background-color: #fff;
-
-    .aside-main {
-        .aside-header {
-            height: 25px;
-            padding: 12px 14px 8px;
-            display: flex;
-            align-items: center;
-
-            .title {
-                align-self: center;
-                color: #333;
-                font-weight: 500;
-                font-size: 16px;
-                line-height: 22px;
-                box-sizing: border-box;
-                flex: 1;
-            }
+  //   width: 200px;
+  display: block;
+  background-color: #fff;
+  box-shadow: 0 1px 2px #00051008, 0 2px 6px #00051008;
+  border-radius: 12px;
+  text-align: center;
+  padding: 20px 0;
+  .aside-content {
+    .main-item {
+      width: 100%;
+      //   padding: 0 14px;
+      &:nth-child(1) .item-box .order {
+        color: var(--az-hot-color-1);
+      }
+      &:nth-child(2) .item-box .order {
+        color: var(--az-hot-color-2);
+      }
+      &:nth-child(3) .item-box .order {
+        color: var(--az-hot-color-3);
+      }
+      .item-box {
+        position: relative;
+        height: 40px;
+        padding: 0 26px 0 21px;
+        overflow: hidden;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--el-font-size-large);
+        transition: 0.3s;
+        &:hover {
+          background-color: #e1e1e1;
+          cursor: pointer;
         }
-
-        .aside-content {
-            .main-item {
-                width: 100%;
-                padding: 0 14px;
-
-                .item-box {
-                    position: relative;
-                    height: 40px;
-                    padding: 0 26px 0 21px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    display: flex;
-                    align-items: center;
-
-                    .title {
-                        margin-right: 10px;
-                        color: #333;
-                        font-size: 14px;
-                        line-height: 18px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
-                }
-            }
+        .order {
+          margin-right: 0.5em;
+          color: var(--az-font-4);
         }
+        .title {
+          margin-right: 10px;
+          color: #333;
+          line-height: 18px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
-
-
+  }
 }
 </style>

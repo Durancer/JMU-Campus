@@ -8,9 +8,7 @@
       </div>
       <div>
         <main class="main-container">
-          <div class="main">
-            <RouterView></RouterView>
-          </div>
+          <RouterView></RouterView>
         </main>
         <!-- <main-cpm :is-hidden="isHidden" /> -->
       </div>
@@ -55,14 +53,6 @@ watch(directions, () => {
   margin: auto;
   width: 100%;
   height: 100%;
-  .main {
-    margin-top: 8px;
-    display: flex;
-    flex-direction: row;
-    margin-top: 18px;
-    justify-content: space-between;
-    height: 100%;
-  }
 }
 .container {
   // max-width: 1200px;

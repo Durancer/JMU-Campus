@@ -1,23 +1,28 @@
 <template>
-  <div>
-    <el-form
-      ref="loginFormRef"
-      :model="loginForm"
-      :rules="loginRules"
-      label-width="auto"
-      label-position="right"
-    >
-      <el-form-item v-for="item in loginFromSetting" :key="item.label" v-bind="item">
-        <el-input v-model="loginForm[item.prop]" v-bind="item.inputArr" />
-      </el-form-item>
-      <div style="border: none; background: none; display: flex; justify-content: center">
-        <el-form-item style="border: none; background: none">
-          <el-button type="primary" style="width: 100%" @click="handleBtn('loginForm')"
-            >登录</el-button
-          >
+  <div class="login-card">
+    <el-card shadow="always">
+      <template #header>
+        <h1 style="text-align: center">登录</h1>
+      </template>
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginRules"
+        label-width="auto"
+        label-position="right"
+      >
+        <el-form-item v-for="item in loginFromSetting" :key="item.label" v-bind="item">
+          <el-input v-model="loginForm[item.prop]" v-bind="item.inputArr" />
         </el-form-item>
-      </div>
-    </el-form>
+        <div style="border: none; background: none; display: flex; justify-content: center">
+          <el-form-item style="border: none; background: none">
+            <el-button type="primary" style="width: 100%" @click="handleBtn('loginForm')"
+              >登录</el-button
+            >
+          </el-form-item>
+        </div>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -48,16 +53,10 @@ const loginRules = reactive<FormRules<APILoginForm>>({
   password: [{ required: true, message: '请输入账号密码', trigger: 'blur' }]
 })
 
-const loginFlag = ref(false)
-
 const handleBtn = async (str: string) => {
-  if (str === 'loginForm') {
-    console.log(loginForm)
-    try {
-      await userStore.loginFn(loginForm)
-      emits('close')
-    } catch (err) {}
-  }
+  try {
+    await userStore.loginFn(loginForm)
+  } catch (err) {}
 }
 
 const loginFromSetting = reactive([
@@ -83,4 +82,12 @@ const loginFromSetting = reactive([
 ])
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.login-card {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 40%;
+  transform: translate(-50%, -50%);
+}
+</style>

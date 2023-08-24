@@ -1,10 +1,12 @@
 <template>
-  <div class="left-container" :class="{ 'left-top': isHidden }">
-    <left-cpn :leftTabsList="leftTabsList" />
-  </div>
-  <main-cpn />
-  <div class="right-container" :class="{ 'right-top': isHidden }">
-    <right-cpn />
+  <div class="main">
+    <div class="left-container" :class="{ 'left-top': isHidden }">
+      <left-cpn :leftTabsList="leftTabsList" />
+    </div>
+    <main-cpn />
+    <div class="right-container" :class="{ 'right-top': isHidden }">
+      <right-cpn />
+    </div>
   </div>
 </template>
 
@@ -52,5 +54,13 @@ const leftTabsList = reactive([
 
 .right-container {
   width: 260px;
+}
+.main {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 18px;
+  justify-content: space-between;
+  height: 100%;
 }
 </style>

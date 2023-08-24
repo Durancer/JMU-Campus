@@ -1,6 +1,9 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import type { HYRequestConfig } from './type'
+import { LOGIN_TOKEN } from '@/global/constants'
+import { localCache } from '@/utils/cache'
+import { failMessage } from '@/utils/common'
 
 // 拦截器: 蒙版Loading/token/修改配置
 
@@ -14,13 +17,12 @@ import type { HYRequestConfig } from './type'
  *  2.响应结果的类型处理(泛型)
  */
 
-class HYRequest {
+class Request {
   instance: AxiosInstance
 
   // request实例 => axios的实例
   constructor(config: HYRequestConfig) {
     this.instance = axios.create(config)
-
     // 每个instance实例都添加拦截器
     this.instance.interceptors.request.use(
       (config) => {
@@ -33,6 +35,9 @@ class HYRequest {
     )
     this.instance.interceptors.response.use(
       (res) => {
+        if (res.data.code <= 199 || res.data.code >= 300) {
+          failMessage(res.data.message)
+        }
         return res.data
       },
       (err) => {
@@ -40,7 +45,7 @@ class HYRequest {
       }
     )
 
-    // 针对特定的hyRequest实例添加拦截器
+    // 针对特定的Request实例添加拦截器
     this.instance.interceptors.request.use(
       config.interceptors?.requestSuccessFn,
       config.interceptors?.requestFailureFn
@@ -55,6 +60,8 @@ class HYRequest {
   // T => IHomeData
   request<T = any>(config: HYRequestConfig<T>) {
     // 单次请求的成功拦截处理
+    console.log('request...', config)
+
     if (config.interceptors?.requestSuccessFn) {
       config = config.interceptors.requestSuccessFn(config)
     }
@@ -93,4 +100,4 @@ class HYRequest {
   }
 }
 
-export default HYRequest
+export default Request
