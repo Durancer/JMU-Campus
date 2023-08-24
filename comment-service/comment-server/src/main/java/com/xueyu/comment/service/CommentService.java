@@ -68,4 +68,12 @@ public interface CommentService extends IService<Comment> {
 	 */
 	void updateComment(Comment comment);
 
+	/**
+	 * 获取各个帖子热度最高的评论
+	 *
+	 * @param postIds 帖子id 集合
+	 * @return answerVO对象
+	 */
+	List<CommentAnswerVO> postsMaxHotComment(List<Integer> postIds);
+
 }

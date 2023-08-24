@@ -89,6 +89,24 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
         // 查询所有 话题信息
         Map<Integer, List<Topic>> topicMap = topicService.getTopicByPostIds(postIds);
+        return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap);
+    }
+
+    /**
+     * 将postView转化为响应体
+     *
+     * @param records 记录列表
+     * @param userInfos 用户信息
+     * @param postListImgs 帖子图片
+     * @param topicMap 话题
+     * @param likeUserIdsMap 点赞用户
+     * @return List<PostListVO>
+     */
+    private List<PostListVO> convertToPostListVO(List<PostView> records,
+                                                 Map<Integer, UserSimpleVO> userInfos,
+                                                 Map<Integer,List<ImageAnnexView>> postListImgs,
+                                                 Map<Integer, List<Topic>> topicMap,
+                                                 Map<Integer, List<Integer>> likeUserIdsMap){
         // 创建响应对象
         List<PostListVO> postData = new ArrayList<>();
         // todo 一次查询所有帖子的点赞用户信息，在循环中赋值
@@ -120,5 +138,6 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         }
         return postData;
     }
+
 
 }

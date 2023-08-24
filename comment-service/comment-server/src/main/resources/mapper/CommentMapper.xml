@@ -4,8 +4,38 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xueyu.comment.mapper.CommentMapper">
+
 	<update id="updateLikeNum" parameterType="com.xueyu.comment.pojo.domain.Comment">
 		update comment
 		set hot = hot + #{num} where id = #{commentId}
 	</update>
+
+	<select id="selectMaxHotByPostId" parameterType="Integer" resultType="com.xueyu.comment.pojo.domain.Comment">
+		SELECT c.*
+		FROM
+			(SELECT
+				 post_id,
+				 MAX(hot) AS max_hot
+			 FROM
+				 comment
+			 where post_id in
+			           <foreach collection="postIds" item="item" separator="," open="(" close=")">
+						   #{item}
+					   </foreach>
+			 GROUP BY post_id) mp
+			INNER JOIN
+			comment c ON c.post_id = mp.post_id
+				AND c.hot = mp.max_hot
+				AND c.create_time = (
+					SELECT
+						MIN(create_time)
+					FROM
+						comment
+					WHERE
+						post_id = mp.post_id
+					  AND hot = mp.max_hot
+				)
+		ORDER BY post_id ;
+	</select>
+
 </mapper>

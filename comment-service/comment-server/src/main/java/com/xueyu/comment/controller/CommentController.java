@@ -8,6 +8,8 @@ import com.xueyu.common.core.result.RestResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -106,6 +108,22 @@ public class CommentController {
 		comment.setUserId(userId);
 		commentService.updateComment(comment);
 		return RestResult.ok(null, "更新成功");
+	}
+
+	/**
+	 * 获取各个帖子热度最高的评论
+	 *
+	 * @param postIds 帖子id
+	 * @return 帖子热度最高评论
+	 */
+	@GetMapping("post/hot")
+	public RestResult<List<CommentAnswerVO>> getPostsMaxHotComment(Integer[] postIds){
+		if(postIds == null || postIds.length == 0){
+			return RestResult.fail("请求体为空");
+		}
+		List<Integer> postIdList = Arrays.asList(postIds);
+		List<CommentAnswerVO> postHotComments = commentService.postsMaxHotComment(postIdList);
+		return RestResult.ok(postHotComments);
 	}
 
 }
