@@ -213,7 +213,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	@Override
-	public List<PostListVO> getPostListByTopicIds(String topicName, Integer userId) {
+	public ListVO<PostListVO> getPostListByTopicIds(String topicName, Integer userId, Integer current, Integer size) {
 		LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
 		wrapper.like(Topic::getName, topicName);
 		List<Topic> topicList = topicService.list(wrapper);
@@ -230,15 +230,20 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		for (PostTopic postTopic : postTopics) {
 			postIds.add(postTopic.getPostId());
 		}
-		// 查找帖子相关记录
+		// 分页查找帖子相关记录
 		LambdaQueryWrapper<PostView> postWrapper = new LambdaQueryWrapper<>();
 		postWrapper.in(PostView::getId, postIds);
-		List<PostView> records = postViewMapper.selectList(postWrapper);
+		IPage<PostView> page = new Page<>(current, size);
+		postViewMapper.selectPage(page, postWrapper);
+		ListVO<PostListVO> res = new ListVO<>();
+		BeanUtils.copyProperties(page, res);
 		// 请求facade进行处理
 		ConvertPostReq convertPostReq = new ConvertPostReq();
 		convertPostReq.setPostIds(postIds);
-		convertPostReq.setRecords(records);
-		return convertPostListFacade.execBusiness(convertPostReq);
+		convertPostReq.setRecords(page.getRecords());
+		List<PostListVO> postViewList = convertPostListFacade.execBusiness(convertPostReq);
+		res.setRecords(postViewList);
+		return res;
 	}
 
 	@Override

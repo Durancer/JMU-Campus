@@ -1,6 +1,9 @@
 package com.xueyu.post.facade;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xueyu.comment.client.CommentClient;
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
+import com.xueyu.common.core.result.RestResult;
 import com.xueyu.common.web.facade.FacadeStrategy;
 import com.xueyu.post.facade.request.ConvertPostReq;
 import com.xueyu.post.mapper.LikePostMapper;
@@ -56,6 +59,9 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
     @Resource
     VoteService voteService;
 
+    @Resource
+    CommentClient commentClient;
+
     @Override
     public List<PostListVO> execBusiness(ConvertPostReq convertPostReq) {
         List<Integer> authors = convertPostReq.getAuthors();
@@ -89,7 +95,13 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         Map<Integer, List<ImageAnnexView>> postListImgs = imageAnnexService.getPostListImgs(postIds);
         // 查询所有 话题信息
         Map<Integer, List<Topic>> topicMap = topicService.getTopicByPostIds(postIds);
-        return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap);
+        // 查询帖子热评
+        List<CommentAnswerVO> hotComments = commentClient.postsMaxHotComment(postIds).getData();
+        Map<Integer, CommentAnswerVO> commentMap = new HashMap<>();
+        for (CommentAnswerVO comment : hotComments) {
+            commentMap.put(comment.getPostId(), comment);
+        }
+        return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap, commentMap);
     }
 
     /**
@@ -106,7 +118,8 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
                                                  Map<Integer, UserSimpleVO> userInfos,
                                                  Map<Integer,List<ImageAnnexView>> postListImgs,
                                                  Map<Integer, List<Topic>> topicMap,
-                                                 Map<Integer, List<Integer>> likeUserIdsMap){
+                                                 Map<Integer, List<Integer>> likeUserIdsMap,
+                                                 Map<Integer, CommentAnswerVO> commentMaps){
         // 创建响应对象
         List<PostListVO> postData = new ArrayList<>();
         // todo 一次查询所有帖子的点赞用户信息，在循环中赋值
@@ -122,6 +135,8 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
                 List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
                 postListVO.setUserLikeBOList(userLikeInfos);
             }
+            // 设置最热评论
+            postListVO.setPostHotComment(commentMaps.get(record.getId()));
             // 设置帖子内容
             postListVO.setTopics(topicMap.get(postListVO.getId()));
             // html转码

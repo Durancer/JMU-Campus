@@ -1,5 +1,6 @@
 package com.xueyu.post.pojo.vo;
 
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
@@ -60,6 +61,11 @@ public class PostListVO {
 	 * 点赞用户列表
 	 */
 	List<UserSimpleVO> userLikeBOList;
+
+	/**
+	 * 帖子最热评论
+	 */
+	CommentAnswerVO postHotComment;
 
 	/**
 	 * 帖子创建时间

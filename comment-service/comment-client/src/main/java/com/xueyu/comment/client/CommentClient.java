@@ -1,5 +1,6 @@
 package com.xueyu.comment.client;
 
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
 import com.xueyu.common.core.result.RestResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,6 @@ public interface CommentClient {
 	 * @return answerVO对象
 	 */
 	@GetMapping("comment/post/hot")
-	RestResult<Object> postsMaxHotComment(@RequestParam List<Integer> postIds);
+	RestResult<List<CommentAnswerVO>> postsMaxHotComment(@RequestParam List<Integer> postIds);
 
 }
