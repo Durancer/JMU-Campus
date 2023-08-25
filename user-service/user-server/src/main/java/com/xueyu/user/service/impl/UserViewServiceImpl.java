@@ -14,6 +14,7 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import com.xueyu.user.service.UserViewService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -50,6 +51,9 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 
 	@Override
 	public Map<Integer, UserSimpleVO> getUserInfoListById(List<Integer> userIdList) {
+		if(CollectionUtils.isEmpty(userIdList)){
+			return null;
+		}
 		List<UserSimpleVO> userInfoList = getUserInfoList(userIdList);
 		Map<Integer, UserSimpleVO> userInfo = new HashMap<>(userIdList.size());
 		for (UserSimpleVO userSimpleVO : userInfoList) {

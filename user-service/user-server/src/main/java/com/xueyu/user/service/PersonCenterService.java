@@ -28,4 +28,13 @@ public interface PersonCenterService {
 	 */
 	String updateUserAvatar(Integer userId, MultipartFile file);
 
+	/**
+	 * 修改用户密码
+	 *
+	 * @param user 用户信息
+	 * @param idencode 验证码
+	 * @return 修改状态
+	 */
+	Boolean updateUserPasswordByEmail(User user, Integer idencode);
+
 }

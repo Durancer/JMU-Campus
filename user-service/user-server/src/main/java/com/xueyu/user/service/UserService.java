@@ -43,4 +43,12 @@ public interface UserService extends IService<User> {
 	 */
 	void sendUserVerifyCode(String email);
 
+	/**
+	 * 效验 验证码
+	 *
+	 * @param idencode 用户传入验证码
+	 * @param key 系统生成验证码
+	 */
+	void verifyIdencode(Integer idencode, String key);
+
 }

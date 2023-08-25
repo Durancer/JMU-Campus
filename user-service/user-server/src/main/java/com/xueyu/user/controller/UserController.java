@@ -2,6 +2,7 @@ package com.xueyu.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.common.core.result.RestResult;
+import com.xueyu.common.web.annotation.RequestLimit;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
@@ -88,6 +89,7 @@ public class UserController {
 	 * @param email 用户邮箱
 	 * @return 发送结果
 	 */
+	@RequestLimit(count = 2)
 	@PostMapping("send/code")
 	public RestResult<?> sendUserMail(String email) {
 		userService.sendUserVerifyCode(email);

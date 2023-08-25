@@ -4,6 +4,7 @@ import com.xueyu.common.core.result.RestResult;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.service.PersonCenterService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +54,22 @@ public class PersonCenterController {
 		user.setId(userId);
 		UserView userView = personCenterService.updateUserInfo(user);
 		return RestResult.ok(userView, "更新成功");
+	}
+
+	/**
+	 * 修改用户密码
+	 *
+	 * @param user 用户信息
+	 * @param idencode 验证码
+	 * @return 修改状态
+	 */
+	@PostMapping("update/password")
+	public RestResult<Boolean> updateUserPasswordByEmail(User user, @NotNull Integer idencode, @RequestHeader Integer userId){
+		user.setId(userId);
+		if(personCenterService.updateUserPasswordByEmail(user, idencode)){
+			return RestResult.ok(true, "修改成功");
+		}
+		return RestResult.ok(false, "修改失败");
 	}
 
 }

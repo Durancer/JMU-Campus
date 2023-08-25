@@ -56,8 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		log.info("邮箱 -> {} 用户进行注册", user.getEmail());
 		// 判断验证码是否相同
 		String key = CODE_KEY_PREFIX + user.getEmail();
-		Integer checkCode = redisTemplate.opsForValue().get(key);
-		verifyIdencode(idencode, checkCode);
+		verifyIdencode(idencode, key);
 		// 检查用户注册参数
 		verifyUserInfo(user);
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -113,7 +112,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public void sendUserVerifyCode(String email) {
-		// todo 限制单ip邮箱发送量
 		// 判断当前待发送邮箱是否已经有验证码
 		String key = MailConstant.CODE_KEY_PREFIX + email;
 		Integer code = redisTemplate.opsForValue().get(key);
@@ -124,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		int idenCode = (int) ((Math.random() * 9 + 1) * 100000);
 		// 封装邮件内容
 		String subject = "欢迎进入 i集大校园，快来遇见校友吧！";
-		String content = "【i集大校园】您正在注册/登录 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。";
+		String content = "【i集大校园】您正在注册/登录 或操作 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。";
 		redisTemplate.opsForValue().set(key, idenCode, 60, TimeUnit.SECONDS);
 		// 发送邮件
 		Mail mail = new Mail();
@@ -142,6 +140,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public Map<String, Object> loginUserByCode(String email, Integer idencode) {
+		// 查询验证码是否正确
+		String key = CODE_KEY_PREFIX + email;
+		// 效验验证码正确性
+		verifyIdencode(idencode, key);
 		// 查询用户信息
 		LambdaQueryWrapper<UserView> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(UserView::getEmail, email);
@@ -149,11 +151,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (userView == null) {
 			throw new UserException("不存在该邮箱账号");
 		}
-		// 查询验证码是否正确
-		String key = CODE_KEY_PREFIX + email;
-		Integer checkCode = redisTemplate.opsForValue().get(key);
-		// 效验验证码正确性
-		verifyIdencode(idencode, checkCode);
 		// 签发jwt
 		String token = JwtUtil.createJwt("userId", userView.getId());
 		log.info("用户 id -> {}, email -> {} 使用邮箱进行了登录操作", userView.getId(), userView.getEmail());
@@ -169,9 +166,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 * 效验 验证码
 	 *
 	 * @param idencode 用户传入验证码
-	 * @param checkCode 系统生成验证码
+	 * @param key 系统生成验证码
 	 */
-	public void verifyIdencode(Integer idencode, Integer checkCode){
+	public void verifyIdencode(Integer idencode, String key){
+		// 系统生成的验证码
+		Integer checkCode = redisTemplate.opsForValue().get(key);
 		if (checkCode == null) {
 			throw new UserException("验证码已过期，请重新发送");
 		}

@@ -212,6 +212,36 @@
 }
 ```
 
+
+#### 修改用户密码
+
+```
+请求地址：/user/person/update/password
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段  | 类型   | 含义                                 | 必填 |
+| ----- | ------ | ------------------------------------ | ---- |
+| token | String | 请求头加入                           | 是   |
+| password  | String   | 用户新密码 | 是   |
+| email  | String   | 用户邮箱 | 是   |
+| idencode  | Integer   | 验证码 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "修改成功",
+    "data": true,
+    "status": true
+}
+```
+
+
+
 #### 邮箱验证登录
 
 ```
