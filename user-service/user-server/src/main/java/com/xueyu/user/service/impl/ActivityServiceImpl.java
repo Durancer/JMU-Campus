@@ -5,9 +5,9 @@ import com.xueyu.user.exception.UserException;
 import com.xueyu.user.mapper.ItemMapper;
 import com.xueyu.user.mapper.UserItemMapper;
 import com.xueyu.user.mapper.UserMapper;
-import com.xueyu.user.pojo.domain.Item;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.domain.UserItem;
+import com.xueyu.user.sdk.pojo.enums.UserStuffEnum;
 import com.xueyu.user.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -83,26 +83,26 @@ public class ActivityServiceImpl implements ActivityService {
 			// 预减派发数量
 			redisTemplate.opsForValue().decrement(STOCK_KEY);
 			// 添加用户票券
-			log.info("用户id -> {}, 抢到流量券", userId);
-			LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<>();
-			wrapper.eq(Item::getName, "流量券");
-			Item item = itemMapper.selectOne(wrapper);
 			LambdaQueryWrapper<UserItem> userItemWrapper = new LambdaQueryWrapper<>();
-			userItemWrapper.eq(UserItem::getItemId, item.getId());
+			Integer traffixId = UserStuffEnum.Traffix.getId();
+			userItemWrapper.eq(UserItem::getItemId, traffixId);
 			UserItem userItem = userItemMapper.selectOne(userItemWrapper);
 			if (userItem == null) {
 				// 如果未查到数据，说明用户还没有流量券直接添加
 				UserItem addItem = new UserItem();
 				addItem.setUserId(userId);
 				addItem.setNum(1);
-				addItem.setItemId(item.getId());
+				addItem.setItemId(traffixId);
 				userItemMapper.insert(addItem);
 			} else {
-				if (userItem.getNum() >= 1 && userItem.getItemId().equals(item.getId())) {
+				if (userItem.getNum() >= 1 && userItem.getItemId().equals(traffixId)) {
 					userItem.setNum(userItem.getNum() + 1);
 					userItemMapper.updateById(userItem);
 				}
 			}
+			log.info("用户id -> {}, 抢到流量券", userId);
+			// 添加系统流量券派出数量
+			itemMapper.updateSendNumById(traffixId, 1);
 			// 添加用户已抢送数据
 			userIds.add(userId);
 		} catch (Exception e) {

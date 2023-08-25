@@ -101,6 +101,10 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 				user.getCreateTime() != null) {
 			throw new UserException("不合法的参数传入");
 		}
+		User check = userMapper.selectById(user.getId());
+		if(!check.getEmail().equals(user.getEmail())){
+			throw new UserException("操作用户非邮箱拥有者用户");
+		}
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
 		log.info("用户id ->{}, 邮箱 -> {} 修改了用户密码", user.getId(), user.getEmail());
