@@ -49,22 +49,6 @@ public interface UserViewService extends IService<UserView> {
 	Map<Integer, List<UserSimpleVO>> getUserInfoListByGroup(Map<String, List<Integer>> userGroupIds);
 
 	/**
-	 * 获取用户物品信息
-	 *
-	 * @param userId 用户id
-	 * @return 用户物品信息
-	 */
-	UserItemList getUserStuff(Integer userId);
-
-	/**
-	 * 获取用户物品信息
-	 *
-	 * @param userIds 用户id
-	 * @return 用户物品信息
-	 */
-	List<UserItemList> getUserListStuff(List<Integer> userIds);
-
-	/**
 	 * 获取用户统计数据 VO
 	 *
 	 * @param userId 用户id

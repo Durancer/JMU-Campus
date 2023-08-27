@@ -15,4 +15,8 @@
 		</where>
 	</update>
 
+	<select id="selectDiffUserIds" resultType="Integer">
+		select distinct `user_id` from user_item
+	</select>
+
 </mapper>

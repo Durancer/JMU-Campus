@@ -31,7 +31,7 @@ public class Item {
 	/**
 	 * 资源描述
 	 */
-	String desc;
+	String detail;
 
 	/**
 	 * 资源图片

@@ -35,7 +35,7 @@ public class UserItemView {
 	/**
 	 * 资源描述
 	 */
-	String desc;
+	String detail;
 
 	/**
 	 * 资源图片路径

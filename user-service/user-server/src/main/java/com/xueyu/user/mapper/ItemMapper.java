@@ -3,6 +3,8 @@ package com.xueyu.user.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xueyu.user.pojo.domain.Item;
 
+import java.util.List;
+
 /**
  * @author durance
  */
@@ -16,5 +18,12 @@ public interface ItemMapper extends BaseMapper<Item> {
      * @return 影响行数
      */
     int updateSendNumById(Integer id, Integer num);
+
+    /**
+     * 查询物品关联表里已有物品的用户
+     *
+     * @return id集合
+     */
+    List<Integer> selectDiffUserIds();
 
 }

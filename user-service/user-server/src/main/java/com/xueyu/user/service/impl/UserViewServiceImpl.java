@@ -29,12 +29,6 @@ import java.util.Map;
 public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> implements UserViewService {
 
 	@Resource
-	UserItemViewMapper userItemViewMapper;
-
-	@Resource
-	UserViewMapper userViewMapper;
-
-	@Resource
 	UserGeneralMapper userGeneralMapper;
 
 	@Override
@@ -81,55 +75,6 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 	}
 
 	@Override
-	public UserItemList getUserStuff(Integer userId) {
-		LambdaQueryWrapper<UserItemView> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(UserItemView::getUserId, userId);
-		List<UserItemView> userItemViews = userItemViewMapper.selectList(wrapper);
-		UserView userView = userViewMapper.selectById(userId);
-		// 创建返回对象，封装属性
-		UserItemList userItemList = new UserItemList();
-		BeanUtils.copyProperties(userItemList, userView);
-		userItemList.setUserItemList(userItemViews);
-		return userItemList;
-	}
-
-	@Override
-	public List<UserItemList> getUserListStuff(List<Integer> userIds) {
-		// 查出所有用户信息
-		LambdaQueryWrapper<UserView> userWrapper = new LambdaQueryWrapper<>();
-		userWrapper.in(UserView::getId, userIds);
-		List<UserView> userViews = userViewMapper.selectList(userWrapper);
-		// 查出所有用户所拥有的物品信息
-		LambdaQueryWrapper<UserItemView> itemWrapper = new LambdaQueryWrapper<>();
-		itemWrapper.in(UserItemView::getUserId, userIds);
-		List<UserItemView> userItemViews = userItemViewMapper.selectList(itemWrapper);
-		// 将查出来的商品进行分组
-		Map<Integer, List<UserItemView>>  itemsMap = new HashMap<>();
-		for (UserItemView userItemView : userItemViews) {
-			List<UserItemView> originItems = itemsMap.getOrDefault(userItemView.getUserId(), new ArrayList<>());
-			originItems.add(userItemView);
-			itemsMap.put(userItemView.getUserId(), originItems);
-		}
-		// 创建总响应体
-		List<UserItemList> res = new ArrayList<>();
-		for(Integer userId : userIds){
-			// 创建单个用户的物品响应体
-			UserItemList userItemList = new UserItemList();
-			// 查找用户信息并赋值
-			for(UserView userView : userViews){
-				if(userView.getId().equals(userId)){
-					BeanUtils.copyProperties(userItemList, userView);
-					break;
-				}
-			}
-			// 赋值商品信息
-			userItemList.setUserItemList(itemsMap.get(userId));
-			res.add(userItemList);
-		}
-		return res;
-	}
-
-	@Override
 	public UserGeneralVO getUserGeneralInfo(Integer userId) {
 		// 查询除对应内容
 		UserView userInfo = getUserInfo(userId);
@@ -146,4 +91,5 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		wrapper.like(UserView::getUsername, username).or().like(UserView::getNickname, username);
 		return query().getBaseMapper().selectList(wrapper);
 	}
+
 }
