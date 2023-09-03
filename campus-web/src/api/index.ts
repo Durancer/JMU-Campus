@@ -4,7 +4,6 @@ import { localCache } from '@/utils/cache'
 import Request from './request'
 
 const request = new Request({
-  baseURL: '/Api',
   // baseURL: 'http://60.204.139.75/api',
   interceptors: {
     requestSuccessFn: (config) => {

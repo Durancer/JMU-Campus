@@ -16,6 +16,13 @@ import { failMessage } from '@/utils/common'
  *
  *  2.响应结果的类型处理(泛型)
  */
+;(function () {
+  if (process.env.NODE_ENV === 'development') {
+    axios.defaults.baseURL = '/Apis'
+  } else if (process.env.NODE_ENV === 'production') {
+    axios.defaults.baseURL = 'http://60.204.139.75/api'
+  }
+})()
 
 class Request {
   instance: AxiosInstance

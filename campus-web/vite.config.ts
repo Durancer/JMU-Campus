@@ -10,12 +10,13 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   server: {
     proxy: {
-      '/Api': {
+      '/Apis': {
         target: 'http://60.204.139.75/api',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/Api/, '')
+        rewrite: (path) => path.replace(/^\/Apis/, '')
       }
     }
   },
