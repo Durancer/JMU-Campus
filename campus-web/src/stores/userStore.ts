@@ -12,6 +12,7 @@ export const useUserStore = defineStore(
     const token = ref('')
     async function loginFn(data: any) {
       const res = await login(data)
+      console.log('data', res)
       if (res.status) {
         // localCache.setCache(LOGIN_TOKEN, res.data.userInfo.token)
         token.value = res.data.token

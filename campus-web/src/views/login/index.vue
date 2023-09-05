@@ -2,7 +2,7 @@
   <div class="login-card">
     <el-card shadow="always">
       <template #header>
-        <h1 style="text-align: center">登录</h1>
+        <h1 style="text-align: center">登录页面</h1>
       </template>
       <el-form
         ref="loginFormRef"
@@ -16,9 +16,7 @@
         </el-form-item>
         <div style="border: none; background: none; display: flex; justify-content: center">
           <el-form-item style="border: none; background: none">
-            <el-button type="primary" style="width: 100%" @click="handleBtn('loginForm')"
-              >登录</el-button
-            >
+            <el-button type="primary" style="width: 100%" @click="login">登录</el-button>
           </el-form-item>
         </div>
       </el-form>
@@ -28,12 +26,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { emitChangeFn, FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 
 import { useUserStore } from '@/stores/userStore.ts'
 
 const userStore = useUserStore()
-const emits = defineEmits(['close'])
 
 interface APILoginForm {
   username: string
@@ -44,8 +41,8 @@ interface APILoginForm {
 const loginFormRef = ref<FormInstance>()
 
 const loginForm = reactive<APILoginForm>({
-  username: '',
-  password: ''
+  username: '简单点',
+  password: '123456'
 })
 
 const loginRules = reactive<FormRules<APILoginForm>>({
@@ -53,9 +50,9 @@ const loginRules = reactive<FormRules<APILoginForm>>({
   password: [{ required: true, message: '请输入账号密码', trigger: 'blur' }]
 })
 
-const handleBtn = async (str: string) => {
+const login = async () => {
   try {
-    await userStore.loginFn(loginForm)
+    userStore.loginFn(loginForm)
   } catch (err) {}
 }
 
