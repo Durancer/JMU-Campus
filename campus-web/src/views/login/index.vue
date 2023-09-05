@@ -41,8 +41,8 @@ interface APILoginForm {
 const loginFormRef = ref<FormInstance>()
 
 const loginForm = reactive<APILoginForm>({
-  username: '简单点',
-  password: '123456'
+  username: '',
+  password: ''
 })
 
 const loginRules = reactive<FormRules<APILoginForm>>({

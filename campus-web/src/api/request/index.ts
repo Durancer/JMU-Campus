@@ -49,7 +49,7 @@ export const createAxiosByinterceptors = (config?: AxiosRequestConfig): AxiosIns
       console.log('config:', config)
       // config.headers.Authorization = vm.$Cookies.get("vue_admin_token");
       if (loading) addLoading()
-      const token = localCache.getCache('login').token
+      const token = localCache.getCache('login')?.token
       if (config.headers && token) {
         // 类型缩小
         // config.headers.Authorization = 'Bearer ' + token
