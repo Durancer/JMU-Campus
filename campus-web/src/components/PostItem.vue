@@ -62,6 +62,7 @@ interface Props {
   imgList?: null | string[]
   voteMessage?: null | voteMessageInter
   userLikeBOList?: null | postItemUserInfo[]
+  postHotComment?: null | [] | object // 后面加的
   createTime: string
   commentNum?: number // detail
   likeNum?: number

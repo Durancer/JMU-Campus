@@ -12,6 +12,7 @@
         </main>
         <!-- <main-cpm :is-hidden="isHidden" /> -->
       </div>
+      <Footer></Footer>
     </div>
   </div>
 </template>
@@ -20,10 +21,8 @@
 import { RouterView } from 'vue-router'
 import { reactive, ref, watch } from 'vue'
 import { useScroll, useDebounceFn } from '@vueuse/core'
-
 import headerCpm from './header/index.vue'
-import mainCpm from './main/index.vue'
-
+import Footer from '@/views/footer/index.vue'
 const isHidden = ref(false)
 
 const { directions, isScrolling, arrivedState } = useScroll(document)

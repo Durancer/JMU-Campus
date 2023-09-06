@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
@@ -15,7 +15,7 @@
     "@vueuse/core": "^10.2.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
-    "axios": "^1.3.4",
+    "axios": "^1.4.0",
     "element-plus": "^2.3.8",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",

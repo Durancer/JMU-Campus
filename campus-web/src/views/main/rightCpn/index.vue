@@ -7,12 +7,14 @@
       <div class="aside-content">
         <ul class="main-item" v-for="(topic, idx) in topicList" :key="topic.key">
           <li class="item-box">
-            <span class="order">
-              {{ idx + 1 }}
-            </span>
-            <span class="title">
-              {{ topic.name }}
-            </span>
+            <RouterLink :to="{ name: 'index', query: { topic: topic.name } }">
+              <span class="order">
+                {{ idx + 1 }}
+              </span>
+              <span class="title">
+                {{ topic.name }}
+              </span>
+            </RouterLink>
           </li>
         </ul>
       </div>
