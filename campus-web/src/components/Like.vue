@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import _ from 'lodash'
+import debounce from 'lodash.debounce'
 import { computed, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { failMessage } from '@/utils/common'
@@ -26,7 +26,7 @@ const props = defineProps({
 const tmpLikeNum = ref(props.likeNum)
 const tmpIsLike = ref(props.isLike)
 const emit = defineEmits(['like-click'])
-const emitClickFn = _.debounce(() => {
+const emitClickFn = debounce(() => {
   if (tmpIsLike.value !== props.isLike) {
     emit('like-click')
   }

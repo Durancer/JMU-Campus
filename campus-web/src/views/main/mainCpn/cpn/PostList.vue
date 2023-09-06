@@ -12,11 +12,11 @@
 
 <script setup lang="ts">
 import PostItem from '@/components/PostItem.vue'
-import _ from 'lodash'
+import debounce from 'lodash.debounce'
 const props = defineProps(['records'])
 const emit = defineEmits(['to-bottom'])
 // TODO：bug一开始就会翻到第二页
-const toBottom = _.debounce(() => {
+const toBottom = debounce(() => {
   console.log('emit-to-bottom')
   emit('to-bottom')
 }, 1000)
