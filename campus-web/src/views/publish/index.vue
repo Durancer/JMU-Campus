@@ -2,19 +2,10 @@
   <div class="editor">
     <el-input placeholder="请输入帖子标题" class="edit-input" v-model="post.title" />
     <div style="border: 1px solid #ccc">
-      <Toolbar
-        style="border-bottom: 1px solid #ccc"
-        :editor="editorRef"
-        :defaultConfig="toolbarConfig"
-        :mode="mode"
-      />
-      <Editor
-        style="height: 500px; overflow-y: hidden"
-        v-model="post.content"
-        :defaultConfig="editorConfig"
-        :mode="mode"
-        @onCreated="handleCreated"
-      />
+      <div id="editor—wrapper">
+        <div id="toolbar-container"><!-- 工具栏 --></div>
+        <div id="editor-container"><!-- 编辑器 --></div>
+      </div>
     </div>
   </div>
 
@@ -25,7 +16,7 @@
     </div>
     <div v-show="isAddTopic">
       <div>
-        <span>请输入增加的话题(最多三个)</span>
+        <span style="margin-right: 10px">请输入增加的话题(最多三个)</span>
         <el-select
           v-model="topic"
           multiple
@@ -37,10 +28,10 @@
           size="large"
         >
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="topic in topicList"
+            :key="topic.id"
+            :label="topic.name"
+            :value="topic.name"
           />
         </el-select>
       </div>
@@ -61,65 +52,52 @@ import { ref, computed, reactive, shallowRef, onMounted, onBeforeUnmount } from 
 import { addPost } from '@/api/posts/index.ts'
 import { sucMessage, failMessage } from '@/utils/common.ts'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import Vote from '@/components/Vote.vue'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { useFetchTopic } from '@/hooks/useFetchTopic.ts'
 
-const contentRef = ref(null)
 const post = reactive({
   title: '',
   content: ''
 })
+const { createEditor, createToolbar } = window.wangEditor
+// 富文本相关
+let editor = null
+let toolbarConfig = {}
+let toolbar = null
+onMounted(() => {
+  editor = createEditor({
+    selector: '#editor-container',
+    html: '<p><br></p>',
+    config: editorConfig,
+    mode: 'default' // or 'simple'
+  })
+  toolbar = createToolbar({
+    editor,
+    selector: '#toolbar-container',
+    config: toolbarConfig,
+    mode: 'default' // or 'simple'
+  })
+})
+let editorConfig = {
+  placeholder: 'Type here...',
+  onChange(editor) {
+    post.content = editor.getText() ? editor.getHtml() : ''
+  }
+}
 const isAddTopic = ref(false)
 const isAddVote = ref(false)
 const voteRef = ref(null)
 const topic = ref<string[]>([])
-// 临时的数据
-const options = [
-  {
-    value: 'HTML',
-    label: 'HTML'
-  },
-  {
-    value: 'CSS',
-    label: 'CSS'
-  },
-  {
-    value: 'JavaScript',
-    label: 'JavaScript'
-  }
-]
+const topicList = useFetchTopic()
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 const mode = 'defalut'
 
-// 内容 HTML
-// const valueHtml = ref('')
-
-// 模拟 ajax 异步获取内容
-// onMounted(() => {
-// setTimeout(() => {
-//   valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
-// }, 1500)
-// failMessage('failMessage')
-// })
-
-const toolbarConfig = {}
-const editorConfig = { placeholder: '请输入帖子内容...' }
-
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
-  const editor = editorRef.value
   if (editor == null) return
   editor.destroy()
 })
-
-const handleCreated = (editor) => {
-  editorRef.value = editor // 记录 editor 实例，重要！
-}
-// const handleInput = (event) => {
-//   post.content = event.target.innerText
-// }
 
 const valid = () => {
   if (!post.title) {
@@ -159,16 +137,9 @@ const publish = () => {
     })
   }
 }
-const totast = () => {
-  ElMessage({
-    message: '发布成功',
-    type: 'success'
-  })
-}
 </script>
 
 <style lang="less">
-@import url('@wangeditor/editor/dist/css/style.css');
 .editor {
   box-sizing: border-box;
   max-width: 930px;

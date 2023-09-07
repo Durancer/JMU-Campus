@@ -50,8 +50,8 @@ watch(directions, () => {
   position: relative;
   max-width: 1200px;
   margin: auto;
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
 }
 .container {
   // max-width: 1200px;

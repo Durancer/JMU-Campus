@@ -78,9 +78,9 @@ export const createAxiosByinterceptors = (config?: AxiosRequestConfig): AxiosIns
         // return downloadFile(response)
       } else {
         if (code <= 299 && code >= 200) {
-          if (method === 'post' && loading) {
-            ElMessage({ message, type: 'success', duration: 1000 }) // post弹出消息提示
-          }
+          // if (method === 'post' && loading) {
+          //   ElMessage({ message, type: 'success', duration: 1000 }) // post弹出消息提示
+          // }
           return response.data
         } else {
           ElMessage.error(message)
