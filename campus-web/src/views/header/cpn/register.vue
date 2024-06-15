@@ -71,11 +71,11 @@ const registerEmailFlag = ref(false)
 const registerFormRef = ref<FormInstance>()
 
 const registerForm = reactive<userinfo>({
-  username: '活得简单点',
-  password: '123456',
-  idencode: 514861,
-  email: '1547025615@qq.com',
-  nickname: 'be simple'
+  username: '',
+  password: '',
+  idencode: 0,
+  email: '',
+  nickname: ''
 })
 
 const registerRules = reactive<FormRules>({

@@ -139,7 +139,7 @@ export function getAllTopic() {
 }
 
 // 根据话题区别帖子
-export function getTopicPost(topicName) {
+export function getTopicPost(topicName: string) {
   return http.request({
     url: '/post/topic/list',
     params: {

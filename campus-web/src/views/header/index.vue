@@ -7,10 +7,10 @@
             <SvgIcon name="logo" size="3em"></SvgIcon>
           </RouterLink>
         </div>
-        <div @click="$router.push({ name: 'admin' })">admin</div>
-        <div>
+        <!-- <div @click="$router.push({ name: 'admin' })">admin</div> -->
+        <!-- <div>
           <input type="text" placeholder="搜索" class="searcher" />
-        </div>
+        </div> -->
         <div class="header-right">
           <template v-if="!userStore.userInfo?.id">
             <div class="login">

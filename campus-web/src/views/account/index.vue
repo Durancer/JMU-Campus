@@ -47,10 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import type { updateInfo } from '@/api/user/type.ts'
 import { reactive, ref, onMounted, computed, toRefs } from 'vue'
 import { useUserStore } from '@/stores/userStore.ts'
-import { storeToRefs } from 'pinia'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 

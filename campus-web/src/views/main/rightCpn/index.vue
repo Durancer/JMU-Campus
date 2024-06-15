@@ -7,12 +7,14 @@
       <div class="aside-content">
         <ul class="main-item" v-for="(topic, idx) in topicList" :key="topic.key">
           <li class="item-box">
-            <span class="order">
-              {{ idx + 1 }}
-            </span>
-            <span class="title">
-              {{ topic.name }}
-            </span>
+            <RouterLink :to="{ name: 'index', query: { topic: topic.name } }">
+              <span class="order">
+                {{ idx + 1 }}
+              </span>
+              <span class="title">
+                {{ topic.name }}
+              </span>
+            </RouterLink>
           </li>
         </ul>
       </div>
@@ -21,18 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { getAllTopic } from '@/api/posts/index.ts'
-const topicList = ref([])
-const getAllTopicFn = async () => {
-  const res = await getAllTopic()
-  if (res.data && res.data.length > 10) {
-    topicList.value = res.data.slice(0, 10)
-  } else {
-    topicList.value = res.data // TODO：话题太多怎么展示话题
-  }
-}
-onMounted(() => getAllTopicFn())
+import { useFetchTopic } from '@/hooks/useFetchTopic'
+const topicList = useFetchTopic()
 </script>
 
 <style scoped lang="less">
