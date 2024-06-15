@@ -96,12 +96,12 @@ public interface PostService extends IService<Post> {
 	ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId);
 
 	/**
-	 * 通过话题id查询其对应的帖子详情
+	 * 通过话题名称分页查询其对应的帖子详情
 	 *
 	 * @param topicName 话题名称
 	 * @param userId 用户id
 	 * @return 帖子列表
 	 */
-	List<PostListVO>  getPostListByTopicIds(String topicName, Integer userId);
+	ListVO<PostListVO>  getPostListByTopicIds(String topicName, Integer userId, Integer current, Integer size);
 
 }

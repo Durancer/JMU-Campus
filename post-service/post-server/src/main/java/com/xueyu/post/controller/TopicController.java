@@ -1,6 +1,7 @@
 package com.xueyu.post.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -67,15 +68,18 @@ public class TopicController {
     }
 
     /**
-     * 通过话题获取帖子列表
+     * 通过话题分页获取帖子列表
      *
      * @param name 话题名称
      * @param userId 用户id
      * @return 所有帖子详细信息
      */
     @GetMapping("list")
-    public RestResult<List<PostListVO>> getPostListByTopic(String name, @RequestHeader(required = false) Integer userId){
-        List<PostListVO> postListInfo = postService.getPostListByTopicIds(name, userId);
+    public RestResult<ListVO<PostListVO>> getPostListByTopic(String name,
+                                                             @RequestHeader(required = false) Integer userId,
+                                                             @RequestParam(defaultValue = "1") Integer current,
+                                                             @RequestParam(defaultValue = "10") Integer size){
+        ListVO<PostListVO> postListInfo = postService.getPostListByTopicIds(name, userId, current, size);
         return RestResult.ok(postListInfo);
     }
 

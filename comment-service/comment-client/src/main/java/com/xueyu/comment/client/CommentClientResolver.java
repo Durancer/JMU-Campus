@@ -1,5 +1,6 @@
 package com.xueyu.comment.client;
 
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
 import com.xueyu.common.core.result.RestResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class CommentClientResolver implements CommentClient {
 	}
 
 	@Override
-	public RestResult<Object> postsMaxHotComment(List<Integer> postIds) {
+	public RestResult<List<CommentAnswerVO>> postsMaxHotComment(List<Integer> postIds) {
 		log.error("comment 服务异常：getPostCommentList 请求失败");
 		return new RestResult<>(503, "fail");
 	}
