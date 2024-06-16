@@ -60,7 +60,7 @@ public class TopicController {
      */
     @PostMapping("add")
     public RestResult<?> addTopic(String name){
-        Boolean result = topicService.createTopic(Arrays.asList(name));
+        Boolean result = topicService.createTopic(Arrays.asList(name), null);
         if(!result){
             return RestResult.fail("创建失败");
         }

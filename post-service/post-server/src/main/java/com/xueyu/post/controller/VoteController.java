@@ -45,7 +45,7 @@ public class VoteController {
      */
     @PostMapping("delete")
     public RestResult<?> deleteVote(Integer voteId){
-        boolean status = voteService.deleteVote(voteId);
+        boolean status = voteService.deletePostVote(voteId);
         if(!status){
             return RestResult.fail("删除投票失败");
         }

@@ -67,7 +67,6 @@ public class UserInfoController {
 	 */
 	@GetMapping("list/group")
 	public RestResult<Map<Integer, List<UserSimpleVO>>> getUserInfoByGroup(@RequestParam HashMap<String, List<Integer>> userGroupIds) {
-		System.out.println(userGroupIds);
 		return RestResult.ok(userViewService.getUserInfoListByGroup(userGroupIds));
 	}
 

@@ -13,6 +13,7 @@ import com.xueyu.post.pojo.vo.VoteOptionVO;
 import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,11 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author fj
+ */
 @Service
+@Slf4j
 public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements VoteService {
 
     @Resource
@@ -64,23 +69,25 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteVote(Integer voteId) {
-        //查询投票数据是否存在
-        Vote vote = voteMapper.selectById(voteId);
+    public boolean deletePostVote(Integer postId) {
+        LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
+        voteQueryWrapper.eq(Vote::getPostId,postId);
+        Vote vote = voteMapper.selectOne(voteQueryWrapper);
         if(vote==null){
             throw new PostException("该投票不存在");
         }
         //删除投票选项
         LambdaQueryWrapper<VoteOption> optionQueryWrapper = new LambdaQueryWrapper<>();
-        optionQueryWrapper.eq(VoteOption::getVoteId,voteId);
+        optionQueryWrapper.eq(VoteOption::getVoteId, postId);
         voteOptionMapper.delete(optionQueryWrapper);
         //删除投票记录
         LambdaQueryWrapper<VoteRecord> recordQueryWrapper = new LambdaQueryWrapper<>();
-        recordQueryWrapper.in(VoteRecord::getVoteId,voteId);
+        recordQueryWrapper.in(VoteRecord::getVoteId, postId);
         voteRecordMapper.delete(recordQueryWrapper);
         //删除投票数据
-        int row = voteMapper.deleteById(voteId);
+        int row = voteMapper.deleteById(postId);
         if(row != 1){
+            log.error("投票删除异常, id -> {}", postId);
             throw new PostException("投票删除异常");
         }
         return true;

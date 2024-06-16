@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * @author renmengzhuo
+ */
 public interface TopicService extends IService<Topic> {
 
     int listByNamenumber(String name);
@@ -17,9 +20,10 @@ public interface TopicService extends IService<Topic> {
      * 创建话题
      *
      * @param topicNames 话题名称列表
+     * @param postId 帖子id
      * @return
      */
-    Boolean createTopic(List<String> topicNames);
+    Boolean createTopic(List<String> topicNames, Integer postId);
 
     /**
      * 判断话题长度

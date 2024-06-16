@@ -16,10 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -37,7 +34,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public Boolean createTopic(List<String> topicNames) {
+    public Boolean createTopic(List<String> topicNames, Integer postId) {
         // 统计目前数据库没有的话题
         LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Topic::getName, topicNames);
@@ -57,13 +54,31 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         // 一次存入数据库未存在的话题
         super.saveBatch(insertList);
         log.info("数据库新增 -> {} 条话题， 插入报文 ->{}", topicNames.size(), topicNames);
+        // 如果帖子id为空，不插入关联数据
+        if(Objects.isNull(postId)){
+            return true;
+        }
+        // 插入关联数据
+        ArrayList<HashMap> maps = new ArrayList<>();
+        LambdaQueryWrapper<Topic> linkWrapper = new LambdaQueryWrapper<>();
+        wrapper.in(Topic::getName, topicNames);
+        List<Topic> linkTopics = topicMapper.selectList(linkWrapper);
+        if(!linkTopics.isEmpty()){
+            for (Topic topic : linkTopics) {
+                HashMap<String, Integer> map = new HashMap<>();
+                map.put("topicId", topic.getId());
+                map.put("postId", postId);
+                maps.add(map);
+            }
+        }
+        topicMapper.insertPostTopics(maps);
         return true;
     }
 
     @Override
     public void checkTopicLength(String name){
-        int TOPIC_MIN_LENGTH = 2;
-        int TOPIC_MAX_LENGTH = 15;
+        final int TOPIC_MIN_LENGTH = 2;
+        final int TOPIC_MAX_LENGTH = 15;
         if(!(name.length() <= TOPIC_MAX_LENGTH && name.length() >= TOPIC_MIN_LENGTH)){
             throw new PostException("话题长度需要在 2-15个字符之间");
         }

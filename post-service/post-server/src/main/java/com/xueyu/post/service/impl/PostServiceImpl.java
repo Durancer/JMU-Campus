@@ -53,13 +53,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	VoteService voteService;
 
 	@Resource
-	VoteMapper voteMapper;
-
-	@Resource
 	PostGeneralMapper postGeneralMapper;
-
-	@Resource
-	ResourceClient resourceClient;
 
 	@Resource
 	RabbitTemplate rabbitTemplate;
@@ -99,42 +93,19 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		postGeneral.setPostId(post.getId());
 		postGeneralMapper.insert(postGeneral);
 		// 添加投票
-		if(vote.getType()!=null & vote.getCycle()!=null & vote.getTopic()!=null){
+		if(vote.getType() != null & vote.getCycle() != null & vote.getTopic() != null){
 			vote.setPostId(post.getId());
 			voteService.launchVote(vote,options);
 		}
 		// 绑定帖子和话题
 		if(!CollectionUtils.isEmpty(names)){
 			// 添加话题数据
-			topicService.createTopic(names);
-			// 插入关联数据
-			ArrayList<HashMap> maps = new ArrayList<>();
-			LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
-			wrapper.in(Topic::getName,names);
-			List<Topic> topics = topicMapper.selectList(wrapper);
-			if(!topics.isEmpty()){
-				for (Topic topic : topics) {
-					HashMap<String, Integer> map = new HashMap<>();
-					map.put("topicId",topic.getId());
-					map.put("postId",post.getId());
-					maps.add(map);
-				}
-			}
-			topicMapper.insertPostTopics(maps);
+			topicService.createTopic(names, post.getId());
+
 		}
 		// 图片是分布式存储的，放最后执行，确保前面业务有异常能够正常回滚
 		if (files != null) {
-			List<ImageAnnex> images = new ArrayList<>();
-			for (MultipartFile file : files) {
-				// 将存入的图片名称存入集合
-				ImageAnnex imageAnnex = new ImageAnnex();
-				// todo 一次性上传所有图片，减少服务调用次数
-				imageAnnex.setFileName(resourceClient.uploadImageFile(file).getData().get("fileName"));
-				imageAnnex.setParentId(post.getId());
-				images.add(imageAnnex);
-			}
-			// 将文件名存入帖子服务的图片附件表
-			imageAnnexService.saveBatch(images);
+			imageAnnexService.savePostImage(files, post.getId());
 		}
 		log.info("用户 id -> {}, 上传了帖子到审核列表, 包含 {} 张图片， {} 个话题", post.getUserId(), files == null ? 0 : files.length, names.size());
 		// 发送mq消息
@@ -152,29 +123,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Post::getId, postId).eq(Post::getUserId, userId);
 		Post post = query().getBaseMapper().selectOne(wrapper);
-		// 如果未查出数据说明帖子为另外的用户或不存在
+		// 如果未查出数据说明帖子为另外的用户创建或不存在
 		if (post == null) {
+			log.error("帖子删除失败，用户id -> {} 与 删除帖子 id -> {}不匹配", userId, postId);
 			throw new PostException("用户id与帖子id不匹配");
 		}
 		// 删除帖子图片
-		LambdaQueryWrapper<ImageAnnex> imgWrapper = new LambdaQueryWrapper<>();
-		imgWrapper.eq(ImageAnnex::getParentId, postId);
-		List<ImageAnnex> imgList = imageAnnexService.list(imgWrapper);
-		// 如果帖子有图片则进行图片删除
-		if (!CollectionUtils.isEmpty(imgList)) {
-			String[] fileList = new String[imgList.size()];
-			for (int i = 0; i < fileList.length; i++) {
-				fileList[i] = imgList.get(i).getFileName();
-			}
-			resourceClient.deleteFilesListByFileName(fileList);
-		}
+		imageAnnexService.deletePostImage(postId);
 		// 删除投票
-		LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
-		voteQueryWrapper.eq(Vote::getPostId,postId);
-		Vote vote = voteMapper.selectOne(voteQueryWrapper);
-		if(vote!=null){
-			voteService.deleteVote(vote.getVoteId());
-		}
+		voteService.deletePostVote(postId);
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {

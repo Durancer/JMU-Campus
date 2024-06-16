@@ -6,6 +6,9 @@ import com.xueyu.post.pojo.domain.VoteRecord;
 
 import java.util.List;
 
+/**
+ * @author fj
+ */
 public interface VoteRecordService extends IService<VoteRecord> {
 
     /**

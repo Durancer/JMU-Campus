@@ -1,5 +1,6 @@
 package com.xueyu.user.service.impl;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.RestResult;
@@ -53,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public Boolean registerUser(User user, Integer idencode) {
-		log.info("邮箱 -> {} 用户进行注册", user.getEmail());
+		log.info("【用户注册入参】:{} ", JSONUtils.toJSONString(user));
 		// 判断验证码是否相同
 		String key = CODE_KEY_PREFIX + user.getEmail();
 		verifyIdencode(idencode, key);
