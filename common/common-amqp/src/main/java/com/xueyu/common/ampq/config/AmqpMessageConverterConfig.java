@@ -13,6 +13,7 @@ public class AmqpMessageConverterConfig {
 
 	@Bean
 	public MessageConverter messageConverter() {
+		// todo 封装公共发送消息工具类
 		return new Jackson2JsonMessageConverter();
 	}
 

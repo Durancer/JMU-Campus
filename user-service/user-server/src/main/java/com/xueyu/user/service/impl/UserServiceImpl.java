@@ -3,6 +3,7 @@ package com.xueyu.user.service.impl;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.common.core.enums.ResultTypeEnum;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.resource.sdk.bo.Mail;
@@ -131,8 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		mail.setSubject(subject);
 		mail.setText(content);
 		RestResult<?> restResult = resourceClient.sendSystemMail(mail);
-		// todo 将响应码在公共模块构建枚举类记录
-		if(!restResult.getCode().equals(200)){
+		if(!restResult.getCode().equals(ResultTypeEnum.SUCCESS.getCode())){
 			// 如果发送失败删除redis验证码数据
 			redisTemplate.delete(key);
 			throw new UserException(restResult.getMessage());

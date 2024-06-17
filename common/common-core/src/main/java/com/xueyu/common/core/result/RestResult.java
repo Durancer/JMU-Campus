@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+import static com.xueyu.common.core.enums.ResultTypeEnum.*;
+
 /**
  * 接口响应体
  *
@@ -35,29 +37,29 @@ public class RestResult<T> implements Serializable {
 	Boolean status;
 
 	public RestResult() {
-		this.code = 200;
+		this.code = SUCCESS.getCode();
 		this.message = "success";
 		this.data = null;
 		this.status = true;
 	}
 
 	public RestResult(T data) {
-		this.code = 200;
+		this.code = SUCCESS.getCode();
 		this.message = "success";
 		this.data = data;
 		this.status = true;
 	}
 
 	public RestResult(Boolean status) {
-		this.code = 200;
-		this.message = "success";
+		this.code = SUCCESS.getCode();
+		this.message = SUCCESS.getDesc();
 		this.data = null;
 		this.status = status;
 	}
 
 	public RestResult(Boolean status, String message) {
-		this.code = 200;
-		this.message = message;
+		this.code = SUCCESS.getCode();
+		this.message = SUCCESS.getDesc();
 		this.data = null;
 		this.status = status;
 	}
@@ -74,27 +76,27 @@ public class RestResult<T> implements Serializable {
 	}
 
 	public static <T> RestResult<T> ok(T data) {
-		return new RestResult<>(200, "success", data, true);
+		return new RestResult<>(SUCCESS.getCode(), SUCCESS.getDesc(), data, true);
 	}
 
 	public static <T> RestResult<T> ok(T data, String message) {
-		return new RestResult<>(200, message, data, true);
+		return new RestResult<>(SUCCESS.getCode(), message, data, true);
 	}
 
 	public static <T> RestResult<T> fail() {
-		return new RestResult<>(400, "fail", null, false);
+		return new RestResult<>(FAIL.getCode(), FAIL.getDesc(), null, false);
 	}
 
 	public static <T> RestResult<T> fail(String errorMessage) {
-		return new RestResult<>(400, errorMessage, null, false);
+		return new RestResult<>(FAIL.getCode(), errorMessage, null, false);
 	}
 
 	public static <T> RestResult<T> limit() {
-		return new RestResult<>(408, "访问频繁，请稍后再试");
+		return new RestResult<>(FREQUENT.getCode(), FREQUENT.getDesc());
 	}
 
 	public static <T> RestResult<T> notFound() {
-		return new RestResult<>(404, "NOT FOUND");
+		return new RestResult<>(NO_FOUND.getCode(), NO_FOUND.getDesc());
 	}
 
 }

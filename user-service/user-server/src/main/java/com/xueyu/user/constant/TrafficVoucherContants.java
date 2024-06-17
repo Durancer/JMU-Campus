@@ -25,6 +25,8 @@ public class TrafficVoucherContants {
 	/**
 	 * 数据用来存储已经领取过流量券的用户id，便于判断
 	 * 在流量券领取活动结束之后将有定时任务来清空本集合，便于下次活动开始时，再次使用
+	 *
+	 * 分布式场景无法试用，待优化
 	 */
 	public static Set<Integer> userIds = new HashSet<>(16);
 
