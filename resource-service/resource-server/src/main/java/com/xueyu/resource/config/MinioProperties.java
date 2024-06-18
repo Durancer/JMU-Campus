@@ -4,10 +4,13 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author durance
+ */
 @Data
 @Component
 @ConfigurationProperties(prefix = "minio")
-public class MinioPerproties {
+public class MinioProperties {
 
 	/**
 	 * 连接地址

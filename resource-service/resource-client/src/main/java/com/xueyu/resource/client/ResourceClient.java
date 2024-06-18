@@ -27,6 +27,15 @@ public interface ResourceClient {
 	RestResult<Map<String, String>> uploadImageFile(@RequestPart MultipartFile file);
 
 	/**
+	 * 上传多个图片接口
+	 *
+	 * @param files 图片
+	 * @return 图片链接
+	 */
+	@PostMapping(value = "/resource/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	RestResult<Map<String, String>> uploadImageFiles(@RequestPart MultipartFile[] files);
+
+	/**
 	 * 删除文件接口
 	 *
 	 * @param fileName 文件名称

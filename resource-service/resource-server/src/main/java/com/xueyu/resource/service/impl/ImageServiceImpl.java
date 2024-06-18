@@ -1,9 +1,11 @@
 package com.xueyu.resource.service.impl;
 
+import com.xueyu.resource.exception.ResourceException;
 import com.xueyu.resource.service.ImageService;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,13 +15,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author 阿杆
  */
 @Component
+@Slf4j
 public class ImageServiceImpl implements ImageService {
 
 	@Resource
@@ -70,6 +72,28 @@ public class ImageServiceImpl implements ImageService {
 			);
 			return fileName;
 		}
+	}
+
+	@Override
+	public List<String> uploadFiles(MultipartFile[] multipartFiles, String bucketName) {
+		List<String> res = new ArrayList<>();
+		try{
+			for (MultipartFile file : multipartFiles) {
+				String upload = upload(file, bucketName);
+				res.add(upload);
+			}
+		}catch (Exception e){
+			log.error("存储多张图片失败, 回滚删除 {} 张照片", res.size());
+			try {
+				String[] files = res.toArray(new String[0]);
+				removeFileList(files, bucketName);
+			} catch (Exception ex) {
+				throw new ResourceException(ex.getMessage());
+			}
+			return null;
+		}
+
+		return res;
 	}
 
 	@Override

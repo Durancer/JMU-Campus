@@ -23,6 +23,8 @@ import java.util.Objects;
 @Service
 public class MailServiceImpl {
 
+	public static final String TITLE = "i集大校园";
+
 	@Resource
 	private JavaMailSenderImpl mailSender;
 
@@ -32,7 +34,7 @@ public class MailServiceImpl {
 		try {
 			sendMimeMail(mail);
 		} catch (Exception e) {
-			log.warn("邮件发送失败：{}", e.getMessage());
+			log.error("邮件发送失败：{}", e.getMessage());
 			throw new MailSendException("邮件发送失败:" + e.getMessage());
 		}
 	}
@@ -65,7 +67,7 @@ public class MailServiceImpl {
 		//true表示支持复杂类型
 		MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage(), true);
 		if (mail.getFrom() == null || mail.getFrom().isEmpty()) {
-			mail.setFrom("i集大校园");
+			mail.setFrom(TITLE);
 		}
 		//邮件发信人
 		messageHelper.setFrom(mailSender.getUsername() + '(' + mail.getFrom() + ')');

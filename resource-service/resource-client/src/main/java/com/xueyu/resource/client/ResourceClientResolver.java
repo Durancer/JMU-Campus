@@ -24,6 +24,12 @@ public class ResourceClientResolver implements ResourceClient {
 	}
 
 	@Override
+	public RestResult<Map<String, String>> uploadImageFiles(MultipartFile[] files) {
+		log.error("Resource 服务异常：uploadImageFiles 请求失败");
+		return new RestResult<>(SERVICE_EXCEPTION.getCode(), SERVICE_EXCEPTION.getDesc());
+	}
+
+	@Override
 	public RestResult<?> deleteFileByFileName(String fileName) {
 		log.error("Resource 服务异常：deleteFileByFileName 请求失败");
 		return new RestResult<>(SERVICE_EXCEPTION.getCode(), SERVICE_EXCEPTION.getDesc());

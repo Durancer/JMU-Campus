@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author durance
@@ -44,6 +45,17 @@ public interface ImageService {
 	 * @throws IOException    字节流为空
 	 */
 	String upload(MultipartFile multipartFile, String bucketName) throws MinioException, IOException;
+
+	/**
+	 * 上传多个文件
+	 *
+	 * @param multipartFile 文件
+	 * @param bucketName    桶名称
+	 * @return 上传生成的文件名
+	 * @throws MinioException minio异常
+	 * @throws IOException    字节流为空
+	 */
+	List<String> uploadFiles(MultipartFile[] multipartFile, String bucketName) throws MinioException, IOException;
 
 	/**
 	 * 上传文件，请手动关闭inputStream
