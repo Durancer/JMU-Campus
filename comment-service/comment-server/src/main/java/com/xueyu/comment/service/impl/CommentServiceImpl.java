@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.xueyu.comment.sdk.constant.CommentMqContants.*;
 
@@ -56,20 +58,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
 	@Override
 	public Boolean sendUserComment(Comment comment) {
-		log.info("用户 id -> {}, 发送评论报文 -> {}", comment.getUserId(), comment);
+		log.info("发送评论报文 -> {}", comment);
 		PostDTO postInfo = postClient.getPostInfo(comment.getPostId()).getData();
 		if (postInfo == null){
 			throw new CommentException("不存在该帖子信息");
 		}
-		if (comment.getHot() != null){
-			throw new CommentException("非法字段传入");
-		}
-		if (!(comment.getType().equals(CommentType.ROOT.getValue()) || comment.getType().equals(CommentType.ANSWER.getValue()))) {
-			throw new CommentException("错误的评论类型");
-		}
-		if (comment.getType().equals(CommentType.ANSWER.getValue()) && comment.getToUserId() == null){
-			throw new CommentException("请选择回复对象");
-		}
+		// 校验参数
+		verifySendParam(comment);
 		Timestamp time = new Timestamp(System.currentTimeMillis());
 		comment.setCreateTime(time);
 		query().getBaseMapper().insert(comment);
@@ -88,6 +83,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		return true;
 	}
 
+	private void verifySendParam(Comment comment){
+		if (comment.getHot() != null){
+			throw new CommentException("非法字段传入");
+		}
+		if (!(comment.getType().equals(CommentType.ROOT.getValue()) || comment.getType().equals(CommentType.ANSWER.getValue()))) {
+			throw new CommentException("错误的评论类型");
+		}
+		if (comment.getType().equals(CommentType.ANSWER.getValue()) && comment.getToUserId() == null){
+			throw new CommentException("请选择回复对象");
+		}
+	}
+
 	@Override
 	public Boolean deleteUserComment(Integer userId, Integer commentId) {
 		log.info("用户id -> {} 执行操作删除 评论 id -> {}", userId, commentId);
@@ -103,10 +110,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			wrapper.eq(Comment::getRootId, commentId);
 			List<Comment> commentList = commentMapper.selectList(wrapper);
 			deleteNum = query().getBaseMapper().delete(wrapper);
-			List<Integer> ids = new ArrayList<>();
-			for(Comment c : commentList){
-				ids.add(c.getId());
-			}
+			List<Integer> ids = commentList.stream().map(Comment::getId).collect(Collectors.toList());
 			LambdaQueryWrapper<Like> lambdaQueryWrapper = new LambdaQueryWrapper<>();
 			lambdaQueryWrapper.in(Like::getCommentId, ids);
 			likeMapper.delete(lambdaQueryWrapper);
@@ -173,11 +177,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	@Override
 	public List<CommentAnswerVO> commentConvertAnswerVO(List<Comment> commentList) {
 		// 统计关联的用户id
-		Set<Integer> userIdSet = new HashSet<>();
-		for (Comment comment : commentList) {
-			userIdSet.add(comment.getUserId());
-			userIdSet.add(comment.getToUserId());
-		}
+		Set<Integer> userIdSet = commentList.stream()
+				.flatMap(comment -> Stream.of(comment.getUserId(), comment.getToUserId())).collect(Collectors.toSet());
 		Map<Integer, UserSimpleVO> userData = userClient.getUserDeatilInfoMap(new ArrayList<>(userIdSet)).getData();
 		List<CommentAnswerVO> answerVOList = new ArrayList<>();
 		for (Comment comment : commentList) {

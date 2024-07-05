@@ -53,8 +53,8 @@ public class PostCommentFacade implements FacadeStrategy<PostCommentReq, List<Co
         Map<Integer, UserSimpleVO> userInfo = userClient.getUserDeatilInfoMap(userIds).getData();
         List<CommentPostVO> rootComment = new LinkedList<>();
         // 创建关联map，key为根id，值为 子评论集合
-        Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(10);
-        Map<CommentPostVO, Comment> linkMap = new HashMap<>(10);
+        Map<Integer, List<CommentAnswerVO>> answerCommentMap = new HashMap<>(16);
+        Map<CommentPostVO, Comment> linkMap = new HashMap<>(16);
         //创建点赞映射
         Map<Integer, Like> likeMap = new HashMap<>();
         if(userId!=null){

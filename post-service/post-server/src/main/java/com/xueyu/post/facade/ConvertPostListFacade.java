@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 根据 帖子id列表，获取帖子列表信息，解耦合方法
@@ -69,10 +71,7 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         List<Integer> postIds = convertPostReq.getPostIds();
         // 传入的 userIds 如果不为空，无需进行再次统计，因为在外面可能提前统计好了
         if (CollectionUtils.isEmpty(authors)) {
-            authors = new ArrayList<>();
-            for (PostView postView : records) {
-                authors.add(postView.getUserId());
-            }
+            authors = records.stream().map(PostView::getUserId).collect(Collectors.toList());
         }
         // 创建map postId | 点赞用户id列表数据，进行批量查询出用户id数据
         Map<Integer, List<Integer>> likeUserIdsMap = new HashMap<>(records.size());
@@ -98,8 +97,12 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         // 查询帖子热评
         List<CommentAnswerVO> hotComments = commentClient.postsMaxHotComment(postIds).getData();
         Map<Integer, CommentAnswerVO> commentMap = new HashMap<>();
-        for (CommentAnswerVO comment : hotComments) {
-            commentMap.put(comment.getPostId(), comment);
+        if(!CollectionUtils.isEmpty(hotComments)){
+            // 有冲突的情况下选择后者，一般没有冲突
+            commentMap = hotComments.stream().collect(Collectors.toMap(
+                            CommentAnswerVO::getPostId,
+                            Function.identity(),
+                            (existsOne, replaceOne) -> replaceOne));
         }
         return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap, commentMap);
     }

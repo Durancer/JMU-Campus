@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.xueyu.comment.sdk.constant.CommentMqContants.COMMENT_DELETE_KEY;
 import static com.xueyu.comment.sdk.constant.CommentMqContants.COMMENT_EXCHANGE;
@@ -60,10 +61,8 @@ public class PostMqListener {
 		wrapper.eq(Comment::getPostId, postOperateDTO.getPostId());
 		int deleteNum = commentMapper.delete(wrapper);
 		List<Comment> list = commentMapper.selectList(wrapper);
-		List<Integer> commentId = new ArrayList<>();
-		for(Comment c : list){
-			commentId.add(c.getId());
-		}
+		// 拿到所有评论的id
+		List<Integer> commentId = list.stream().map(Comment::getId).collect(Collectors.toList());
 		LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.in(Like::getCommentId, commentId);
 		likeMapper.delete(queryWrapper);

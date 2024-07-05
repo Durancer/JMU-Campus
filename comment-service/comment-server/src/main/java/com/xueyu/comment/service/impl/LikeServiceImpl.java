@@ -75,20 +75,15 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
             return new ArrayList<>();
         }
         //查出对应的评论信息
-        List<Integer> commentIds = new ArrayList<>();
-        for(Like like:likeList)
-        {
-            commentIds.add(like.getCommentId());
-        }
+        List<Integer> commentIds = likeList.stream().map(Like::getCommentId).collect(Collectors.toList());
         List<Comment> commentList = commentMapper.selectBatchIds(commentIds);
 
         //查询出被点赞评论的用户信息和评论关系的映射
         Map<Integer,Comment> commentInfo = new HashMap<>();
         Set<Integer> userIds = new HashSet<>();
-        for(Comment comment:commentList)
-        {
+        for(Comment comment:commentList){
             userIds.add(comment.getUserId());
-            commentInfo.put(comment.getId(),comment);
+            commentInfo.put(comment.getId(), comment);
         }
         List<Integer> userList = new ArrayList<>(userIds);
         Map<Integer, UserSimpleVO> userInfo = userClient.getUserDeatilInfoMap(userList).getData();
@@ -132,12 +127,7 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements Li
         List<Like> likes = likeMapper.selectList(likeLambdaQueryWrapper);
 
         //查出点赞用户信息
-        Set<Integer> userIds = new HashSet<>();
-        for(Like like:likes)
-        {
-            userIds.add(like.getUserId());
-        }
-        List<Integer> userList = new ArrayList<>(userIds);
+        List<Integer> userList = likes.stream().map(Like::getUserId).distinct().collect(Collectors.toList());
         Map<Integer, UserSimpleVO> userInfo = userClient.getUserDeatilInfoMap(userList).getData();
         //stream流把comment对象赋值到likeVO中
         return likes.stream().map((item) -> {

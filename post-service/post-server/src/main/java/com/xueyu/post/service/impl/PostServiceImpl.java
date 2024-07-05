@@ -36,6 +36,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
@@ -174,19 +175,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
 		wrapper.like(Topic::getName, topicName);
 		List<Topic> topicList = topicService.list(wrapper);
-		List<Integer> topicIds = new ArrayList<>();
+		List<Integer> topicIds = topicList.stream().map(Topic::getId).collect(Collectors.toList());
 		// 统计模糊的话题 相关id
-		for (Topic topic : topicList) {
-			topicIds.add(topic.getId());
-		}
 		LambdaQueryWrapper<PostTopic> linkWrapper = new LambdaQueryWrapper<>();
 		linkWrapper.in(PostTopic::getTopicId, topicIds);
 		// 查询所有相关的 帖子id
 		List<PostTopic> postTopics = postTopicMapper.selectList(linkWrapper);
-		List<Integer> postIds = new ArrayList<>();
-		for (PostTopic postTopic : postTopics) {
-			postIds.add(postTopic.getPostId());
-		}
+		List<Integer> postIds = postTopics.stream().map(PostTopic::getPostId).collect(Collectors.toList());
 		// 分页查找帖子相关记录
 		LambdaQueryWrapper<PostView> postWrapper = new LambdaQueryWrapper<>();
 		postWrapper.in(PostView::getId, postIds);
