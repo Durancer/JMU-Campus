@@ -1,7 +1,9 @@
 package com.xueyu.gateway.filter;
 
+import com.xueyu.gateway.constant.GatewayConstant;
 import com.xueyu.gateway.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -24,6 +26,12 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class AccessLimitFilter implements GlobalFilter, Ordered {
+
+	@Value("${limit.time}")
+	Integer time;
+
+	@Value("${limit.count}")
+	Integer count;
 
 	@Resource
 	RedisTemplate<String, Integer> redisTemplate;
@@ -50,18 +58,21 @@ public class AccessLimitFilter implements GlobalFilter, Ordered {
 	 * @return 是否超限
 	 */
 	public boolean checkLimit(String ipAddress) {
-		// todo 将限流参数转移到配置文件当中
-		int time = 10, count = 30;
-		String key = "limit:" + ipAddress;
-		Integer hasLimit = redisTemplate.opsForValue().get(key);
-		if (hasLimit != null) {
-			if (hasLimit == 0) {
-				log.warn("ip 地址为 ->{}, 触发限流告警", ipAddress);
-				return true;
+		try{
+			String key = GatewayConstant.LIMIT_KEY + ipAddress;
+			Integer hasLimit = redisTemplate.opsForValue().get(key);
+			if (hasLimit != null) {
+				if (hasLimit == 0) {
+					log.warn("ip 地址为 ->{}, 触发限流告警", ipAddress);
+					return true;
+				}
+				redisTemplate.opsForValue().decrement(key);
+			} else {
+				redisTemplate.opsForValue().set(key, count, time, TimeUnit.SECONDS);
 			}
-			redisTemplate.opsForValue().decrement(key);
-		} else {
-			redisTemplate.opsForValue().set(key, count, time, TimeUnit.SECONDS);
+		}catch (Exception e){
+			log.error("检查限流情况异常, {}", e.getMessage());
+			throw new RuntimeException("检查限流情况异常");
 		}
 		return false;
 	}

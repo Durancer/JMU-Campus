@@ -108,7 +108,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		if (files != null) {
 			imageAnnexService.savePostImage(files, post.getId());
 		}
-		log.info("用户 id -> {}, 上传了帖子到审核列表, 包含 {} 张图片， {} 个话题", post.getUserId(), files == null ? 0 : files.length, names.size());
+		log.info("上传帖子 -> {}, 上传了帖子到审核列表, 包含 {} 张图片， {} 个话题", post, files == null ? 0 : files.length, names == null ? 0 : names.size());
 		// 发送mq消息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
 		postOperateDTO.setUserId(post.getUserId());

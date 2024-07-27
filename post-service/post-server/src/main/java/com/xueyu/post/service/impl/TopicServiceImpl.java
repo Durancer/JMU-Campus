@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,21 +40,21 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Topic::getName, topicNames);
         List<Topic> topics = query().getBaseMapper().selectList(wrapper);
-        for(Topic topic : topics){
-            // 移除数据库中有的话题，将剩余话题插入
-            topicNames.remove(topic.getName());
-        }
+        // 去掉已存在的topic
+        Set<String> requestTopics = new HashSet<>(topicNames);
+        Set<String> existTopic = topics.stream().map(Topic::getName).collect(Collectors.toSet());
+        requestTopics = requestTopics.stream().filter(topic -> !existTopic.contains(topic)).collect(Collectors.toSet());
+
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        List<Topic> insertList = new ArrayList<>();
-        for (String name : topicNames) {
+        List<Topic> insertList = requestTopics.stream().map(topicName ->{
             Topic topic = new Topic();
-            topic.setName(name);
+            topic.setName(topicName);
             topic.setCreateTime(now);
-            insertList.add(topic);
-        }
+            return topic;
+        }).collect(Collectors.toList());
         // 一次存入数据库未存在的话题
-        super.saveBatch(insertList);
-        log.info("数据库新增 -> {} 条话题， 插入报文 ->{}", topicNames.size(), topicNames);
+        saveBatch(insertList);
+        log.info("数据库新增话题插入报文 ->{}", topicNames);
         // 如果帖子id为空，不插入关联数据
         if(Objects.isNull(postId)){
             return true;

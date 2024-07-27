@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.xueyu.resource.sdk.constant.MailConstant.CODE_KEY_PREFIX;
@@ -55,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 	@Override
 	public Boolean registerUser(User user, Integer idencode) {
-		log.info("【用户注册入参】:{} ", JSONUtils.toJSONString(user));
+		log.info("【用户注册入参】:{} ", user);
 		// 判断验证码是否相同
 		String key = CODE_KEY_PREFIX + user.getEmail();
 		verifyIdencode(idencode, key);
@@ -84,6 +85,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 			user.setAvatar("default_girl.png");
 		}
 		userMapper.insert(user);
+		redisTemplate.delete(key);
 		log.info("用户id -> {}, 邮箱 -> {}, 注册成功", user.getId(), user.getEmail());
 		// 创建数据统计表行数据
 		UserGeneral userGeneral = new UserGeneral();
@@ -97,6 +99,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
+		if (Objects.isNull(check)){
+			throw new UserException("改账号不存在");
+		}
 		// 核对密码是否正确
 		boolean checkpw = BCrypt.checkpw(user.getPassword(), check.getPassword());
 		if (!checkpw) {

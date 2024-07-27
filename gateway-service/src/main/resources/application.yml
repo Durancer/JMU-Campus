@@ -1,6 +1,10 @@
 server:
   port: 8010
 
+limit:
+  time: 10
+  count: 30
+
 spring:
   application:
     name: gateway-service
