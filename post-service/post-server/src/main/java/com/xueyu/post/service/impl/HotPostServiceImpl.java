@@ -72,7 +72,7 @@ public class HotPostServiceImpl implements HotPostService {
                 BeanUtils.copyProperties(hotPostVO, postView);
                 postViews.add(postView);
             }
-            result = postService.queryPostList(postViews, userId);
+            result = postService.dealPostListInfo(postViews, userId);
         }
         return result;
     }

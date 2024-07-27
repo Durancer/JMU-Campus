@@ -21,7 +21,6 @@ import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.PostService;
 import com.xueyu.post.service.TopicService;
 import com.xueyu.post.service.VoteService;
-import com.xueyu.resource.client.ResourceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -34,7 +33,6 @@ import org.springframework.web.util.HtmlUtils;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -148,7 +146,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	@Override
-	public ListVO<PostListVO> getPostListByPage(Integer current, Integer size, Integer userId) {
+	public ListVO<PostListVO> getUserPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
 		// userId不为空则查找用户帖子列表
 		if (userId != null) {
@@ -156,6 +154,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		}
 
 		IPage<PostView> page = new Page<>(current, size);
+		wrapper.orderByDesc(PostView::getCreateTime);
 		// 查完将自动赋值记录到 page中
 		postViewMapper.selectPage(page, wrapper);
 		return queryPostListByPage(page, userId);
@@ -238,13 +237,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
+		wrapper.orderByDesc(PostView::getCreateTime);
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
 		return queryPostListByPage(page, userId);
 	}
 
 	/**
-	 * 处理分页查询 帖子列表
+	 * 处理分页查询 帖子列表， 将分页查询信息转为分页响应体
 	 *
 	 * @param page 查询记录之后的 page 对象
 	 * @param userId 用户id
@@ -255,19 +255,19 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 将除具体记录外的分页数据赋值
 		BeanUtils.copyProperties(page, result);
 		List<PostView> records = page.getRecords();
-		result.setRecords(queryPostList(records, userId));
+		result.setRecords(dealPostListInfo(records, userId));
 		return result;
 	}
 
 	/**
-	 * 封装 帖子列表信息，如 用户信息设置等
+	 * 帖子列表查询最后一层，封装 帖子列表信息，处理帖子额外的信息查询，如 用户信息设置等
 	 *
 	 * @param records 需要处理的帖子列表
 	 * @param userId 用户id
 	 * @return 帖子列表信息
 	 */
 	@Override
-	public List<PostListVO> queryPostList(List<PostView> records, Integer userId) {
+	public List<PostListVO> dealPostListInfo(List<PostView> records, Integer userId) {
 		// 统计postId, userId
 		List<Integer> postIds = new ArrayList<>();
 		List<Integer> authors = new ArrayList<>();

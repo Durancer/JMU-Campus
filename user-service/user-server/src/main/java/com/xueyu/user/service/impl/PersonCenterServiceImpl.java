@@ -1,5 +1,6 @@
 package com.xueyu.user.service.impl;
 
+import com.xueyu.common.core.result.RestResult;
 import com.xueyu.resource.client.ResourceClient;
 import com.xueyu.resource.sdk.constant.MailConstant;
 import com.xueyu.user.exception.UserException;
@@ -71,7 +72,15 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 		if (check == null) {
 			throw new UserException("不存在的用户id");
 		}
-		// 如果不为默认头像，删除原来的头像文件
+		// 进行头像保存，获取文件名
+		RestResult<Map<String, String>> uploadResult = resourceClient.uploadImageFile(file);
+		if (!uploadResult.getStatus()){
+			throw new UserException(uploadResult.getMessage());
+		}
+		Map<String, String> resDate = uploadResult.getData();
+		String fileName = resDate.get("fileName");
+
+		// 如果不为默认头像，删除原来的头像文件 todo 转为默认头像配置
 		String originName = check.getAvatar();
 		if (!("default.jpg".equals(originName) ||
 				"default_boy.png".equals(originName) ||
@@ -79,9 +88,6 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 		)) {
 			resourceClient.deleteFileByFileName(originName);
 		}
-		// 进行头像保存，获取文件名
-		Map<String, String> resDate = resourceClient.uploadImageFile(file).getData();
-		String fileName = resDate.get("fileName");
 		User user = new User();
 		user.setId(userId);
 		user.setAvatar(fileName);

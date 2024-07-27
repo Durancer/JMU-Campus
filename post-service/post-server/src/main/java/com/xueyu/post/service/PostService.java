@@ -7,7 +7,6 @@ import com.xueyu.post.pojo.domain.Vote;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -40,14 +39,14 @@ public interface PostService extends IService<Post> {
 	Boolean deletePost(Integer postId, Integer userId);
 
 	/**
-	 * 分页查询帖子列表
+	 * 分页查询帖子列表, 获取用户帖子列表使用，userId用于指定查询的用户
 	 *
 	 * @param current 当前页
 	 * @param size    每页大小
 	 * @param userId  用户id，为空时查找全部
 	 * @return 分页数据
 	 */
-	ListVO<PostListVO> getPostListByPage(Integer current, Integer size, Integer userId);
+	ListVO<PostListVO> getUserPostListByPage(Integer current, Integer size, Integer userId);
 
 	/**
 	 * 获取帖子详情信息
@@ -67,7 +66,7 @@ public interface PostService extends IService<Post> {
 	void passPostContent(Integer postId, Integer decision);
 
 	/**
-	 * 分页获得所有帖子
+	 * 分页获得所有帖子, 首页使用，userId用于判断是否点赞
 	 *
 	 * @param current 当前
 	 * @param size    大小
@@ -77,13 +76,13 @@ public interface PostService extends IService<Post> {
 	ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId);
 
 	/**
-	 * 查询列表VO
+	 * 帖子列表查询最后一层，封装 帖子列表信息，处理帖子额外的信息查询，如 用户信息设置等
 	 *
 	 * @param list   列表
 	 * @param userId 用户id
 	 * @return {@link List}<{@link PostListVO}>
 	 */
-	List<PostListVO> queryPostList(List<PostView> list, Integer userId);
+	List<PostListVO> dealPostListInfo(List<PostView> list, Integer userId);
 
 	/**
 	 * 分页获取未审核的帖子

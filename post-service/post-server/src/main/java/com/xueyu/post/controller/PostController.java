@@ -106,7 +106,7 @@ public class PostController {
 	 */
 	@GetMapping("list/user/self")
 	public RestResult<ListVO<PostListVO>> getUserSelfPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader Integer userId) {
-		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
+		ListVO<PostListVO> postListByPage = postService.getUserPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
 
@@ -119,7 +119,7 @@ public class PostController {
 	 */
 	@GetMapping("list/user")
 	public RestResult<ListVO<PostListVO>> getUserPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @NotNull Integer userId) {
-		ListVO<PostListVO> postListByPage = postService.getPostListByPage(current, size, userId);
+		ListVO<PostListVO> postListByPage = postService.getUserPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
 
