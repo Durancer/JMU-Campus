@@ -64,7 +64,7 @@ const handleUpdate = () => {
   userStore.updateUserinfoFn(updateForm)
 }
 // 上传图片
-const action = '/Api/user/person/update/avatar'
+const action = '/api/user/person/update/avatar'
 const upload = ref<UploadInstance>()
 
 const handleExceed: UploadProps['onExceed'] = (files) => {

@@ -30,7 +30,7 @@ const cancelLoading = () => {
   } else if (process.env.NODE_ENV == 'debug') {
     axios.defaults.baseURL = '/debug'
   } else if (process.env.NODE_ENV == 'production') {
-    axios.defaults.baseURL = 'https://www.jmucampus.top/api'
+    axios.defaults.baseURL = 'http://jmucampus.top/api'
   }
 })()
 

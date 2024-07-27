@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/Apis': {
-        target: 'http://60.204.139.75/api',
+        target: 'http://jmucampus.top/api',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/Apis/, '')
       }

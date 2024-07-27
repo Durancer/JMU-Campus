@@ -23,7 +23,7 @@ export function register(data: userinfo) {
 
 // 发送请求码
 export function requestCode(email: string) {
-  return http.post({
+  return http.request({
     url: '/user/send/code',
     method: 'post',
     data: {
