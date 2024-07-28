@@ -2,7 +2,7 @@ package com.xueyu.post.pojo.vo;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 热门帖子

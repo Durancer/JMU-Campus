@@ -15,4 +15,14 @@
 		set comment_num = comment_num + #{num} where post_id = #{postId}
 	</update>
 
+	<update id="incrPostViewNum" parameterType="integer">
+		update post_general
+		<set>
+			view_num = view_num + 1
+		</set>
+		<where>
+			post_id = #{postId}
+		</where>
+	</update>
+
 </mapper>

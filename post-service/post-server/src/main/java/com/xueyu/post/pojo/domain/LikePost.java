@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author durance
@@ -34,6 +34,6 @@ public class LikePost {
 	/**
 	 * 点赞时间
 	 */
-	Timestamp time;
+	Date time;
 
 }

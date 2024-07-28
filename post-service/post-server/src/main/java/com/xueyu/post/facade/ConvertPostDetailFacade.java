@@ -5,6 +5,8 @@ import com.xueyu.comment.client.CommentClient;
 import com.xueyu.common.web.facade.FacadeStrategy;
 import com.xueyu.post.facade.request.ConvertDetailReq;
 import com.xueyu.post.mapper.LikePostMapper;
+import com.xueyu.post.mapper.PostGeneralMapper;
+import com.xueyu.post.mapper.PostMapper;
 import com.xueyu.post.mapper.TopicMapper;
 import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.vo.PostDetailVO;
@@ -41,6 +43,9 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
     @Resource
     CommentClient commentClient;
 
+    @Resource
+    PostGeneralMapper postGeneralMapper;
+
     @Override
     public PostDetailVO execBusiness(ConvertDetailReq convertDetailReq) {
         PostView postView = convertDetailReq.getPostView();
@@ -73,6 +78,8 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         } else {
             voteVO = voteService.getVoteDetail(postId, null);
         }
+        // 增加帖子阅读量
+        postGeneralMapper.incrPostViewNum(postId);
         postDetailVO.setVoteMessage(voteVO);
         return postDetailVO;
     }

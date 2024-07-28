@@ -14,7 +14,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
@@ -57,7 +57,7 @@ public class PostOperateServiceImpl implements PostOperateService {
 			LikePost likePost = new LikePost();
 			likePost.setPostId(postId);
 			likePost.setUserId(userId);
-			likePost.setTime(new Timestamp(System.currentTimeMillis()));
+			likePost.setTime(new Date());
 			likePostMapper.insert(likePost);
 			postGeneralMapper.updateLikeNumByPostId(postId, 1);
 			log.info("用户 id -> {} 点赞了 帖子 postId ->{}", userId, postId);

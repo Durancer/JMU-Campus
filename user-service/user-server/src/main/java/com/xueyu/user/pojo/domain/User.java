@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author durance
@@ -66,6 +66,6 @@ public class User {
 	/**
 	 * 创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 投票表
@@ -55,6 +55,6 @@ public class Vote {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    Timestamp createTime;
+    Date createTime;
 
 }

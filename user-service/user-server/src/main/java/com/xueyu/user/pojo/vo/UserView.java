@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 用户显示层实体类
@@ -61,6 +61,6 @@ public class UserView {
 	/**
 	 * 创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

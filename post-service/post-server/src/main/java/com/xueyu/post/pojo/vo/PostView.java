@@ -2,7 +2,7 @@ package com.xueyu.post.pojo.vo;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 帖子列表显示实体类
@@ -50,7 +50,7 @@ public class PostView {
 	/**
 	 * 帖子创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 	/**
 	 * 帖子状态 0 审核中 | 1 公开

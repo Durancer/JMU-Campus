@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +81,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options, List<String> names) {
-		Timestamp now = new Timestamp(System.currentTimeMillis());
+		Date now = new Date();
 		post.setCreateTime(now);
 		//html标签转码
 		post.setContent(HtmlUtils.htmlEscapeHex(post.getContent()));

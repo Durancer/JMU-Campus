@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -42,11 +42,11 @@ public class HotPostServiceImpl implements HotPostService {
         //1.查询前一周的帖子数据
         LambdaQueryWrapper<PostView> queryWrapper = new LambdaQueryWrapper<>();
         //计算时间
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.WEEK_OF_MONTH,-1);
-        Timestamp time = new Timestamp(calendar.getTimeInMillis());
+        Date time = new Date(calendar.getTimeInMillis());
         queryWrapper.lt(PostView::getCreateTime,now);
         queryWrapper.gt(PostView::getCreateTime,time);
         List<PostView> postViewlist = postViewMapper.selectList(queryWrapper);

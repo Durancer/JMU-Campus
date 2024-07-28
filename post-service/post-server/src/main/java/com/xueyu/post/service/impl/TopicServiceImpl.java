@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         Set<String> existTopic = topics.stream().map(Topic::getName).collect(Collectors.toSet());
         requestTopics = requestTopics.stream().filter(topic -> !existTopic.contains(topic)).collect(Collectors.toSet());
 
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Date now = new Date();
         List<Topic> insertList = requestTopics.stream().map(topicName ->{
             Topic topic = new Topic();
             topic.setName(topicName);

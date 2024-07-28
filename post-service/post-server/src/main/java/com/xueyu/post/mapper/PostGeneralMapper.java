@@ -27,4 +27,12 @@ public interface PostGeneralMapper extends BaseMapper<PostGeneral> {
 	 */
 	Integer updateCommentNumByPostId(@Param("postId") Integer postId, @Param("num") Integer num);
 
+	/**
+	 * 递增阅读量
+	 *
+	 * @param postId 帖子id
+	 * @return
+	 */
+	int incrPostViewNum(@Param("postId") Integer postId);
+
 }

@@ -13,7 +13,7 @@ import com.xueyu.post.pojo.enums.VoteType;
 import com.xueyu.post.service.VoteRecordService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -114,8 +114,8 @@ public class VoteRecordServiceImpl extends ServiceImpl<VoteRecordMapper, VoteRec
         } else if(vote.getCycle().equals(VoteCycle.YEAR.getValue())){
             calendar.add(Calendar.YEAR,1);
         }
-        Timestamp endTime = new Timestamp(calendar.getTimeInMillis());
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Date endTime = new Date(calendar.getTimeInMillis());
+        Date now = new Date();
         return now.before(endTime);
     }
 }

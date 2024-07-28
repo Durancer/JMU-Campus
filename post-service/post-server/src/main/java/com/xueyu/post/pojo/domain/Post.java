@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 帖子实体类
@@ -43,7 +43,7 @@ public class Post {
 	/**
 	 * 帖子创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 	/**
 	 * 帖子状态 0为审核中 | 1为公开

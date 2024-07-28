@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 帖子评论列表实体
@@ -64,6 +64,6 @@ public class CommentAnswerVO {
 	/**
 	 * 创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

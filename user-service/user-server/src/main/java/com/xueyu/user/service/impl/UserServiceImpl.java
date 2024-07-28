@@ -24,7 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -71,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (check != null) {
 			return false;
 		}
-		Timestamp time = new Timestamp(System.currentTimeMillis());
+		Date time = new Date();
 		user.setCreateTime(time);
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);

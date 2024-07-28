@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author fsj0591
@@ -39,6 +39,6 @@ public class Like {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    Timestamp createTime;
+    Date createTime;
 
 }

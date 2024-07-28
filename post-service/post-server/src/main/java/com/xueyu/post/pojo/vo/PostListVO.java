@@ -6,7 +6,7 @@ import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,6 +70,6 @@ public class PostListVO {
 	/**
 	 * 帖子创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

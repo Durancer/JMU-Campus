@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @Author：mofan
@@ -26,7 +25,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler
     public void insertFill(MetaObject metaObject)
     {
         log.info("start insert fill.....");
-        this.setFieldValByName("createTime", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setFieldValByName("createTime", new Date(), metaObject);
     }
 
     /**
@@ -36,6 +35,6 @@ public class MyMetaObjectHandler implements MetaObjectHandler
     public void updateFill(MetaObject metaObject)
     {
         log.info("start update fill.....");
-        this.setFieldValByName("updateTime", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setFieldValByName("updateTime", new Date(), metaObject);
     }
 }

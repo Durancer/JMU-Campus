@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +77,6 @@ public class PostDetailVO {
 	/**
 	 * 帖子创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

@@ -24,7 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,7 +65,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		}
 		// 校验参数
 		verifySendParam(comment);
-		Timestamp time = new Timestamp(System.currentTimeMillis());
+		Date time = new Date();
 		comment.setCreateTime(time);
 		query().getBaseMapper().insert(comment);
 		// 如果为根评论则设置rootId为本身id

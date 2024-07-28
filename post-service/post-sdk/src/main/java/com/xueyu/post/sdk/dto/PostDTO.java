@@ -2,7 +2,7 @@ package com.xueyu.post.sdk.dto;
 
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 博客数据传输
@@ -40,6 +40,6 @@ public class PostDTO {
 	/**
 	 * 帖子创建时间
 	 */
-	Timestamp createTime;
+	Date createTime;
 
 }

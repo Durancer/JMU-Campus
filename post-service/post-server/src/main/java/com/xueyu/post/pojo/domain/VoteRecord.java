@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 投票记录表
@@ -46,6 +46,6 @@ public class VoteRecord {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    Timestamp createTime;
+    Date createTime;
 
 }
