@@ -73,6 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		}
 		Date time = new Date();
 		user.setCreateTime(time);
+		user.setUpdateTime(time);
 		String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(hashpw);
 		// 判断头像

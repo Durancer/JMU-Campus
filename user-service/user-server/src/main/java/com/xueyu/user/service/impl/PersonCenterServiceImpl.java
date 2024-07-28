@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
 
 import static com.xueyu.resource.sdk.constant.MailConstant.CODE_KEY_PREFIX;
@@ -51,12 +52,13 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 				user.getEmail() != null) {
 			throw new UserException("不合法的参数传入");
 		}
-		// 如果性别参数不为空的情况下，做判断
+		// 如果性别参数不为空的情况下，做判断 todo 封装枚举判断
 		if (user.getSex() != null && !(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
 				UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
 				UserGenderEnum.GIRL.getCode().equals(user.getSex()))) {
 			throw new UserException("不合规的用户性别参数");
 		}
+		user.setUpdateTime(new Date());
 		int i = userMapper.updateById(user);
 		UserView userView = userViewMapper.selectById(user.getId());
 		if (i != 1) {
@@ -91,6 +93,7 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 		User user = new User();
 		user.setId(userId);
 		user.setAvatar(fileName);
+		user.setUpdateTime(new Date());
 		userMapper.updateById(user);
 		UserView userView = userViewMapper.selectById(userId);
 		return userView.getAvatarUrl();

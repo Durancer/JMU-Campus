@@ -67,6 +67,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		verifySendParam(comment);
 		Date time = new Date();
 		comment.setCreateTime(time);
+		comment.setUpdateTime(time);
 		query().getBaseMapper().insert(comment);
 		// 如果为根评论则设置rootId为本身id
 		if (comment.getType().equals(CommentType.ROOT.getValue())) {
@@ -171,7 +172,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		if(!old.getUserId().equals(comment.getUserId())){
 			throw new CommentException("评论id与用户id不匹配");
 		}
-		update().getBaseMapper().updateById(comment);
+		comment.setUpdateTime(new Date());
+		int i = update().getBaseMapper().updateById(comment);
+		if (i != 0){
+			throw new CommentException("更新异常");
+		}
 	}
 
 	@Override

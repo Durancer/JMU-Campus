@@ -83,6 +83,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options, List<String> names) {
 		Date now = new Date();
 		post.setCreateTime(now);
+		post.setUpdateTime(now);
 		//html标签转码
 		post.setContent(HtmlUtils.htmlEscapeHex(post.getContent()));
 		// 存入帖子数据，获得主键值

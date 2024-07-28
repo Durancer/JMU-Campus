@@ -61,4 +61,9 @@ public class Comment {
 	 */
 	Date createTime;
 
+	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
 }

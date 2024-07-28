@@ -63,4 +63,9 @@ public class UserView {
 	 */
 	Date createTime;
 
+	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
 }

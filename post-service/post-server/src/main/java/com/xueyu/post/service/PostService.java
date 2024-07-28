@@ -99,6 +99,8 @@ public interface PostService extends IService<Post> {
 	 *
 	 * @param topicName 话题名称
 	 * @param userId 用户id
+	 * @param current 当前页
+	 * @param size 页大小
 	 * @return 帖子列表
 	 */
 	ListVO<PostListVO>  getPostListByTopicIds(String topicName, Integer userId, Integer current, Integer size);

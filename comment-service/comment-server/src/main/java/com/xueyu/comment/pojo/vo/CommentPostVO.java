@@ -64,6 +64,11 @@ public class CommentPostVO {
 	Date createTime;
 
 	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
+	/**
 	 * 该评论下的子评论
 	 */
 	List<CommentAnswerVO> answerCommentList;

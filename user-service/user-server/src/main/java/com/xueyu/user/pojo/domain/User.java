@@ -68,4 +68,9 @@ public class User {
 	 */
 	Date createTime;
 
+	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
 }

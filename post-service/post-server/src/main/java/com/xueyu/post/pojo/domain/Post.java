@@ -46,6 +46,11 @@ public class Post {
 	Date createTime;
 
 	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
+	/**
 	 * 帖子状态 0为审核中 | 1为公开
 	 */
 	Integer status;

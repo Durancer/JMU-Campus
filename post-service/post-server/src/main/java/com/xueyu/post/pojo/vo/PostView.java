@@ -53,6 +53,11 @@ public class PostView {
 	Date createTime;
 
 	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
+	/**
 	 * 帖子状态 0 审核中 | 1 公开
 	 */
 	Integer status;

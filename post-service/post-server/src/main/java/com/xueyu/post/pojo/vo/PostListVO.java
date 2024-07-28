@@ -72,4 +72,9 @@ public class PostListVO {
 	 */
 	Date createTime;
 
+	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
 }
