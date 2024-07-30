@@ -25,4 +25,13 @@ public interface PostOperateService {
 	 */
 	Boolean checkLiked(Integer postId, Integer userId);
 
+	/**
+	 * 检查用户是否点赞了该帖子
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return 已点赞 true | 未点赞 false
+	 */
+	Boolean hideOrOpenPost(Integer postId, Integer userId);
+
 }

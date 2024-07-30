@@ -55,4 +55,9 @@ public class Post {
 	 */
 	Integer status;
 
+	/**
+	 * 帖子状态 0 公开 | 1 私密
+	 */
+	Integer isPrivate;
+
 }

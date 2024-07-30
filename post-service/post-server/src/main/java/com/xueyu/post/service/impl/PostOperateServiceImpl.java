@@ -7,6 +7,7 @@ import com.xueyu.post.mapper.PostGeneralMapper;
 import com.xueyu.post.mapper.PostMapper;
 import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.pojo.enums.PostIsPrivateEnum;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.PostOperateService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Objects;
 
 import static com.xueyu.post.sdk.constant.PostMqContants.*;
 
@@ -71,7 +73,7 @@ public class PostOperateServiceImpl implements PostOperateService {
 		log.info("用户 id -> {} 取消点赞了 帖子 postId ->{}", userId, postId);
 		// 发送取消点赞帖子事件消息
 		rabbitTemplate.convertAndSend(POST_EXCHANGE, POST_OPERATE_LIKE_CANCEL_KEY, postOperateDTO);
-		return false;
+		return true;
 	}
 
 	@Override
@@ -81,6 +83,28 @@ public class PostOperateServiceImpl implements PostOperateService {
 		LikePost likePost = likePostMapper.selectOne(wrapper);
 		// 不存在返回false，反之
 		return likePost != null;
+	}
+
+	@Override
+	public Boolean hideOrOpenPost(Integer postId, Integer userId) {
+		Post post = postMapper.selectById(postId);
+		if (Objects.isNull(post)){
+			log.error("帖子信息查询为空");
+			throw new PostException("帖子信息查询为空");
+		}
+		if (!post.getUserId().equals(userId)){
+			log.error("非该用户的帖子，无法私密或公开");
+			throw new PostException("非该用户的帖子，无法私密或公开");
+		}
+		Post update = new Post();
+		update.setId(postId);
+		update.setIsPrivate(post.getIsPrivate().equals(PostIsPrivateEnum.NO.getValue()) ?
+				PostIsPrivateEnum.YES.getValue() : PostIsPrivateEnum.NO.getValue());
+		int i = postMapper.updateById(update);
+		if(i != 1){
+			throw new PostException("操作异常");
+		}
+		return true;
 	}
 
 }

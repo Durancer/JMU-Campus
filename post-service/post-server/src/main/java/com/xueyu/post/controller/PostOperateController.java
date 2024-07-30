@@ -30,9 +30,9 @@ public class PostOperateController {
 	@PostMapping("like")
 	public RestResult<?> likeUserPost(@NonNull Integer postId, @RequestHeader Integer userId) {
 		if (postOperateService.likeUserPost(postId, userId)) {
-			return RestResult.ok(null, "点赞成功");
+			return RestResult.ok(null, "操作成功");
 		}
-		return RestResult.ok(null, "取消点赞");
+		return RestResult.fail("操作失败");
 	}
 
 	/**
@@ -45,9 +45,24 @@ public class PostOperateController {
 	@GetMapping("like/check")
 	public RestResult<Boolean> checkUserLikePost(@NonNull Integer postId, @NonNull Integer userId) {
 		if (postOperateService.checkLiked(postId, userId)) {
-			return RestResult.ok(true, "已点赞");
+			return RestResult.ok(true, "点赞成功");
 		}
-		return RestResult.ok(false, "未点赞");
+		return RestResult.fail("点赞失败");
+	}
+
+	/**
+	 * 查看用户是否点赞了该帖子
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return 点赞结果
+	 */
+	@PostMapping("private")
+	public RestResult<Boolean> hideOrOpenPost(@NonNull Integer postId, @RequestHeader Integer userId) {
+		if (postOperateService.hideOrOpenPost(postId, userId)) {
+			return RestResult.ok(true, "操作成功");
+		}
+		return RestResult.fail("操作失败");
 	}
 
 }

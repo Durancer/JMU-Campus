@@ -39,7 +39,7 @@ public interface PostService extends IService<Post> {
 	Boolean deletePost(Integer postId, Integer userId);
 
 	/**
-	 * 分页查询帖子列表, 获取用户帖子列表使用，userId用于指定查询的用户
+	 * 分页查询当前登录用户的帖子列表, 获取用户帖子列表使用，userId用于指定查询的用户
 	 *
 	 * @param current 当前页
 	 * @param size    每页大小
@@ -47,6 +47,16 @@ public interface PostService extends IService<Post> {
 	 * @return 分页数据
 	 */
 	ListVO<PostListVO> getUserPostListByPage(Integer current, Integer size, Integer userId);
+
+	/**
+	 * 分页其他用户的帖子列表, 获取用户帖子列表使用，userId用于指定查询的用户
+	 *
+	 * @param current 当前页
+	 * @param size    每页大小
+	 * @param userId  用户id，为空时查找全部
+	 * @return 分页数据
+	 */
+	ListVO<PostListVO> getUserSelfPostListByPage(Integer current, Integer size, Integer userId);
 
 	/**
 	 * 获取帖子详情信息

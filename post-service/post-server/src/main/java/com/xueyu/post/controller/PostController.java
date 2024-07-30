@@ -1,5 +1,6 @@
 package com.xueyu.post.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.exception.PostException;
@@ -44,25 +45,23 @@ public class PostController {
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> publishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, String[] names) {
+	public RestResult<?> publishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<String> names) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
 		}
-		List<String> topics = null;
-		if (names != null) {
-			topics = Arrays.asList(names);
+		if (CollectionUtils.isNotEmpty(names)) {
 			// 核对话题数量及长度是否合规
 			int MAX_TOPICS = 3;
-			if (topics.size() > MAX_TOPICS) {
+			if (names.size() > MAX_TOPICS) {
 				throw new PostException("最多携带 3 个话题");
 			}
-			for (String name : topics) {
+			for (String name : names) {
 				topicService.checkTopicLength(name);
 			}
 		}
 		post.setUserId(userId);
-		Boolean sendStatus = postService.publishPost(post, files, vote, options, topics);
+		Boolean sendStatus = postService.publishPost(post, files, vote, options, names);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");
 		}
@@ -119,7 +118,7 @@ public class PostController {
 	 */
 	@GetMapping("list/user")
 	public RestResult<ListVO<PostListVO>> getUserPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @NotNull Integer userId) {
-		ListVO<PostListVO> postListByPage = postService.getUserPostListByPage(current, size, userId);
+		ListVO<PostListVO> postListByPage = postService.getUserSelfPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
 	}
 

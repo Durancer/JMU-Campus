@@ -12,6 +12,7 @@ import com.xueyu.post.facade.request.ConvertDetailReq;
 import com.xueyu.post.facade.request.ConvertPostReq;
 import com.xueyu.post.mapper.*;
 import com.xueyu.post.pojo.domain.*;
+import com.xueyu.post.pojo.enums.PostIsPrivateEnum;
 import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -162,6 +163,23 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	@Override
+	public ListVO<PostListVO> getUserSelfPostListByPage(Integer current, Integer size, Integer userId) {
+		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+		// userId不为空则查找用户帖子列表
+		if (userId != null) {
+			wrapper.eq(PostView::getUserId, userId);
+		}
+		wrapper.eq(PostView::getIsPrivate, PostIsPrivateEnum.NO.getValue());
+		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
+
+		IPage<PostView> page = new Page<>(current, size);
+		wrapper.orderByDesc(PostView::getCreateTime);
+		// 查完将自动赋值记录到 page中
+		postViewMapper.selectPage(page, wrapper);
+		return queryPostListByPage(page, userId);
+	}
+
+	@Override
 	public ListVO<PostListVO> getStatusPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(PostView::getStatus, PostStatus.EXAMINE.getValue());
@@ -238,6 +256,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	public ListVO<PostListVO> getAllPostListByPage(Integer current, Integer size, Integer userId) {
 		LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(PostView::getStatus, PostStatus.PUBLIC.getValue());
+		wrapper.eq(PostView::getIsPrivate, PostIsPrivateEnum.NO.getValue());
 		wrapper.orderByDesc(PostView::getCreateTime);
 		IPage<PostView> page = new Page<>(current, size);
 		postViewMapper.selectPage(page, wrapper);
