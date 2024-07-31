@@ -236,19 +236,29 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	@Override
-	public void passPostContent(Integer postId, Integer desicion) {
-		if (!(desicion.equals(PostStatus.PUBLIC.getValue()) || desicion.equals(PostStatus.FAIL.getValue()))) {
+	public void passPostContent(Integer postId, Integer desicion, String reason) {
+		// todo 封装枚举遍历判断方法，其他地方也一样
+		if (!(desicion.equals(PostStatus.PUBLIC.getValue()) ||
+				desicion.equals(PostStatus.FAIL.getValue()) ||
+				desicion.equals(PostStatus.EXAMINE.getValue()))) {
 			throw new PostException("不合法的审核参数");
 		}
-		// 参数合法修改帖子状态 todo 如果审核失败，返回失败原因
+		// 参数合法修改帖子状态
 		Post post = new Post();
 		post.setId(postId);
 		post.setStatus(desicion);
-		postMapper.updateById(post);
 		if (PostStatus.PUBLIC.getValue().equals(desicion)) {
+			post.setReason("");
+			postMapper.updateById(post);
 			log.info("帖子 id -> {}, 审核通过", postId);
+		} else if (PostStatus.EXAMINE.getValue().equals(desicion)) {
+			post.setReason("");
+			postMapper.updateById(post);
+			log.info("帖子 id -> {}, 重新提交审核", postId);
 		} else {
-			log.info("帖子 id -> {}, 审核未通过", postId);
+			post.setReason(reason);
+			postMapper.updateById(post);
+			log.info("帖子 id -> {}, 审核未通过, 原因 -> {}", postId, reason);
 		}
 	}
 

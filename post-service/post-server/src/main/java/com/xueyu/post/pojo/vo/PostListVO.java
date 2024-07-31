@@ -77,4 +77,14 @@ public class PostListVO {
 	 */
 	Date updateTime;
 
+	/**
+	 * 帖子状态 0 审核中 | 1 公开
+	 */
+	Integer status;
+
+	/**
+	 * 审核失败原因
+	 */
+	String reason;
+
 }

@@ -72,8 +72,9 @@ public interface PostService extends IService<Post> {
 	 *
 	 * @param postId   帖子id
 	 * @param decision 审核选择 1 通过，2 未通过
+	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
 	 */
-	void passPostContent(Integer postId, Integer decision);
+	void passPostContent(Integer postId, Integer decision, String reason);
 
 	/**
 	 * 分页获得所有帖子, 首页使用，userId用于判断是否点赞

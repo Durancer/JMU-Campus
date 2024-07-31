@@ -140,11 +140,12 @@ public class PostController {
 	 *
 	 * @param postId   帖子id
 	 * @param decision 帖子审核选项 1 审核通过 | 2 审核不通过
+	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
 	 * @return 审核结果
 	 */
 	@PostMapping("check")
-	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision) {
-		postService.passPostContent(postId, decision);
+	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision, String reason) {
+		postService.passPostContent(postId, decision, reason);
 		return RestResult.ok(null, "提交成功");
 	}
 

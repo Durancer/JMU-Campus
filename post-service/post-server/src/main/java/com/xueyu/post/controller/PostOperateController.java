@@ -51,7 +51,7 @@ public class PostOperateController {
 	}
 
 	/**
-	 * 查看用户是否点赞了该帖子
+	 * 用户私密/公开帖子
 	 *
 	 * @param postId 帖子id
 	 * @param userId 用户id

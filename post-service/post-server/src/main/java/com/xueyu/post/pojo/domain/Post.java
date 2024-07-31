@@ -60,4 +60,9 @@ public class Post {
 	 */
 	Integer isPrivate;
 
+	/**
+	 * 审核失败原因
+	 */
+	String reason;
+
 }
