@@ -13,7 +13,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>post-server</module>
-		<module>post-sdk</module>
 		<module>post-client</module>
         <module>post-search-server</module>
     </modules>

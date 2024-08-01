@@ -4,7 +4,6 @@ import com.xueyu.comment.sdk.vo.CommentAnswerVO;
 import com.xueyu.common.core.result.RestResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;

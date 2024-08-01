@@ -16,37 +16,31 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-web</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-data</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-amqp</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
-			<artifactId>post-sdk</artifactId>
-			<version>1.0.0</version>
+			<artifactId>post-client</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
-			<artifactId>user-sdk</artifactId>
-			<version>1.0.0</version>
+			<artifactId>user-client</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>resource-client</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<!--鉴权-->
@@ -69,7 +63,6 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>comment-client</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>

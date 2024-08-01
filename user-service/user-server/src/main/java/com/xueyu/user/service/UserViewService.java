@@ -2,7 +2,6 @@ package com.xueyu.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
-import com.xueyu.user.pojo.vo.UserItemList;
 import com.xueyu.user.pojo.vo.UserView;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 

@@ -24,7 +24,7 @@ public class CommentClientResolver implements CommentClient {
 
 	@Override
 	public RestResult<List<CommentAnswerVO>> postsMaxHotComment(List<Integer> postIds) {
-		log.error("comment 服务异常：getPostCommentList 请求失败");
+		log.error("comment 服务异常：postsMaxHotComment 请求失败");
 		return new RestResult<>(SERVICE_EXCEPTION.getCode(), SERVICE_EXCEPTION.getDesc());
 	}
 

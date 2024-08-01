@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-web</artifactId>
-			<version>1.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.xueyu</groupId>
@@ -28,7 +27,6 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>resource-client</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<!--minio相关依赖-->

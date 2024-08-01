@@ -3,7 +3,6 @@ package com.xueyu.user.listener;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.mapper.UserGeneralMapper;
-import com.xueyu.user.pojo.domain.UserGeneral;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;

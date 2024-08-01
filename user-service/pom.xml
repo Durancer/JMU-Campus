@@ -13,7 +13,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>user-server</module>
-		<module>user-sdk</module>
 		<module>user-client</module>
 	</modules>
 

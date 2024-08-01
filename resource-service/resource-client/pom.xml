@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-core</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>

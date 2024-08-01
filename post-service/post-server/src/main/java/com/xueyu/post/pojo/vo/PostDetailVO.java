@@ -79,4 +79,14 @@ public class PostDetailVO {
 	 */
 	Date createTime;
 
+	/**
+	 * 创建时间
+	 */
+	Date updateTime;
+
+	/**
+	 * 帖子状态 0 公开 | 1 私密
+	 */
+	Integer isPrivate;
+
 }

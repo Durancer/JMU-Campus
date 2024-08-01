@@ -13,7 +13,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>comment-server</module>
-		<module>comment-sdk</module>
 		<module>comment-client</module>
 	</modules>
 

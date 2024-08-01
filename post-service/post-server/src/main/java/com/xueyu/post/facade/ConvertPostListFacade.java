@@ -3,7 +3,6 @@ package com.xueyu.post.facade;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.comment.client.CommentClient;
 import com.xueyu.comment.sdk.vo.CommentAnswerVO;
-import com.xueyu.common.core.result.RestResult;
 import com.xueyu.common.web.facade.FacadeStrategy;
 import com.xueyu.post.facade.request.ConvertPostReq;
 import com.xueyu.post.mapper.LikePostMapper;

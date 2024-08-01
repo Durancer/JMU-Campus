@@ -15,14 +15,7 @@
 
 		<dependency>
 			<groupId>com.xueyu</groupId>
-			<artifactId>user-sdk</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.xueyu</groupId>
 			<artifactId>common-core</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>

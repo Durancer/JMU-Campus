@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>com.xueyu</groupId>
 			<artifactId>common-web</artifactId>
-			<version>1.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>

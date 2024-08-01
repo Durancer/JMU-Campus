@@ -118,6 +118,7 @@ public class CommentController {
 	 */
 	@GetMapping("post/hot")
 	public RestResult<List<CommentAnswerVO>> getPostsMaxHotComment(Integer[] postIds){
+		// todo 做性能优化，缓存构建
 		if(postIds == null || postIds.length == 0){
 			return RestResult.fail("请求体为空");
 		}

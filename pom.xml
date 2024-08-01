@@ -138,6 +138,55 @@
 				<version>23.0.0</version>
 			</dependency>
 
+<!--			项目Jar包-->
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>user-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>comment-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>post-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>resource-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>common-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>common-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>common-amqp</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.xueyu</groupId>
+				<artifactId>common-data</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
