@@ -52,10 +52,8 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 				user.getEmail() != null) {
 			throw new UserException("不合法的参数传入");
 		}
-		// 如果性别参数不为空的情况下，做判断 todo 封装枚举判断
-		if (user.getSex() != null && !(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
-				UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
-				UserGenderEnum.GIRL.getCode().equals(user.getSex()))) {
+		// 如果性别参数不为空的情况下，做判断
+		if (user.getSex() != null && !UserGenderEnum.isInEnums(user.getSex())) {
 			throw new UserException("不合规的用户性别参数");
 		}
 		user.setUpdateTime(new Date());
@@ -82,12 +80,9 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 		Map<String, String> resDate = uploadResult.getData();
 		String fileName = resDate.get("fileName");
 
-		// 如果不为默认头像，删除原来的头像文件 todo 转为默认头像配置
+		// 如果不为默认头像，删除原来的头像文件
 		String originName = check.getAvatar();
-		if (!("default.jpg".equals(originName) ||
-				"default_boy.png".equals(originName) ||
-				"default_girl.png".equals(originName)
-		)) {
+		if (!UserGenderEnum.isAvatarInEnums(originName)) {
 			resourceClient.deleteFileByFileName(originName);
 		}
 		User user = new User();

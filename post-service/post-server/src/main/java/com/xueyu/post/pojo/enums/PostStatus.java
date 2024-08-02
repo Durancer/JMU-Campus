@@ -29,4 +29,32 @@ public enum PostStatus {
 
 	final Integer value;
 
+	/**
+	 * 是否在枚举中
+	 * @param code code
+	 * @return
+	 */
+	public static boolean isInEnums(Integer code){
+		for(PostStatus postStatus : PostStatus.values()){
+			if (postStatus.value.equals(code)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 通过code取枚举
+	 * @param code code
+	 * @return
+	 */
+	public static PostStatus getEnumByCode(Integer code){
+		for(PostStatus postStatus : PostStatus.values()){
+			if (postStatus.value.equals(code)){
+				return postStatus;
+			}
+		}
+		return null;
+	}
+
 }

@@ -204,6 +204,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	 */
 	@Override
 	public List<CommentAnswerVO> postsMaxHotComment(List<Integer> postIds) {
+		// todo 做性能优化，缓存构建
 		List<Comment> comments = commentMapper.selectMaxHotByPostId(postIds);
 		return commentConvertAnswerVO(comments);
 	}

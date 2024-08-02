@@ -237,10 +237,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
 	@Override
 	public void passPostContent(Integer postId, Integer desicion, String reason) {
-		// todo 封装枚举遍历判断方法，其他地方也一样
-		if (!(desicion.equals(PostStatus.PUBLIC.getValue()) ||
-				desicion.equals(PostStatus.FAIL.getValue()) ||
-				desicion.equals(PostStatus.EXAMINE.getValue()))) {
+		if (!PostStatus.isInEnums(desicion)) {
 			throw new PostException("不合法的审核参数");
 		}
 		// 参数合法修改帖子状态
