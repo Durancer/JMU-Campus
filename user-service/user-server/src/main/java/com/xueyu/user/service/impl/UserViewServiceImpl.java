@@ -1,12 +1,16 @@
 package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.user.mapper.UserGeneralMapper;
 import com.xueyu.user.mapper.UserViewMapper;
 import com.xueyu.user.pojo.domain.UserGeneral;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserView;
+import com.xueyu.user.request.UserQueryRequest;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import com.xueyu.user.service.UserViewService;
 import org.springframework.beans.BeanUtils;
@@ -14,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author durance
@@ -89,4 +90,35 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		return query().getBaseMapper().selectList(wrapper);
 	}
 
+	@Override
+	public ListVO<UserView> getUserListPage(UserQueryRequest request) {
+		LambdaQueryWrapper<UserView> wrapper = new LambdaQueryWrapper<>();
+		if (Objects.nonNull(request.getSex())){
+			wrapper.eq(UserView::getSex, request.getSex());
+		}
+		if (Objects.nonNull(request.getId())){
+			wrapper.eq(UserView::getId, request.getId());
+		}
+		if (Objects.nonNull(request.getPhone())){
+			wrapper.eq(UserView::getPhone, request.getPhone());
+		}
+		if (Objects.nonNull(request.getNickname())){
+			wrapper.like(UserView::getNickname, request.getNickname());
+		}
+		if (Objects.nonNull(request.getUsername())){
+			wrapper.like(UserView::getUsername, request.getUsername());
+		}
+		if (Objects.nonNull(request.getEmail())){
+			wrapper.eq(UserView::getEmail, request.getEmail());
+		}
+		if (Objects.nonNull(request.getCreateTime())){
+			wrapper.ge(UserView::getCreateTime, request.getCreateTime());
+		}
+		wrapper.ne(UserView::getId, 0);
+		IPage<UserView> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		ListVO<UserView> result = new ListVO<>();
+		BeanUtils.copyProperties(page, result);
+		return result;
+	}
 }

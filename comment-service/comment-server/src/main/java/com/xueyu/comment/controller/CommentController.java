@@ -3,7 +3,9 @@ package com.xueyu.comment.controller;
 import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
+import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
@@ -124,6 +126,17 @@ public class CommentController {
 		List<Integer> postIdList = Arrays.asList(postIds);
 		List<CommentAnswerVO> postHotComments = commentService.postsMaxHotComment(postIdList);
 		return RestResult.ok(postHotComments);
+	}
+
+	/**
+	 * 获取各个帖子热度最高的评论
+	 *
+	 * @param request req
+	 * @return 帖子热度最高评论
+	 */
+	@GetMapping("manage/list")
+	public RestResult<ListVO<Comment>> getPostsMaxHotComment(CommentQueryRequest request){
+		return RestResult.ok(commentService.getManageCommentListPage(request));
 	}
 
 }

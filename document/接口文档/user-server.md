@@ -1,14 +1,15 @@
 ## 用户服务接口文档
+
 请求 BaseUrl：http://127.0.0.1/
 
 ### 基本接口
 
-#### 用户登录
+### 用户登录
 
-```
+#### 
 请求地址：/user/login
 请求方法：POST
-```
+####
 
 **入参字段**
 
@@ -23,33 +24,33 @@
 
 ```json
 {
-    "code": 200,
-    "message": "账号或密码错误",
-    "data": null,
-    "status": false
+    "code": 200,
+    "message": "账号或密码错误",
+    "data": null,
+    "status": false
 }
 ```
 
-- **登录成功**
+#### **登录成功**
 
 ```json
 {
-    "code": 200,
-    "message": "登录成功",
-    "data": {
-        "userInfo": {
-            "id": 1,
-            "username": "lucy",
-            "nickname": "lucy",
-            "avatarUrl": "http://xxx/default.jpg",
-            "introduce": "ta还没有个人介绍哦！",
-            "sex": 0,
-            "phone": null,
-            "createTime": "2023-02-03T08:41:57.000+00:00"
-        },
-        "token": "xxxxx"
-    },
-    "status": true
+    "code": 200,
+    "message": "登录成功",
+    "data": {
+        "userInfo": {
+            "id": 1,
+            "username": "lucy",
+            "nickname": "lucy",
+            "avatarUrl": "http://xxx/default.jpg",
+            "introduce": "ta还没有个人介绍哦！",
+            "sex": 0,
+            "phone": null,
+            "createTime": "2023-02-03T08:41:57.000+00:00"
+        },
+        "token": "xxxxx"
+    },
+    "status": true
 }
 ```
 
@@ -91,10 +92,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "注册成功",
-    "data": null,
-    "status": true
+    "code": 200,
+    "message": "注册成功",
+    "data": null,
+    "status": true
 }
 ```
 
@@ -116,10 +117,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "上传成功",
-    "data": "xxx.jpg",
-    "status": true
+    "code": 200,
+    "message": "上传成功",
+    "data": "xxx.jpg",
+    "status": true
 }
 ```
 
@@ -150,13 +151,12 @@
 
 ```json
 {
-    "code": 200,
-    "message": "更新成功",
-    "data": null,
-    "status": true
+    "code": 200,
+    "message": "更新成功",
+    "data": null,
+    "status": true
 }
 ```
-
 
 #### 修改用户密码
 
@@ -167,21 +167,21 @@
 
 **入参字段**
 
-| 字段  | 类型   | 含义                                 | 必填 |
-| ----- | ------ | ------------------------------------ | ---- |
-| token | String | 请求头加入                           | 是   |
-| password  | String   | 用户新密码 | 是   |
-| email  | String   | 用户邮箱 | 是   |
-| idencode  | Integer   | 验证码 | 是   |
+| 字段     | 类型    | 含义       | 必填 |
+| -------- | ------- | ---------- | ---- |
+| token    | String  | 请求头加入 | 是   |
+| password | String  | 用户新密码 | 是   |
+| email    | String  | 用户邮箱   | 是   |
+| idencode | Integer | 验证码     | 是   |
 
 **出参**
 
 ```json
 {
-    "code": 200,
-    "message": "修改成功",
-    "data": true,
-    "status": true
+    "code": 200,
+    "message": "修改成功",
+    "data": true,
+    "status": true
 }
 ```
 
@@ -207,10 +207,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "验证码错误",
-    "data": null,
-    "status": false
+    "code": 200,
+    "message": "验证码错误",
+    "data": null,
+    "status": false
 }
 ```
 
@@ -218,22 +218,22 @@
 
 ```json
 {
-    "code": 200,
-    "message": "登录成功",
-    "data": {
-        "userInfo": {
-            "id": 1,
-            "username": "lucy",
-            "nickname": "lucy",
-            "avatarUrl": "http://xxx/default.jpg",
-            "introduce": "ta还没有个人介绍哦！",
-            "sex": 0,
-            "phone": null,
-            "createTime": "2023-02-03T08:41:57.000+00:00"
-        },
-        "token": "xxxxx"
-    },
-    "status": true
+    "code": 200,
+    "message": "登录成功",
+    "data": {
+        "userInfo": {
+            "id": 1,
+            "username": "lucy",
+            "nickname": "lucy",
+            "avatarUrl": "http://xxx/default.jpg",
+            "introduce": "ta还没有个人介绍哦！",
+            "sex": 0,
+            "phone": null,
+            "createTime": "2023-02-03T08:41:57.000+00:00"
+        },
+        "token": "xxxxx"
+    },
+    "status": true
 }
 ```
 
@@ -264,10 +264,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "发送成功",
-    "data": null,
-    "status": true
+    "code": 200,
+    "message": "发送成功",
+    "data": null,
+    "status": true
 }
 ```
 
@@ -290,23 +290,24 @@
 
 已存在
 
-```json
+#### json
+
 {
-    "code": 200,
-    "message": "已存在相同的邮箱",
-    "data": true,
-    "status": true
+    "code": 200,
+    "message": "已存在相同的邮箱",
+    "data": true,
+    "status": true
 }
-```
+####
 
 不存在
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": false,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": false,
+    "status": true
 }
 ```
 
@@ -329,10 +330,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "已存在相同的用户名",
-    "data": true,
-    "status": true
+    "code": 200,
+    "message": "已存在相同的用户名",
+    "data": true,
+    "status": true
 }
 ```
 
@@ -340,24 +341,24 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": false,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": false,
+    "status": true
 }
 ```
 
 
 
-### 用户信息获取
-
+```用户信息获取
 #### 获取用户信息
 
 ```
+
 请求地址：/user/detail
 请求方法：GET
-```
 
+```
 **入参字段**
 
 | 字段   | 类型    | 含义   | 必填 |
@@ -368,10 +369,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
 ```
 
@@ -388,7 +389,6 @@
 
 以下入参字段至少一个必填，当查询他人统计时，传递 otherUserId 即可，查询自己的统计数据时有 token就行
 
-
 | 字段        | 类型    | 含义           | 必填 |
 | ----------- | ------- | -------------- | ---- |
 | token       | Integer | 请求头添加     | 否   |
@@ -398,10 +398,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
 ```
 
@@ -424,14 +424,15 @@
 
 **出参**
 
-```json
+#### json
+
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
-```
+####
 
 
 
@@ -457,10 +458,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
 ```
 
@@ -486,10 +487,10 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
 ```
 
@@ -499,10 +500,10 @@
 
 用户物品
 
-```
+#### 
 请求地址：/user/stuff/list/user
 请求方法：GET
-```
+####
 
 **入参字段**
 
@@ -514,14 +515,53 @@
 
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": data,
-    "status": true
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
 }
 ```
 
 
+
+
+
+### 管理站接口
+
+
+
+#### 获取用户列表（管理站）
+
+```
+请求地址：/user/list/page
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段       | 类型    | 含义                   | 必填 |
+| ---------- | ------- | ---------------------- | ---- |
+| token      | String  | 请求头添加             | 是   |
+| id         | Integer | 用户id                 | 否   |
+| username   | String  | 用户名                 | 否   |
+| nickname   | String  | 昵称                   | 否   |
+| email      | String  | 邮箱                   | 否   |
+| sex        | Integer | 性别 0 匿 1 boy 2 girl | 否   |
+| phone      | String  | 电话                   | 否   |
+| createTime | Date    | 创建时间 >=            | 否   |
+| current    | Integer | 当前页                 | 否   |
+| size       | Integer | 页大小                 | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
 
 
 

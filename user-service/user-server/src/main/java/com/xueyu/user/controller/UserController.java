@@ -1,12 +1,14 @@
 package com.xueyu.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.common.web.annotation.RequestLimit;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserView;
+import com.xueyu.user.request.UserQueryRequest;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.service.UserViewService;
 import org.jetbrains.annotations.NotNull;
@@ -159,5 +161,17 @@ public class UserController {
 		List<UserView> userViewList = userViewService.getUserListBySearch(username);
 		return RestResult.ok(userViewList);
 	}
+
+	/**
+	 * 根据传入id进行分组查询用户信息
+	 *
+	 * @param request 查询
+	 * @return 分组用户信息
+	 */
+	@GetMapping("list/page")
+	public RestResult<ListVO<UserView>> getUserInfoByGroup(UserQueryRequest request) {
+		return RestResult.ok(userViewService.getUserListPage(request));
+	}
+
 
 }

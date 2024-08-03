@@ -16,8 +16,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -31,8 +29,6 @@ import java.util.Set;
 public class AuthorizeFilter implements GlobalFilter, Ordered {
 
 	public static final String AUTHORIZE_TOKEN = "token";
-
-	private Set<String> matchersCheck;
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -53,6 +49,11 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 				Integer userId = (Integer) claims.get("userId");
 				ServerHttpRequest build = exchange.getRequest().mutate().header("userId", userId.toString()).build();
 				exchange = exchange.mutate().request(build).build();
+				// 验证管理员接口权限
+				if (verifyAdminInterface(path, userId)){
+					response.setStatusCode(HttpStatus.UNAUTHORIZED);
+					return response.setComplete();
+				}
 				// 只要token解析正确就进行返回
 				return chain.filter(exchange);
 			} catch (Exception e) {
@@ -81,14 +82,30 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 	 * @return 判断结果
 	 */
 	private boolean verifyNoAuthentication(String path){
+		Set<String> matchersCheck = JwtProperties.matchers;
 		//将不需要认证的接口存储在 Set中，减少判断是否为非鉴权接口的时间复杂度
 		if(CollectionUtils.isEmpty(matchersCheck)){
-			matchersCheck = new HashSet<>();
-			String[] matchers = JwtProperties.matchers;
-			matchersCheck.addAll(Arrays.asList(matchers));
+			return false;
 		}
 		// 为非鉴权接口直接跳过， 否则返回未认证
 		return matchersCheck.contains(path);
+	}
+
+	/**
+	 * 判断接口管理员接口是否有权限请求
+	 *
+	 * @param path 请求接口
+	 * @return 判断结果
+	 */
+	private boolean verifyAdminInterface(String path, Integer userId){
+		//将不需要认证的接口存储在 Set中，减少判断是否为非鉴权接口的时间复杂度
+		Set<String> adminMatchers = JwtProperties.adminMatchers;
+		if(CollectionUtils.isEmpty(adminMatchers)){
+			return true;
+		}
+		final Integer adminUserId = 0;
+		// 为管理员接口，且不为管理员账号，驳回
+		return !adminMatchers.contains(path) || userId.equals(adminUserId);
 	}
 
 	@Override

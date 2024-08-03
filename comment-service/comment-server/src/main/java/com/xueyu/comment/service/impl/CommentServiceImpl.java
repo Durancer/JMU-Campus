@@ -1,6 +1,8 @@
 package com.xueyu.comment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.facade.PostCommentFacade;
@@ -12,8 +14,10 @@ import com.xueyu.comment.pojo.domain.CommentType;
 import com.xueyu.comment.pojo.domain.Like;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;
+import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.client.PostClient;
 import com.xueyu.post.sdk.dto.PostDTO;
 import com.xueyu.user.client.UserClient;
@@ -207,6 +211,37 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		// todo 做性能优化，缓存构建
 		List<Comment> comments = commentMapper.selectMaxHotByPostId(postIds);
 		return commentConvertAnswerVO(comments);
+	}
+
+	@Override
+	public ListVO<Comment> getManageCommentListPage(CommentQueryRequest request) {
+		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+		if (Objects.nonNull(request.getRootId())){
+			wrapper.eq(Comment::getRootId, request.getRootId());
+		}
+		if (Objects.nonNull(request.getUserId())){
+			wrapper.eq(Comment::getUserId, request.getUserId());
+		}
+		if (Objects.nonNull(request.getPostId())){
+			wrapper.eq(Comment::getPostId, request.getPostId());
+		}
+		if (Objects.nonNull(request.getType())){
+			wrapper.eq(Comment::getType, request.getType());
+		}
+		if (Objects.nonNull(request.getToUserId())){
+			wrapper.eq(Comment::getToUserId, request.getToUserId());
+		}
+		if (Objects.nonNull(request.getCreateTime())){
+			wrapper.ge(Comment::getCreateTime, request.getCreateTime());
+		}
+		if (Objects.nonNull(request.getContent())){
+			wrapper.like(Comment::getContent, request.getContent());
+		}
+		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		ListVO<Comment> result = new ListVO<>();
+		BeanUtils.copyProperties(page, result);
+		return result;
 	}
 
 }

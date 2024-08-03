@@ -101,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		wrapper.eq(User::getUsername, user.getUsername());
 		User check = userMapper.selectOne(wrapper);
 		if (Objects.isNull(check)){
-			throw new UserException("改账号不存在");
+			throw new UserException("改账号不存在 -> " + user.getUsername());
 		}
 		// 核对密码是否正确
 		boolean checkpw = BCrypt.checkpw(user.getPassword(), check.getPassword());

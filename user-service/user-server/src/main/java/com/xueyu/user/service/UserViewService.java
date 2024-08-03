@@ -1,8 +1,10 @@
 package com.xueyu.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xueyu.common.core.result.ListVO;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
 import com.xueyu.user.pojo.vo.UserView;
+import com.xueyu.user.request.UserQueryRequest;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 
 import java.util.List;
@@ -62,5 +64,13 @@ public interface UserViewService extends IService<UserView> {
 	 * @return 用户列表
 	 */
 	List<UserView> getUserListBySearch(String username);
+
+	/**
+	 * 用户列表查询
+	 *
+	 * @param request request
+	 * @return 用户列表
+	 */
+	ListVO<UserView> getUserListPage(UserQueryRequest request);
 
 }

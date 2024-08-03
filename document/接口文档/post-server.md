@@ -177,36 +177,6 @@
 
 
 
-#### 审核用户帖子
-
-```
-请求地址：/post/check
-请求方法：POST
-```
-
-**入参字段**
-
-当用户重新提交审核时， decision 传 0
-
-| 字段     | 类型    | 含义                                          | 必填 |
-| -------- | ------- | --------------------------------------------- | ---- |
-| postId   | Integer | 帖子id                                        | 是   |
-| decision | Integer | 审核结果，0 审核中\| 1 审核通过 \| 2 审核失败 | 是   |
-| reason   | String  | 审核失败需要传，失败原因                      | 否   |
-
-**出参**
-
-```json
-{
-    "code": 200,
-    "message": "提交成功",
-    "data": null,
-    "status": true
-}
-```
-
-
-
 #### 用户 私密/公开 帖子
 
 如果帖子是公开的状态，则置为私密，否则反之
@@ -553,3 +523,72 @@
     "data": data,
     "status": true
 }
+```
+
+
+
+### 管理站接口
+
+#### 获取帖子列表（管理站）
+
+```
+请求地址：/post/manage/list
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段       | 类型    | 含义                        | 必填 |
+| ---------- | ------- | --------------------------- | ---- |
+| token      | String  | 请求头添加                  | 是   |
+| id         | Integer | id                          | 否   |
+| userId     | Integer | 用户id                      | 否   |
+| title      | String  | 标题                        | 否   |
+| content    | String  | 内容                        | 否   |
+| status     | Integer | 性别 0 审核中 1 通过 2 驳回 | 否   |
+| isPrivate  | Integer | 私密状态 0 否 1是           | 否   |
+| createTime | Date    | 创建时间 >=                 | 否   |
+| current    | Integer | 当前页                      | 否   |
+| size       | Integer | 页大小                      | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+#### 审核用户帖子
+
+```
+请求地址：/post/check
+请求方法：POST
+```
+
+**入参字段**
+
+当用户重新提交审核时， decision 传 0
+
+| 字段     | 类型    | 含义                                          | 必填 |
+| -------- | ------- | --------------------------------------------- | ---- |
+| postId   | Integer | 帖子id                                        | 是   |
+| decision | Integer | 审核结果，0 审核中\| 1 审核通过 \| 2 审核失败 | 是   |
+| reason   | String  | 审核失败需要传，失败原因                      | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功",
+    "data": null,
+    "status": true
+}
+```
+
+
+

@@ -251,3 +251,45 @@
 
 
 
+
+
+### 管理站接口
+
+
+
+#### 获取评论列表（管理站）
+
+```
+请求地址：/comment/manage/list
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段       | 类型    | 含义                     | 必填 |
+| ---------- | ------- | ------------------------ | ---- |
+| token      | String  | 请求头添加               | 是   |
+| id         | Integer | 用id                     | 否   |
+| userId     | Integer | 用户id                   | 否   |
+| postId     | Integer | 帖子id                   | 否   |
+| toUserId   | Integer | 回复的用户id             | 否   |
+| rootId     | Integer | 根评论id                 | 否   |
+| content    | String  | 内容 模糊匹配            | 否   |
+| type       | String  | 类型 answer 回复 root 根 | 否   |
+| createTime | Date    | 创建时间 >=              | 否   |
+| current    | Integer | 当前页                   | 否   |
+| size       | Integer | 页大小                   | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+

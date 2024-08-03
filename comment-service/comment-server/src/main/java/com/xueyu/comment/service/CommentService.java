@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;
+import com.xueyu.comment.request.CommentQueryRequest;
+import com.xueyu.common.core.result.ListVO;
 
 import java.util.List;
 
@@ -75,5 +77,13 @@ public interface CommentService extends IService<Comment> {
 	 * @return answerVO对象
 	 */
 	List<CommentAnswerVO> postsMaxHotComment(List<Integer> postIds);
+
+	/**
+	 * 管理站获取评论列表
+	 *
+	 * @param request req
+	 * @return
+	 */
+	ListVO<Comment> getManageCommentListPage(CommentQueryRequest request);
 
 }
