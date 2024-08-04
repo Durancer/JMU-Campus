@@ -4,6 +4,7 @@ import com.alibaba.nacos.api.utils.StringUtils;
 import com.xueyu.gateway.config.JwtProperties;
 import com.xueyu.gateway.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -43,22 +44,28 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 			// 如果不为空则进行效验
 			try {
 				// 效验jwt正确性，如果错误会抛出异常
-				JwtUtil.parseJwt(jwt);
 				// 解析jwt拿到jwt的载荷跟其余信息
 				Claims claims = JwtUtil.parseJwt(jwt);
 				Integer userId = (Integer) claims.get("userId");
 				ServerHttpRequest build = exchange.getRequest().mutate().header("userId", userId.toString()).build();
 				exchange = exchange.mutate().request(build).build();
 				// 验证管理员接口权限
-				if (verifyAdminInterface(path, userId)){
+				if (!verifyAdminInterface(path, userId)){
 					response.setStatusCode(HttpStatus.UNAUTHORIZED);
 					return response.setComplete();
 				}
 				// 只要token解析正确就进行返回
 				return chain.filter(exchange);
+			} catch (ExpiredJwtException e){
+				log.warn("jwt失效", e);
+				if (verifyNoAuthentication(path)){
+					return chain.filter(exchange);
+				}
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				return response.setComplete();
 			} catch (Exception e) {
 				// 出现异常可能是token过期或恶意攻击
-				log.warn("jwt解析错误：{}", e.getMessage());
+				log.error("jwt解析错误：{}", e.getMessage());
 				// 如果解析错误（过期了也会解析错误），判断是否为免鉴权接口
 				if (verifyNoAuthentication(path)){
 					return chain.filter(exchange);

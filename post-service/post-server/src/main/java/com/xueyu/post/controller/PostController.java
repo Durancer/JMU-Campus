@@ -1,11 +1,13 @@
 package com.xueyu.post.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.exception.PostException;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.domain.Vote;
+import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.sdk.dto.PostDTO;
@@ -16,7 +18,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +48,7 @@ public class PostController {
 	 * @return 发布结果
 	 */
 	@PostMapping("add")
-	public RestResult<?> publishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, List<String> names) {
+	public RestResult<?> publishPost(Post post, MultipartFile[] files, @RequestHeader Integer userId, Vote vote, String[] options, ArrayList<String> names) {
 		int MAX_FILES = 9;
 		if (files != null && files.length >= MAX_FILES) {
 			throw new PostException("最多上传 9 张图");
@@ -138,12 +142,15 @@ public class PostController {
 	 * 审核用户帖子
 	 *
 	 * @param postId   帖子id
-	 * @param decision 帖子审核选项 1 审核通过 | 2 审核不通过
+	 * @param decision 帖子审核选项 0 审核中 | 1 审核通过 | 2 审核不通过
 	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
 	 * @return 审核结果
 	 */
 	@PostMapping("check")
 	public RestResult<?> checkUserPost(@NotNull Integer postId, @NotNull Integer decision, String reason) {
+		if (decision.equals(PostStatus.FAIL.getValue()) && StringUtils.isEmpty(reason)){
+			throw new PostException("失败原因不能为空");
+		}
 		postService.passPostContent(postId, decision, reason);
 		return RestResult.ok(null, "提交成功");
 	}

@@ -2,6 +2,7 @@ package com.xueyu.comment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.comment.exception.CommentException;
@@ -225,7 +226,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		if (Objects.nonNull(request.getPostId())){
 			wrapper.eq(Comment::getPostId, request.getPostId());
 		}
-		if (Objects.nonNull(request.getType())){
+		if (StringUtils.isNotEmpty(request.getType())){
 			wrapper.eq(Comment::getType, request.getType());
 		}
 		if (Objects.nonNull(request.getToUserId())){
@@ -234,9 +235,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		if (Objects.nonNull(request.getCreateTime())){
 			wrapper.ge(Comment::getCreateTime, request.getCreateTime());
 		}
-		if (Objects.nonNull(request.getContent())){
+		if (StringUtils.isNotEmpty(request.getContent())){
 			wrapper.like(Comment::getContent, request.getContent());
 		}
+		wrapper.orderByDesc(Comment::getCreateTime);
 		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
 		query().getBaseMapper().selectPage(page, wrapper);
 		ListVO<Comment> result = new ListVO<>();

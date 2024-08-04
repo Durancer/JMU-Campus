@@ -2,6 +2,7 @@ package com.xueyu.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
@@ -54,12 +55,13 @@ public class PostViewServiceImpl extends ServiceImpl<PostViewMapper, PostView> i
         if (Objects.nonNull(request.getCreateTime())){
             wrapper.ge(PostView::getCreateTime, request.getCreateTime());
         }
-        if (Objects.nonNull(request.getTitle())){
+        if (StringUtils.isNotEmpty(request.getTitle())){
             wrapper.like(PostView::getTitle, request.getTitle());
         }
-        if (Objects.nonNull(request.getContent())){
+        if (StringUtils.isNotEmpty(request.getContent())){
             wrapper.like(PostView::getContent, request.getContent());
         }
+        wrapper.orderByDesc(PostView::getCreateTime);
         IPage<PostView> page = new Page<>(request.getCurrent(), request.getSize());
         query().getBaseMapper().selectPage(page, wrapper);
         ListVO<PostView> result = new ListVO<>();

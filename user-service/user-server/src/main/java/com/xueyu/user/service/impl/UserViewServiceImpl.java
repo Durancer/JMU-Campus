@@ -2,6 +2,7 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
@@ -99,22 +100,23 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 		if (Objects.nonNull(request.getId())){
 			wrapper.eq(UserView::getId, request.getId());
 		}
-		if (Objects.nonNull(request.getPhone())){
+		if (StringUtils.isNotEmpty(request.getPhone())){
 			wrapper.eq(UserView::getPhone, request.getPhone());
 		}
-		if (Objects.nonNull(request.getNickname())){
+		if (StringUtils.isNotEmpty(request.getNickname())){
 			wrapper.like(UserView::getNickname, request.getNickname());
 		}
-		if (Objects.nonNull(request.getUsername())){
+		if (StringUtils.isNotEmpty(request.getUsername())){
 			wrapper.like(UserView::getUsername, request.getUsername());
 		}
-		if (Objects.nonNull(request.getEmail())){
+		if (StringUtils.isNotEmpty(request.getEmail())){
 			wrapper.eq(UserView::getEmail, request.getEmail());
 		}
 		if (Objects.nonNull(request.getCreateTime())){
 			wrapper.ge(UserView::getCreateTime, request.getCreateTime());
 		}
 		wrapper.ne(UserView::getId, 0);
+		wrapper.orderByDesc(UserView::getCreateTime);
 		IPage<UserView> page = new Page<>(request.getCurrent(), request.getSize());
 		query().getBaseMapper().selectPage(page, wrapper);
 		ListVO<UserView> result = new ListVO<>();
