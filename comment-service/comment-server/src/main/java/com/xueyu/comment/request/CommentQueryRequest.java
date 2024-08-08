@@ -38,6 +38,11 @@ public class CommentQueryRequest extends PageRequest {
     Integer rootId;
 
     /**
+     * 状态
+     */
+    Integer status;
+
+    /**
      * 评论内容
      */
     String content;

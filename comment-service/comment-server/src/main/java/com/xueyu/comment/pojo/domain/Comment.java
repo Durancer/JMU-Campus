@@ -68,4 +68,14 @@ public class Comment {
 	 */
 	Date updateTime;
 
+	/**
+	 * 状态 0 审核中  1 通过 2 失败
+	 */
+	Integer status;
+
+	/**
+	 * 审核失败原因
+	 */
+	String reason;
+
 }

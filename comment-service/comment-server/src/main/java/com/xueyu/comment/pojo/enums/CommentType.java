@@ -1,4 +1,4 @@
-package com.xueyu.comment.pojo.domain;
+package com.xueyu.comment.pojo.enums;
 
 /**
  * 评论类型枚举类

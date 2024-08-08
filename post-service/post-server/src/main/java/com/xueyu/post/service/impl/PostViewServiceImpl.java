@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -64,6 +65,9 @@ public class PostViewServiceImpl extends ServiceImpl<PostViewMapper, PostView> i
         wrapper.orderByDesc(PostView::getCreateTime);
         IPage<PostView> page = new Page<>(request.getCurrent(), request.getSize());
         query().getBaseMapper().selectPage(page, wrapper);
+        for (PostView record : page.getRecords()) {
+            record.setContent(HtmlUtils.htmlUnescape(record.getContent()));
+        }
         ListVO<PostView> result = new ListVO<>();
         BeanUtils.copyProperties(page, result);
         return result;

@@ -40,12 +40,20 @@ public interface CommentService extends IService<Comment> {
 	List<CommentPostVO> getPostComments(Integer userId,Integer postId);
 
 	/**
-	 * 获取用户发送的评论信息
+	 * 获取用户自己发送的评论信息
 	 *
 	 * @param userId 用户id
 	 * @return 评论信息
 	 */
-	List<CommentAnswerVO> getUserComments(Integer userId);
+	List<CommentAnswerVO> getUserSelfComments(Integer userId);
+
+	/**
+	 * 获取其他用户自己发送的评论信息
+	 *
+	 * @param userId 用户id
+	 * @return 评论信息
+	 */
+	List<CommentAnswerVO> getOtherUserComments(Integer userId);
 
 	/**
 	 * 获取用户收到的回复评论
@@ -85,5 +93,14 @@ public interface CommentService extends IService<Comment> {
 	 * @return
 	 */
 	ListVO<Comment> getManageCommentListPage(CommentQueryRequest request);
+
+	/**
+	 * 审核评论内容
+	 *
+	 * @param  commentId  评论id
+	 * @param decision 审核选择0 审核中 1 通过，2 未通过
+	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
+	 */
+	void passCommentContent(Integer commentId, Integer decision, String reason);
 
 }

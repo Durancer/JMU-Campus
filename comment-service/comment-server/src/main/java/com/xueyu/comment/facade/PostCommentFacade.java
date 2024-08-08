@@ -5,7 +5,7 @@ import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.facade.request.PostCommentReq;
 import com.xueyu.comment.mapper.LikeMapper;
 import com.xueyu.comment.pojo.domain.Comment;
-import com.xueyu.comment.pojo.domain.CommentType;
+import com.xueyu.comment.pojo.enums.CommentType;
 import com.xueyu.comment.pojo.domain.Like;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;

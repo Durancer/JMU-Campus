@@ -1,16 +1,18 @@
 package com.xueyu.comment.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.pojo.domain.Comment;
+import com.xueyu.comment.pojo.enums.CommentStatusEnum;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.service.CommentService;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,12 +46,12 @@ public class CommentController {
 	@GetMapping("user/list")
 	public RestResult<List<CommentAnswerVO>> getUserCommentList(@RequestHeader(required = false) Integer userId, Integer otherUserId) {
 		if(otherUserId != null){
-			return RestResult.ok(commentService.getUserComments(otherUserId));
+			return RestResult.ok(commentService.getOtherUserComments(otherUserId));
 		}
 		if(userId == null){
 			throw new CommentException("参数异常");
 		}
-		return RestResult.ok(commentService.getUserComments(userId));
+		return RestResult.ok(commentService.getUserSelfComments(userId));
 	}
 
 	/**
@@ -135,8 +137,27 @@ public class CommentController {
 	 * @return 帖子热度最高评论
 	 */
 	@GetMapping("manage/list")
-	public RestResult<ListVO<Comment>> getPostsMaxHotComment(CommentQueryRequest request){
+	public RestResult<ListVO<Comment>> getManageCommentListPage(CommentQueryRequest request){
 		return RestResult.ok(commentService.getManageCommentListPage(request));
 	}
+
+
+	/**
+	 * 审核用户评论
+	 *
+	 * @param commentId   帖子id
+	 * @param decision 帖子审核选项 0 审核中 | 1 审核通过 | 2 审核不通过
+	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
+	 * @return 审核结果
+	 */
+	@PostMapping("check")
+	public RestResult<?> checkUserPost(@Validated @NotNull Integer commentId, @Validated @NotNull Integer decision, String reason) {
+		if (decision.equals(CommentStatusEnum.FAIL.getCode()) && StringUtils.isEmpty(reason)){
+			throw new CommentException("失败原因不能为空");
+		}
+		commentService.passCommentContent(commentId, decision, reason);
+		return RestResult.ok(null, "提交成功");
+	}
+
 
 }

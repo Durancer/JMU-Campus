@@ -11,7 +11,8 @@ import com.xueyu.comment.facade.request.PostCommentReq;
 import com.xueyu.comment.mapper.CommentMapper;
 import com.xueyu.comment.mapper.LikeMapper;
 import com.xueyu.comment.pojo.domain.Comment;
-import com.xueyu.comment.pojo.domain.CommentType;
+import com.xueyu.comment.pojo.enums.CommentStatusEnum;
+import com.xueyu.comment.pojo.enums.CommentType;
 import com.xueyu.comment.pojo.domain.Like;
 import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.pojo.vo.CommentPostVO;
@@ -142,6 +143,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	public List<CommentPostVO> getPostComments(Integer userId,Integer postId) {
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Comment::getPostId, postId).orderByAsc(Comment::getCreateTime);
+		wrapper.eq(Comment::getStatus, CommentStatusEnum.PUBLIC.getCode());
 		// 查询出属于该帖子的所有评论
 		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
 		// 如果为空返回空列表
@@ -155,9 +157,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	}
 
 	@Override
-	public List<CommentAnswerVO> getUserComments(Integer userId) {
+	public List<CommentAnswerVO> getUserSelfComments(Integer userId) {
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Comment::getUserId, userId);
+		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
+		return commentConvertAnswerVO(comments);
+	}
+
+	@Override
+	public List<CommentAnswerVO> getOtherUserComments(Integer userId) {
+		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(Comment::getUserId, userId);
+		wrapper.eq(Comment::getStatus, CommentStatusEnum.PUBLIC.getCode());
 		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
 		return commentConvertAnswerVO(comments);
 	}
@@ -232,6 +243,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		if (Objects.nonNull(request.getToUserId())){
 			wrapper.eq(Comment::getToUserId, request.getToUserId());
 		}
+		if (Objects.nonNull(request.getStatus())){
+			wrapper.eq(Comment::getStatus, request.getStatus());
+		}
 		if (Objects.nonNull(request.getCreateTime())){
 			wrapper.ge(Comment::getCreateTime, request.getCreateTime());
 		}
@@ -244,6 +258,30 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		ListVO<Comment> result = new ListVO<>();
 		BeanUtils.copyProperties(page, result);
 		return result;
+	}
+
+	@Override
+	public void passCommentContent(Integer commentId, Integer decision, String reason) {
+		if (!CommentStatusEnum.isInEnums(decision)) {
+			throw new CommentException("不合法的审核参数");
+		}
+		// 参数合法修改评论状态
+		Comment comment = new Comment();
+		comment.setId(commentId);
+		comment.setStatus(decision);
+		if (CommentStatusEnum.PUBLIC.getCode().equals(decision)) {
+			comment.setReason("");
+			commentMapper.updateById(comment);
+			log.info("评论 id -> {}, 审核通过", commentId);
+		} else if (CommentStatusEnum.EXAMINE.getCode().equals(decision)) {
+			comment.setReason("");
+			commentMapper.updateById(comment);
+			log.info("评论 id -> {}, 重新提交审核", commentId);
+		} else {
+			comment.setReason(reason);
+			commentMapper.updateById(comment);
+			log.info("评论 id -> {}, 审核未通过, 原因 -> {}", commentId, reason);
+		}
 	}
 
 }
