@@ -12,6 +12,7 @@ import com.xueyu.user.request.UserQueryRequest;
 import com.xueyu.user.service.UserService;
 import com.xueyu.user.service.UserViewService;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -173,5 +174,16 @@ public class UserController {
 		return RestResult.ok(userViewService.getUserListPage(request));
 	}
 
+	/**
+	 * 拉黑用户
+	 *
+	 * @param userId 用户id
+	 * @param time 时间 分钟
+	 * @return 拉黑结果
+	 */
+	@PostMapping("black")
+	public RestResult<Boolean> blackUser(@Validated @NotNull Integer userId, @Validated @NotNull Integer time) {
+		return RestResult.ok(userService.blackUser(userId, time));
+	}
 
 }

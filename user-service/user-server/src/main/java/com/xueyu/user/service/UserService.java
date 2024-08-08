@@ -51,4 +51,13 @@ public interface UserService extends IService<User> {
 	 */
 	void verifyIdencode(Integer idencode, String key);
 
+	/**
+	 * 拉黑用户
+	 *
+	 * @param userId 用户id
+	 * @param time 拉黑时长，分钟
+	 * @return 拉黑结果
+	 */
+	boolean blackUser(Integer userId, Integer time);
+
 }

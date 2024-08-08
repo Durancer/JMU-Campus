@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -17,7 +18,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.util.Set;
+
+import static com.xueyu.common.core.constant.RedisKeyConstant.BLACK_USER_KEY;
 
 
 /**
@@ -28,6 +32,9 @@ import java.util.Set;
 @Component
 @Slf4j
 public class AuthorizeFilter implements GlobalFilter, Ordered {
+
+	@Resource
+	RedisTemplate<String, Integer> redisTemplate;
 
 	public static final String AUTHORIZE_TOKEN = "token";
 
@@ -51,6 +58,11 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 				exchange = exchange.mutate().request(build).build();
 				// 验证管理员接口权限
 				if (!verifyAdminInterface(path, userId)){
+					response.setStatusCode(HttpStatus.UNAUTHORIZED);
+					return response.setComplete();
+				}
+				// 验证是否被拉黑
+				if (isBlackUser(userId)){
 					response.setStatusCode(HttpStatus.UNAUTHORIZED);
 					return response.setComplete();
 				}
@@ -80,6 +92,21 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 		}
 		response.setStatusCode(HttpStatus.UNAUTHORIZED);
 		return response.setComplete();
+	}
+
+	/**
+	 * 判断是否是被拉黑的用户
+	 * @param userId
+	 * @return
+	 */
+	private boolean isBlackUser(Integer userId) {
+		String key = BLACK_USER_KEY + userId;
+		try {
+			return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+		}catch (Exception e){
+			log.error("判断是否为拉黑用户失败", e);
+		}
+		return false;
 	}
 
 	/**

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.xueyu.common.core.constant.RedisKeyConstant.BLACK_USER_KEY;
 import static com.xueyu.resource.sdk.constant.MailConstant.CODE_KEY_PREFIX;
 
 /**
@@ -200,5 +201,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new UserException("不合规的用户性别参数");
         }
     }
+
+	@Override
+	public boolean blackUser(Integer userId, Integer time) {
+		String key = BLACK_USER_KEY + userId;
+		// 设置拉黑时长
+		try{
+			final Integer forever = -1;
+			if (time.equals(forever)){
+				redisTemplate.opsForValue().set(key, 1);
+			}else {
+				redisTemplate.opsForValue().set(key, 1, time * 60, TimeUnit.SECONDS);
+			}
+		}catch (Exception e){
+			log.error("拉黑用户失败", e);
+			return false;
+		}
+		return true;
+	}
 
 }

@@ -1,6 +1,6 @@
 package com.xueyu.gateway.filter;
 
-import com.xueyu.gateway.constant.GatewayConstant;
+import com.xueyu.common.core.constant.RedisKeyConstant;
 import com.xueyu.gateway.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +59,7 @@ public class AccessLimitFilter implements GlobalFilter, Ordered {
 	 */
 	public boolean checkLimit(String ipAddress) {
 		try{
-			String key = GatewayConstant.LIMIT_KEY + ipAddress;
+			String key = RedisKeyConstant.LIMIT_KEY + ipAddress;
 			Integer hasLimit = redisTemplate.opsForValue().get(key);
 			if (hasLimit != null) {
 				if (hasLimit == 0) {

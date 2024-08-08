@@ -565,3 +565,31 @@
 
 
 
+#### 拉黑用户
+
+```
+请求地址：/user/black
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段   | 类型    | 含义               | 必填 |
+| ------ | ------- | ------------------ | ---- |
+| token  | String  | 请求头添加         | 是   |
+| userId | Integer | 用户id             | 是   |
+| time   | Integer | 拉黑时长，单位分钟 | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": true,// 拉黑结果
+    "status": true
+}
+```
+
+
+
