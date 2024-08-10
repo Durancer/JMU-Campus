@@ -2,9 +2,10 @@ package com.xueyu.comment.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xueyu.comment.pojo.domain.Comment;
-import com.xueyu.comment.pojo.vo.CommentAnswerVO;
-import com.xueyu.comment.pojo.vo.CommentPostVO;
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
+import com.xueyu.comment.sdk.vo.CommentPostVO;
 import com.xueyu.comment.request.CommentQueryRequest;
+import com.xueyu.comment.request.PostCommentQueryRequest;
 import com.xueyu.common.core.result.ListVO;
 
 import java.util.List;
@@ -34,10 +35,10 @@ public interface CommentService extends IService<Comment> {
 	/**
 	 * 获取帖子评论信息
 	 *
-	 * @param postId 帖子id
+	 * @param request req
 	 * @return 评论信息
 	 */
-	List<CommentPostVO> getPostComments(Integer userId,Integer postId);
+	ListVO<CommentPostVO> getPostComments(PostCommentQueryRequest request);
 
 	/**
 	 * 获取用户自己发送的评论信息

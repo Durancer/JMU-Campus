@@ -1,10 +1,12 @@
-package com.xueyu.comment.pojo.vo;
+package com.xueyu.comment.sdk.vo;
 
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * 帖子评论列表实体
@@ -14,7 +16,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentAnswerVO {
+public class CommentPostVO {
 
 	/**
 	 * 自增id
@@ -30,11 +32,6 @@ public class CommentAnswerVO {
 	 * 评论用户信息
 	 */
 	UserSimpleVO userInfo;
-
-	/**
-	 * 回复的用户信息，为根评论时此项为null
-	 */
-	UserSimpleVO answerUserInfo;
 
 	/**
 	 * 根评论id，本身为根评论则为 id
@@ -70,5 +67,10 @@ public class CommentAnswerVO {
 	 * 创建时间
 	 */
 	Date updateTime;
+
+	/**
+	 * 该评论下的子评论
+	 */
+	List<CommentAnswerVO> answerCommentList;
 
 }

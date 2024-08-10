@@ -1,14 +1,17 @@
 package com.xueyu.comment.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
+import com.xueyu.comment.sdk.vo.CommentPostVO;
+import com.xueyu.comment.request.PostCommentQueryRequest;
 import com.xueyu.comment.exception.CommentException;
 import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.enums.CommentStatusEnum;
-import com.xueyu.comment.pojo.vo.CommentAnswerVO;
 import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.service.CommentService;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import java.util.List;
  * @author durance
  */
 @RestController
+@Slf4j
 @RequestMapping("comment")
 public class CommentController {
 
@@ -29,12 +33,12 @@ public class CommentController {
 	/**
 	 * 获取帖子评论集合
 	 *
-	 * @param postId 帖子id
+	 * @param request req
 	 * @return 评论集合
 	 */
 	@GetMapping("post/list")
-	public RestResult<Object> getPostCommentList(@RequestParam(required = false) Integer userId, @RequestParam Integer postId) {
-		return RestResult.ok(commentService.getPostComments(userId,postId));
+	public RestResult<ListVO<CommentPostVO>> getPostCommentList(@Validated PostCommentQueryRequest request) {
+		return RestResult.ok(commentService.getPostComments(request));
 	}
 
 	/**

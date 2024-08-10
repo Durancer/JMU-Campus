@@ -1,4 +1,4 @@
-package com.xueyu.common.web.request;
+package com.xueyu.common.core.request;
 
 import lombok.Data;
 
@@ -22,6 +22,10 @@ public class PageRequest {
      */
     Integer size;
 
+    /**
+     * 默认1
+     * @return 当前页
+     */
     public Integer getCurrent() {
         if (Objects.isNull(current)){
             return 1;
@@ -29,6 +33,10 @@ public class PageRequest {
         return current;
     }
 
+    /**
+     * 默认10
+     * @return 页大小
+     */
     public Integer getSize() {
         if (Objects.isNull(size)){
             return 10;

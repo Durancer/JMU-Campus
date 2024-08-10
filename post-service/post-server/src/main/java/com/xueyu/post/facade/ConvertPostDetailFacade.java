@@ -2,6 +2,10 @@ package com.xueyu.post.facade;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.comment.client.CommentClient;
+import com.xueyu.comment.request.PostCommentQueryRequest;
+import com.xueyu.comment.sdk.vo.CommentPostVO;
+import com.xueyu.common.core.result.ListVO;
+import com.xueyu.common.core.result.RestResult;
 import com.xueyu.common.web.facade.FacadeStrategy;
 import com.xueyu.post.facade.request.ConvertDetailReq;
 import com.xueyu.post.mapper.LikePostMapper;
@@ -14,6 +18,7 @@ import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.user.client.UserClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
@@ -26,6 +31,7 @@ import javax.annotation.Resource;
  * @author durance
  */
 @Component
+@Slf4j
 public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq, PostDetailVO> {
 
     @Resource
@@ -68,7 +74,16 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         // 查询并设置作者信息
         postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
         // 查询评论信息
-        postDetailVO.setCommentList(commentClient.getPostCommentList(userId, postId).getData());
+        PostCommentQueryRequest request = new PostCommentQueryRequest();
+        request.setPostId(postId);
+        request.setUserId(userId);
+        // todo 后期抽离，前端单独查询评论
+        RestResult<ListVO<CommentPostVO>> postCommentList = commentClient.getPostCommentList(request);
+        if (postCommentList.getStatus()){
+            postDetailVO.setCommentList(postCommentList.getData().getRecords());
+        }else {
+            log.error("postId ->{}, 评论获取异常", postId);
+        }
         // 查询携带的话题
         postDetailVO.setTopics(topicMapper.selectByPostId(postId));
         // 设置投票信息

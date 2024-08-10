@@ -1,7 +1,6 @@
-package com.xueyu.post;
+package com.xueyu.post.request;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.xueyu.common.web.request.PageRequest;
+import com.xueyu.common.core.request.PageRequest;
 import lombok.Data;
 
 import java.util.Date;

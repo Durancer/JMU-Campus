@@ -2,6 +2,7 @@ package com.xueyu.comment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,9 +15,10 @@ import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.enums.CommentStatusEnum;
 import com.xueyu.comment.pojo.enums.CommentType;
 import com.xueyu.comment.pojo.domain.Like;
-import com.xueyu.comment.pojo.vo.CommentAnswerVO;
-import com.xueyu.comment.pojo.vo.CommentPostVO;
+import com.xueyu.comment.sdk.vo.CommentAnswerVO;
+import com.xueyu.comment.sdk.vo.CommentPostVO;
 import com.xueyu.comment.request.CommentQueryRequest;
+import com.xueyu.comment.request.PostCommentQueryRequest;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
 import com.xueyu.common.core.result.ListVO;
@@ -140,20 +142,32 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	}
 
 	@Override
-	public List<CommentPostVO> getPostComments(Integer userId,Integer postId) {
+	public ListVO<CommentPostVO> getPostComments(PostCommentQueryRequest request) {
+		ListVO<CommentPostVO> result = new ListVO<>();
+		// 分页查询出属于该帖子的根评论
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(Comment::getPostId, postId).orderByAsc(Comment::getCreateTime);
+		wrapper.eq(Comment::getPostId, request.getPostId()).orderByAsc(Comment::getCreateTime);
 		wrapper.eq(Comment::getStatus, CommentStatusEnum.PUBLIC.getCode());
-		// 查询出属于该帖子的所有评论
-		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
-		// 如果为空返回空列表
-		if (comments.size() == 0) {
-			return new ArrayList<>();
+		wrapper.eq(Comment::getType, CommentType.ROOT.getValue());
+		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		BeanUtils.copyProperties(page, result);
+		if (CollectionUtils.isEmpty(page.getRecords())){
+			return ListVO.buildNonDataRes(request.getCurrent(), request.getSize());
 		}
+		List<Integer> rootIds = page.getRecords().stream().map(Comment::getId).collect(Collectors.toList());
+		// 查询帖子相关的评论，包括子评论
+		LambdaQueryWrapper<Comment> commentListWrapper = new LambdaQueryWrapper<>();
+		commentListWrapper.in(Comment::getRootId, rootIds);
+		wrapper.eq(Comment::getStatus, CommentStatusEnum.PUBLIC.getCode());
+		List<Comment> comments = query().getBaseMapper().selectList(commentListWrapper);
 		PostCommentReq postCommentReq = new PostCommentReq();
 		postCommentReq.setComments(comments);
-		postCommentReq.setUserId(userId);
-		return postCommentFacade.execBusiness(postCommentReq);
+		postCommentReq.setUserId(request.getUserId());
+		// 将列表交由facede处理顺序和归属问题
+		List<CommentPostVO> commentPostList = postCommentFacade.execBusiness(postCommentReq);
+		result.setRecords(commentPostList);
+		return result;
 	}
 
 	@Override

@@ -2,8 +2,7 @@ package com.xueyu.post.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xueyu.common.core.result.ListVO;
-import com.xueyu.post.PostQueryRequest;
-import com.xueyu.post.pojo.domain.Post;
+import com.xueyu.post.request.PostQueryRequest;
 import com.xueyu.post.pojo.vo.PostView;
 
 /**
