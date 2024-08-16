@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 帖子是否私有枚举类
+ * 帖子是否匿名枚举类
  *
  * @author durance
  */
 @Getter
 @AllArgsConstructor
-public enum PostIsPrivateEnum {
+public enum PostIsAnonymousEnum {
 
 	/**
 	 * 公开
@@ -20,7 +20,7 @@ public enum PostIsPrivateEnum {
 	/**
 	 * 私密
 	 */
-	YES(1, "私密"),
+	YES(1, "匿名"),
 	;
 
 	/**
@@ -32,6 +32,5 @@ public enum PostIsPrivateEnum {
 	 * 描述
 	 */
 	String desc;
-
 
 }

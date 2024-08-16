@@ -210,8 +210,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 			final Integer forever = -1;
 			if (time.equals(forever)){
 				redisTemplate.opsForValue().set(key, 1);
+				log.info("用户 id -> {}, 永久拉黑", userId);
 			}else {
 				redisTemplate.opsForValue().set(key, 1, time * 60, TimeUnit.SECONDS);
+				log.info("用户 id -> {}, 拉黑 -> {} 分钟", userId, time);
 			}
 		}catch (Exception e){
 			log.error("拉黑用户失败", e);

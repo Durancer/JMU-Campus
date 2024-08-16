@@ -116,4 +116,12 @@ public interface PostService extends IService<Post> {
 	 */
 	ListVO<PostListVO>  getPostListByTopicIds(String topicName, Integer userId, Integer current, Integer size);
 
+	/**
+	 * 更新帖子匿名状态
+	 *
+	 * @param userId 用户id
+	 * @param postId 帖子id
+	 */
+	void updatePostAnonymous(Integer userId, Integer postId);
+
 }

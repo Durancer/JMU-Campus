@@ -12,6 +12,7 @@ import com.xueyu.post.facade.request.ConvertDetailReq;
 import com.xueyu.post.facade.request.ConvertPostReq;
 import com.xueyu.post.mapper.*;
 import com.xueyu.post.pojo.domain.*;
+import com.xueyu.post.pojo.enums.PostIsAnonymousEnum;
 import com.xueyu.post.pojo.enums.PostIsPrivateEnum;
 import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
@@ -35,6 +36,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.xueyu.post.sdk.constant.PostMqContants.*;
@@ -308,6 +310,29 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		convertPostReq.setRecords(records);
 		convertPostReq.setAuthors(authors);
 		return convertPostListFacade.execBusiness(convertPostReq);
+	}
+
+	@Override
+	public void updatePostAnonymous(Integer userId, Integer postId) {
+		Post post = query().getBaseMapper().selectById(postId);
+		if (Objects.isNull(post)){
+			throw new PostException("未查询到帖子信息");
+		}
+		if (!post.getUserId().equals(userId)){
+			throw new PostException("用户与帖子不匹配");
+		}
+		Post update = new Post();
+		update.setId(postId);
+		if (post.getIsAnonymous().equals(PostIsAnonymousEnum.YES.getValue())){
+			update.setIsAnonymous(PostIsAnonymousEnum.NO.getValue());
+		}else {
+			update.setIsAnonymous(PostIsAnonymousEnum.YES.getValue());
+		}
+		int i = query().getBaseMapper().updateById(update);
+		if (i != 1){
+			throw new PostException("更新失败");
+		}
+		log.info("更新匿名状态，用户id -> {}, 帖子id -> {}, 更新后状态 -> {}", userId, postId, update.getIsAnonymous());
 	}
 
 }

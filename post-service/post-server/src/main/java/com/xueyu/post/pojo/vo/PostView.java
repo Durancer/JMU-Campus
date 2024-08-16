@@ -72,4 +72,9 @@ public class PostView {
 	 */
 	String reason;
 
+	/**
+	 * 是否匿名发送 0 否 1 是
+	 */
+	Integer isAnonymous;
+
 }

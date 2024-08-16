@@ -15,6 +15,7 @@ import com.xueyu.post.service.PostService;
 import com.xueyu.post.service.TopicService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -180,6 +181,19 @@ public class PostController {
 	public RestResult<ListVO<PostListVO>> getStatusPost(@RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size, @RequestHeader(required = false) Integer userId) {
 		ListVO<PostListVO> postListByPage = postService.getStatusPostListByPage(current, size, userId);
 		return RestResult.ok(postListByPage);
+	}
+
+	/**
+	 * 更新匿名状态，原本为是，则更新为否
+	 *
+	 * @param postId 页大小
+	 * @param userId 用户id
+	 * @return 帖子信息
+	 */
+	@PostMapping("update/anonymous")
+	public RestResult<ListVO<PostListVO>> updatePostAnonymous(@RequestHeader Integer userId, @Validated @NotNull Integer postId) {
+		postService.updatePostAnonymous(userId, postId);
+		return RestResult.ok();
 	}
 
 }

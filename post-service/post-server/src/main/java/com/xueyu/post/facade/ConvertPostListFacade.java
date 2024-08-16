@@ -9,6 +9,7 @@ import com.xueyu.post.mapper.LikePostMapper;
 import com.xueyu.post.pojo.bo.ImageAnnexView;
 import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.domain.Topic;
+import com.xueyu.post.pojo.enums.PostIsAnonymousEnum;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.pojo.vo.VoteVO;
@@ -129,7 +130,11 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
             PostListVO postListVO = new PostListVO();
             BeanUtils.copyProperties(record, postListVO);
             // 设置帖子用户信息
-            postListVO.setUserInfo(userInfos.get(record.getUserId()));
+            if (PostIsAnonymousEnum.YES.getValue().equals(record.getIsAnonymous())){
+                postListVO.setUserInfo(buildHideUserInfo());
+            }else{
+                postListVO.setUserInfo(userInfos.get(record.getUserId()));
+            }
             // 设置该帖子图片信息
             postListVO.setImgList(postListImgs.get(record.getId()));
             // 设置点赞用户信息
@@ -156,5 +161,17 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         return postData;
     }
 
+
+    /**
+     * 生成匿名用户
+     * @return ret
+     */
+    private UserSimpleVO buildHideUserInfo(){
+        UserSimpleVO userSimpleVO = new UserSimpleVO();
+        userSimpleVO.setAvatarUrl("http://image.jmucampus.top/image/default.jpg");
+        userSimpleVO.setSex(0);
+        userSimpleVO.setNickname("匿名用户");
+        return userSimpleVO;
+    }
 
 }

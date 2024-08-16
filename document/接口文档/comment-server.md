@@ -117,6 +117,43 @@
 
 
 
+
+
+
+#### 查询帖子评论
+
+
+```
+请求地址：/comment/post/list
+请求方法：GET
+```
+
+**入参字段**
+
+以下入参字段至少一个必填，当查询他人评论时，传递 otherUserId 即可，查询自己的评论时有 token就行
+
+| 字段    | 类型    | 含义          | 必填 |
+| ------- | ------- | ------------- | ---- |
+| token   | String  | 请求头添加    | 否   |
+| postId  | Integer | 帖子id        | 是   |
+| current | Integer | 当前页 默认 1 | 否   |
+| size    | Integer | 大小 默认 10  | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+
+
 #### 获取回复我的评论
 
 不包含自己回复自己的评论
