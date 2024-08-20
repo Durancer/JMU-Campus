@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
+import com.xueyu.post.pojo.enums.PostIsTopEnum;
 import com.xueyu.post.request.PostQueryRequest;
 import com.xueyu.post.mapper.PostViewMapper;
 import com.xueyu.post.pojo.vo.PostView;
@@ -15,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -54,6 +56,14 @@ public class PostViewServiceImpl extends ServiceImpl<PostViewMapper, PostView> i
         ListVO<PostView> result = new ListVO<>();
         BeanUtils.copyProperties(page, result);
         return result;
+    }
+
+    @Override
+    public List<PostView> getUserTopPost(Integer userId) {
+        LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PostView::getUserId, userId);
+        wrapper.eq(PostView::getIsTop, PostIsTopEnum.YES.getValue());
+        return query().getBaseMapper().selectList(wrapper);
     }
 
 }

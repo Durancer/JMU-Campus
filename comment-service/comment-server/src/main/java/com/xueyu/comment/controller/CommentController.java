@@ -9,6 +9,7 @@ import com.xueyu.comment.pojo.domain.Comment;
 import com.xueyu.comment.pojo.enums.CommentStatusEnum;
 import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import lombok.extern.slf4j.Slf4j;
@@ -48,14 +49,14 @@ public class CommentController {
 	 * @return 用户发送的评论列表
 	 */
 	@GetMapping("user/list")
-	public RestResult<List<CommentAnswerVO>> getUserCommentList(@RequestHeader(required = false) Integer userId, Integer otherUserId) {
+	public RestResult<ListVO<CommentAnswerVO>> getUserCommentList(@RequestHeader(required = false) Integer userId, Integer otherUserId, PageRequest pageRequest) {
 		if(otherUserId != null){
-			return RestResult.ok(commentService.getOtherUserComments(otherUserId));
+			return RestResult.ok(commentService.getOtherUserComments(otherUserId, pageRequest));
 		}
 		if(userId == null){
 			throw new CommentException("参数异常");
 		}
-		return RestResult.ok(commentService.getUserSelfComments(userId));
+		return RestResult.ok(commentService.getUserSelfComments(userId, pageRequest));
 	}
 
 	/**
@@ -65,8 +66,8 @@ public class CommentController {
 	 * @return 用户收到的回复评论列表
 	 */
 	@GetMapping("user/answer")
-	public RestResult<List<CommentAnswerVO>> getUserAnsweredList(@RequestHeader Integer userId) {
-		return RestResult.ok(commentService.getUserAnsweredComments(userId));
+	public RestResult<ListVO<CommentAnswerVO>> getUserAnsweredList(@RequestHeader Integer userId, PageRequest pageRequest) {
+		return RestResult.ok(commentService.getUserAnsweredComments(userId, pageRequest));
 	}
 
 	/**

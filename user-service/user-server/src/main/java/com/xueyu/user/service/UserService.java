@@ -60,4 +60,12 @@ public interface UserService extends IService<User> {
 	 */
 	boolean blackUser(Integer userId, Integer time);
 
+	/**
+	 * 移除拉黑用户
+	 *
+	 * @param userId 用户id
+	 * @return 拉黑结果
+	 */
+	boolean removeBlackUser(Integer userId);
+
 }

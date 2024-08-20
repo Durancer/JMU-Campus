@@ -21,6 +21,7 @@ import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.request.PostCommentQueryRequest;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.client.PostClient;
 import com.xueyu.post.sdk.dto.PostDTO;
@@ -171,29 +172,44 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	}
 
 	@Override
-	public List<CommentAnswerVO> getUserSelfComments(Integer userId) {
+	public ListVO<CommentAnswerVO> getUserSelfComments(Integer userId, PageRequest request) {
+		ListVO<CommentAnswerVO> res = new ListVO<>();
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Comment::getUserId, userId);
-		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
-		return commentConvertAnswerVO(comments);
+		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		BeanUtils.copyProperties(page, res);
+		List<CommentAnswerVO> commentAnswerVOS = commentConvertAnswerVO(page.getRecords());
+		res.setRecords(commentAnswerVOS);
+		return res;
 	}
 
 	@Override
-	public List<CommentAnswerVO> getOtherUserComments(Integer userId) {
+	public ListVO<CommentAnswerVO> getOtherUserComments(Integer userId, PageRequest request) {
+		ListVO<CommentAnswerVO> res = new ListVO<>();
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Comment::getUserId, userId);
 		wrapper.eq(Comment::getStatus, CommentStatusEnum.PUBLIC.getCode());
-		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
-		return commentConvertAnswerVO(comments);
+		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		BeanUtils.copyProperties(page, res);
+		List<CommentAnswerVO> commentAnswerVOS = commentConvertAnswerVO(page.getRecords());
+		res.setRecords(commentAnswerVOS);
+		return res;
 	}
 
 	@Override
-	public List<CommentAnswerVO> getUserAnsweredComments(Integer toUserId) {
+	public ListVO<CommentAnswerVO> getUserAnsweredComments(Integer toUserId, PageRequest request) {
+		ListVO<CommentAnswerVO> res = new ListVO<>();
 		LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
 		// 查询收到得到信息，且不为自己发送的
 		wrapper.eq(Comment::getToUserId, toUserId).ne(Comment::getUserId, toUserId);
-		List<Comment> comments = query().getBaseMapper().selectList(wrapper);
-		return commentConvertAnswerVO(comments);
+		IPage<Comment> page = new Page<>(request.getCurrent(), request.getSize());
+		query().getBaseMapper().selectPage(page, wrapper);
+		BeanUtils.copyProperties(page, res);
+		List<CommentAnswerVO> commentAnswerVOS = commentConvertAnswerVO(page.getRecords());
+		res.setRecords(commentAnswerVOS);
+		return res;
 	}
 
 	@Override

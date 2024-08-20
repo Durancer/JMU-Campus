@@ -82,9 +82,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 			user.setSex(UserGenderEnum.HIDE.getCode());
 		}
 		if (user.getSex().equals(UserGenderEnum.BOY.getCode())) {
-			user.setAvatar("default_boy.png");
+			user.setAvatar(UserGenderEnum.BOY.getDefaultAvatarUrl());
 		} else if (user.getSex().equals(UserGenderEnum.GIRL.getCode())) {
-			user.setAvatar("default_girl.png");
+			user.setAvatar(UserGenderEnum.GIRL.getDefaultAvatarUrl());
 		}
 		userMapper.insert(user);
 		redisTemplate.delete(key);
@@ -132,7 +132,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 封装邮件内容
 		String subject = "欢迎进入 i集大校园，快来遇见校友吧！";
 		String content = "【i集大校园】您正在注册/登录 或操作 i集大校园，验证码：" + idenCode + ", 该验证码一分钟内有效，如非本人操作请勿将验证码给与他人。";
-		redisTemplate.opsForValue().set(key, idenCode, 60, TimeUnit.SECONDS);
+		final Integer expiredTime = 60;
+        redisTemplate.opsForValue().set(key, idenCode, expiredTime, TimeUnit.SECONDS);
 		// 发送邮件
 		Mail mail = new Mail();
 		mail.setTo(email);
@@ -195,9 +196,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user.getUsername() == null || user.getPassword() == null) {
             throw new UserException("账号和密码不能为空");
         }
-        if (user.getSex() != null && !(UserGenderEnum.HIDE.getCode().equals(user.getSex()) ||
-                UserGenderEnum.BOY.getCode().equals(user.getSex()) ||
-                UserGenderEnum.GIRL.getCode().equals(user.getSex()))) {
+        if (user.getSex() != null && !UserGenderEnum.isInEnums(user.getSex())) {
             throw new UserException("不合规的用户性别参数");
         }
     }
@@ -207,12 +206,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		String key = BLACK_USER_KEY + userId;
 		// 设置拉黑时长
 		try{
+			if (redisTemplate.hasKey(key)){
+				Long expire = redisTemplate.getExpire(key);
+				throw new UserException("已拉黑用户 -> " + userId + ", 拉黑时长剩余 -> " + expire + " 秒");
+			}
 			final Integer forever = -1;
 			if (time.equals(forever)){
 				redisTemplate.opsForValue().set(key, 1);
 				log.info("用户 id -> {}, 永久拉黑", userId);
 			}else {
-				redisTemplate.opsForValue().set(key, 1, time * 60, TimeUnit.SECONDS);
+				redisTemplate.opsForValue().set(key, 1, time, TimeUnit.MINUTES);
 				log.info("用户 id -> {}, 拉黑 -> {} 分钟", userId, time);
 			}
 		}catch (Exception e){
@@ -222,4 +225,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		return true;
 	}
 
+	@Override
+	public boolean removeBlackUser(Integer userId) {
+		String key = BLACK_USER_KEY + userId;
+		try{
+			if (!redisTemplate.hasKey(key)){
+				throw new UserException("该用户未被拉黑");
+			}
+			Boolean delete = redisTemplate.delete(key);
+			if (delete){
+				log.info("移除拉黑成功, 用户id -> {}", userId);
+			}else {
+				throw new UserException("移除失败");
+			}
+		}catch (Exception e){
+			log.error("移除失败", e);
+			throw new UserException("移除失败");
+		}
+		return true;
+	}
 }

@@ -70,4 +70,9 @@ public class Post {
 	 */
 	Integer isAnonymous;
 
+	/**
+	 * 是否置顶 0 否 1是  最多三个置顶
+	 */
+	Integer isTop;
+
 }

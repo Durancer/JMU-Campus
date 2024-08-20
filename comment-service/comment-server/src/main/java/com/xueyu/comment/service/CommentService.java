@@ -6,6 +6,7 @@ import com.xueyu.comment.sdk.vo.CommentAnswerVO;
 import com.xueyu.comment.sdk.vo.CommentPostVO;
 import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.request.PostCommentQueryRequest;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 
 import java.util.List;
@@ -44,25 +45,28 @@ public interface CommentService extends IService<Comment> {
 	 * 获取用户自己发送的评论信息
 	 *
 	 * @param userId 用户id
+	 *               	 * @param request req
 	 * @return 评论信息
 	 */
-	List<CommentAnswerVO> getUserSelfComments(Integer userId);
+	ListVO<CommentAnswerVO> getUserSelfComments(Integer userId, PageRequest request);
 
 	/**
 	 * 获取其他用户自己发送的评论信息
 	 *
 	 * @param userId 用户id
+	 * @param request req
 	 * @return 评论信息
 	 */
-	List<CommentAnswerVO> getOtherUserComments(Integer userId);
+	ListVO<CommentAnswerVO> getOtherUserComments(Integer userId, PageRequest request);
 
 	/**
 	 * 获取用户收到的回复评论
 	 *
 	 * @param toUserId 回复的用户id
+	 *                 	 * @param request req
 	 * @return 评论信息
 	 */
-	List<CommentAnswerVO> getUserAnsweredComments(Integer toUserId);
+	ListVO<CommentAnswerVO> getUserAnsweredComments(Integer toUserId, PageRequest request);
 
 	/**
 	 * 将评论对象转化为 answerVO对象

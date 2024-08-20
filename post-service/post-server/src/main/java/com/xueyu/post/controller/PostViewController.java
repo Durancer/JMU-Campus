@@ -8,12 +8,13 @@ import com.xueyu.post.service.PostViewService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author durance
  */
 @RestController
-@RequestMapping("post/manage")
+@RequestMapping("post")
 public class PostViewController {
 
     @Resource
@@ -24,9 +25,19 @@ public class PostViewController {
      *
      * @param request req
      */
-    @GetMapping("list")
+    @GetMapping("manage/list")
     public RestResult<ListVO<PostView>> getManagePostList(PostQueryRequest request){
         return RestResult.ok(postViewService.getManagePostListPage(request));
+    }
+
+    /**
+     * 获得帖子列表，// todo 缺少整合投票、话题信息
+     *
+     * @param userId userId
+     */
+    @GetMapping("user/top")
+    public RestResult<List<PostView>> getUserTopPost(Integer userId){
+        return RestResult.ok(postViewService.getUserTopPost(userId));
     }
 
 }

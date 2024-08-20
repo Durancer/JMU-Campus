@@ -186,4 +186,15 @@ public class UserController {
 		return RestResult.ok(userService.blackUser(userId, time));
 	}
 
+	/**
+	 * 移除拉黑用户
+	 *
+	 * @param userId 用户id
+	 * @return 拉黑结果
+	 */
+	@PostMapping("black/remove")
+	public RestResult<Boolean> removeBlackUser(@Validated @NotNull Integer userId) {
+		return RestResult.ok(userService.removeBlackUser(userId));
+	}
+
 }

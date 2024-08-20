@@ -14,6 +14,7 @@ import com.xueyu.post.mapper.*;
 import com.xueyu.post.pojo.domain.*;
 import com.xueyu.post.pojo.enums.PostIsAnonymousEnum;
 import com.xueyu.post.pojo.enums.PostIsPrivateEnum;
+import com.xueyu.post.pojo.enums.PostIsTopEnum;
 import com.xueyu.post.pojo.enums.PostStatus;
 import com.xueyu.post.pojo.vo.PostDetailVO;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -84,6 +85,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Boolean publishPost(Post post, MultipartFile[] files, Vote vote, String[] options, List<String> names) {
+		if (Objects.nonNull(post.getIsTop()) && post.getIsTop().equals(PostIsTopEnum.YES.getValue())){
+			LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+			wrapper.eq(Post::getIsTop, post.getIsTop());
+			wrapper.eq(Post::getUserId, post.getUserId());
+			long count = count(wrapper);
+			final int maxTopPost = 3;
+			if (count > maxTopPost){
+				throw new PostException("最多只能有3个置顶帖子");
+			}
+		}
 		Date now = new Date();
 		post.setCreateTime(now);
 		post.setUpdateTime(now);

@@ -88,6 +88,36 @@
 
 
 
+#### 查询用户置顶帖子
+
+每个用户最多3个置顶帖子
+
+```
+请求地址：/post/user/top
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段   | 类型    | 含义   | 必填 |
+| ------ | ------- | ------ | ---- |
+| userId | Integer | 用户id | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+
+
 #### 获取帖子详细信息
 
 ```
@@ -136,6 +166,8 @@
 | cycle   | String  | 投票周期  day 一天 \ week 一周 \ month 一月 \ year 一年 | 是   |
 | options | Integer | 投票选项                                                   |  是   |
 | names | String[] | 话题名称集合                                        |  否   |
+| isTop | Integer | 是否置顶 默认否 0 否 1是 | 否 |
+| isAnonymous | Integer | 是否匿名 默认否 0 否 1是 | 否 |
 
 **出参**
 
