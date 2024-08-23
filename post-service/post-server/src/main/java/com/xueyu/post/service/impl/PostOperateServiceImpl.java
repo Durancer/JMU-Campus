@@ -8,6 +8,7 @@ import com.xueyu.post.mapper.PostMapper;
 import com.xueyu.post.pojo.domain.LikePost;
 import com.xueyu.post.pojo.domain.Post;
 import com.xueyu.post.pojo.enums.PostIsPrivateEnum;
+import com.xueyu.post.pojo.enums.PostIsTopEnum;
 import com.xueyu.post.sdk.dto.PostOperateDTO;
 import com.xueyu.post.service.PostOperateService;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,50 @@ public class PostOperateServiceImpl implements PostOperateService {
 		int i = postMapper.updateById(update);
 		if(i != 1){
 			throw new PostException("操作异常");
+		}
+		if (update.getIsPrivate().equals(PostIsPrivateEnum.YES.getValue())){
+			log.info("用户id -> {}, 帖子 -> {}, 私密成功", userId, postId);
+		}else {
+			log.info("用户id -> {}, 帖子 -> {}, 公开成功", userId, postId);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean topOrCancelPost(Integer postId, Integer userId) {
+		Post post = postMapper.selectById(postId);
+		if (Objects.isNull(post)){
+			log.error("帖子信息查询为空");
+			throw new PostException("帖子信息查询为空");
+		}
+		if (!post.getUserId().equals(userId)){
+			log.error("非该用户的帖子，无法私密或公开");
+			throw new PostException("非该用户的帖子，无法置顶或取消置顶");
+		}
+		Post update = new Post();
+		update.setId(postId);
+		update.setIsTop(post.getIsTop().equals(PostIsTopEnum.NO.getValue()) ?
+				PostIsTopEnum.YES.getValue() : PostIsTopEnum.NO.getValue());
+		// 如果要执行置顶，检查数量是否超出
+		final int maxTop = 3;
+		if (update.getIsTop().equals(PostIsTopEnum.YES.getValue())){
+			LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+			wrapper.eq(Post::getUserId, userId);
+			wrapper.eq(Post::getIsTop, PostIsTopEnum.YES.getValue());
+			Long num = postMapper.selectCount(wrapper);
+			// 如该用户现在已经有3个了，则驳回
+			if (num >= maxTop){
+				throw new PostException("已达最高置顶帖子数量");
+			}
+		}
+		int i = postMapper.updateById(update);
+		if(i != 1){
+			throw new PostException("操作异常");
+		}
+		if (update.getIsTop().equals(PostIsTopEnum.YES.getValue())){
+			log.info("用户id -> {}, 帖子 -> {}, 置顶成功", userId, postId);
+		}else {
+			log.info("用户id -> {}, 帖子 -> {}, 取消置顶成功", userId, postId);
 		}
 		return true;
 	}

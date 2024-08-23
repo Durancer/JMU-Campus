@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.common.web.annotation.RequestLimit;
+import com.xueyu.common.web.core.AbstractController;
+import com.xueyu.common.web.util.ValidatorUtil;
 import com.xueyu.user.exception.UserException;
 import com.xueyu.user.pojo.domain.User;
 import com.xueyu.user.pojo.vo.UserGeneralVO;
@@ -25,7 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("user")
-public class UserController {
+public class UserController extends AbstractController {
 
 	@Resource
 	UserService userService;
@@ -52,6 +54,9 @@ public class UserController {
 	 */
 	@PostMapping("register")
 	public RestResult<?> registerUser(User user, @NotNull Integer idencode) {
+		verifyParam(ValidatorUtil.verifyEmail(user.getEmail()), "邮箱格式异常");
+		verifyParam(ValidatorUtil.verifyPureLetter(user.getUsername()), "用户名只能为英文字母");
+		verifyParam(ValidatorUtil.verifyPureNumber(user.getPhone()), "电话号码只能为数字");
 		if (userService.registerUser(user, idencode)) {
 			return RestResult.ok(null, "注册成功");
 		}
@@ -66,6 +71,8 @@ public class UserController {
 	 */
 	@GetMapping("login")
 	public RestResult<Map<String, Object>> loginUser(User user) {
+		nonNull(user.getUsername(), "用户名不能为空");
+		nonNull(user.getPassword(), "密码不能为空");
 		Map<String, Object> result = userService.loginUser(user);
 		if (result == null) {
 			return new RestResult<>(false, "账号或密码错误");
@@ -81,7 +88,8 @@ public class UserController {
 	 * @return 登录结果
 	 */
 	@GetMapping("login/email")
-	public RestResult<Map<String, Object>> loginUserByEmail(@Email String email, @NotNull Integer idencode) {
+	public RestResult<Map<String, Object>> loginUserByEmail(@NotNull String email, @NotNull Integer idencode) {
+		verifyParam(ValidatorUtil.verifyEmail(email), "邮箱格式错误");
 		Map<String, Object> result = userService.loginUserByCode(email, idencode);
 		return RestResult.ok(result, "登录成功");
 	}

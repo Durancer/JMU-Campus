@@ -3,6 +3,7 @@ package com.xueyu.post.controller;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.service.PostOperateService;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,7 +29,7 @@ public class PostOperateController {
 	 * @return 执行结果
 	 */
 	@PostMapping("like")
-	public RestResult<?> likeUserPost(@NonNull Integer postId, @RequestHeader Integer userId) {
+	public RestResult<?> likeUserPost(@Validated @NonNull Integer postId, @RequestHeader Integer userId) {
 		if (postOperateService.likeUserPost(postId, userId)) {
 			return RestResult.ok(null, "操作成功");
 		}
@@ -43,7 +44,7 @@ public class PostOperateController {
 	 * @return 点赞结果
 	 */
 	@GetMapping("like/check")
-	public RestResult<Boolean> checkUserLikePost(@NonNull Integer postId, @NonNull Integer userId) {
+	public RestResult<Boolean> checkUserLikePost(@Validated @NonNull Integer postId, @NonNull Integer userId) {
 		if (postOperateService.checkLiked(postId, userId)) {
 			return RestResult.ok(true, "点赞成功");
 		}
@@ -58,8 +59,23 @@ public class PostOperateController {
 	 * @return 点赞结果
 	 */
 	@PostMapping("private")
-	public RestResult<Boolean> hideOrOpenPost(@NonNull Integer postId, @RequestHeader Integer userId) {
+	public RestResult<Boolean> hideOrOpenPost(@Validated @NonNull Integer postId, @RequestHeader Integer userId) {
 		if (postOperateService.hideOrOpenPost(postId, userId)) {
+			return RestResult.ok(true, "操作成功");
+		}
+		return RestResult.fail("操作失败");
+	}
+
+	/**
+	 * 用户置顶/取消置顶帖子
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return 点赞结果
+	 */
+	@PostMapping("top")
+	public RestResult<Boolean> topOrCancelPost(@Validated @NonNull Integer postId, @RequestHeader Integer userId) {
+		if (postOperateService.topOrCancelPost(postId, userId)) {
 			return RestResult.ok(true, "操作成功");
 		}
 		return RestResult.fail("操作失败");

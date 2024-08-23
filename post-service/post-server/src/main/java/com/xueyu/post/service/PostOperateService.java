@@ -26,12 +26,21 @@ public interface PostOperateService {
 	Boolean checkLiked(Integer postId, Integer userId);
 
 	/**
-	 * 检查用户是否点赞了该帖子
+	 * 私密或公开帖子
 	 *
 	 * @param postId 帖子id
 	 * @param userId 用户id
 	 * @return 已点赞 true | 未点赞 false
 	 */
 	Boolean hideOrOpenPost(Integer postId, Integer userId);
+
+	/**
+	 * 置顶或取消置顶
+	 *
+	 * @param postId 帖子id
+	 * @param userId 用户id
+	 * @return 已点赞 true | 未点赞 false
+	 */
+	Boolean topOrCancelPost(Integer postId, Integer userId);
 
 }
