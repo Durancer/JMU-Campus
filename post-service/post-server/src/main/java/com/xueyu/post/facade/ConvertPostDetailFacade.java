@@ -101,7 +101,7 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         } else {
             voteVO = voteService.getVoteDetail(postId, null);
         }
-        // 增加帖子阅读量
+        // 增加帖子阅读量 todo 设计方案优化，不每次都直接更新库中次数
         postGeneralMapper.incrPostViewNum(postId);
         postDetailVO.setVoteMessage(voteVO);
         return postDetailVO;

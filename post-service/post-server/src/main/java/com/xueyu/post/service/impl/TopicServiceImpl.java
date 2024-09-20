@@ -1,7 +1,11 @@
 package com.xueyu.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.exception.PostException;
 import com.xueyu.post.mapper.PostTopicMapper;
@@ -9,10 +13,13 @@ import com.xueyu.post.mapper.TopicMapper;
 import com.xueyu.post.pojo.domain.PostTopic;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.pojo.vo.PostListVO;
+import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.service.TopicService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -123,8 +130,23 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public ListVO<PostListVO> getPostListByTopic(Integer current, Integer size, Integer userId, String name) {
+    public ListVO<Topic> getPageTopic(PageRequest request, String name) {
+        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotEmpty(name)){
+            wrapper.like(Topic::getName, name);
+        }
+        wrapper.orderByDesc(Topic::getCreateTime);
+        IPage<Topic> page = new Page<>(request.getCurrent(), request.getSize());
+        query().getBaseMapper().selectPage(page, wrapper);
+        ListVO<Topic> result = new ListVO<>();
+        BeanUtils.copyProperties(page, result);
+        return result;
+    }
+
+    @Override
+    public ListVO<PostListVO> getPostListByTopic(PageRequest request, Integer userId, String name) {
 
         return null;
     }
+
 }

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.xueyu.user.client.UserClientResolver
+  com.xueyu.user.client.UserClientResolver,com.xueyu.user.sdk.pojo.utils.UserFactory,com.xueyu.user.sdk.pojo.config.UserAnonymityConfig

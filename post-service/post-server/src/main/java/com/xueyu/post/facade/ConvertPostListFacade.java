@@ -17,6 +17,7 @@ import com.xueyu.post.service.ImageAnnexService;
 import com.xueyu.post.service.TopicService;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.user.client.UserClient;
+import com.xueyu.user.sdk.pojo.utils.UserFactory;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,9 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
 
     @Resource
     CommentClient commentClient;
+
+    @Resource
+    UserFactory userFactory;
 
     @Override
     public List<PostListVO> execBusiness(ConvertPostReq convertPostReq) {
@@ -131,7 +135,7 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
             BeanUtils.copyProperties(record, postListVO);
             // 设置帖子用户信息
             if (PostIsAnonymousEnum.YES.getValue().equals(record.getIsAnonymous())){
-                postListVO.setUserInfo(buildHideUserInfo());
+                postListVO.setUserInfo(userFactory.buildAnonymityUserInfo());
             }else{
                 postListVO.setUserInfo(userInfos.get(record.getUserId()));
             }
@@ -161,17 +165,5 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         return postData;
     }
 
-
-    /**
-     * 生成匿名用户
-     * @return ret
-     */
-    private UserSimpleVO buildHideUserInfo(){
-        UserSimpleVO userSimpleVO = new UserSimpleVO();
-        userSimpleVO.setAvatarUrl("http://image.jmucampus.top/image/default.jpg");
-        userSimpleVO.setSex(0);
-        userSimpleVO.setNickname("匿名用户");
-        return userSimpleVO;
-    }
 
 }

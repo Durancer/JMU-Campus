@@ -42,6 +42,12 @@ public class ListVO<T> {
 	 */
 	Long current;
 
+	/**
+	 * 构建空列表分页返回
+	 * @param current 当前页
+	 * @param size 页大小
+	 * @return 空列表
+	 */
 	public static ListVO buildNonDataRes(Integer current, Integer size){
 		ListVO listVO = new ListVO<>();
 		listVO.setRecords(new ArrayList<>());

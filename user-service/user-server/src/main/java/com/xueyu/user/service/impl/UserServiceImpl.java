@@ -105,8 +105,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 			throw new UserException("改账号不存在 -> " + user.getUsername());
 		}
 		// 核对密码是否正确
-		boolean checkpw = BCrypt.checkpw(user.getPassword(), check.getPassword());
-		if (!checkpw) {
+		boolean checkPw = BCrypt.checkpw(user.getPassword(), check.getPassword());
+		if (!checkPw) {
 			return null;
 		}
 		// 签发jwt，设置用户id

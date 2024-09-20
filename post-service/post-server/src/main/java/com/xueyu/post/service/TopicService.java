@@ -1,6 +1,7 @@
 package com.xueyu.post.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.pojo.vo.PostListVO;
@@ -42,14 +43,22 @@ public interface TopicService extends IService<Topic> {
     Map<Integer, List<Topic>> getTopicByPostIds(List<Integer> postIds);
 
     /**
+     * 分页查询话题
+     *
+     * @param request 当前页
+     * @param name  话题名称
+     * @return 分页数据
+     */
+    ListVO<Topic> getPageTopic(PageRequest request, String name);
+
+    /**
      * 按照话题分页查询帖子列表
      *
-     * @param current 当前页
-     * @param size    每页大小
+     * @param request 当前页
      * @param userId  用户id
      * @param name  话题名称
      * @return 分页数据
      */
-    ListVO<PostListVO> getPostListByTopic(Integer current, Integer size, Integer userId, String name);
+    ListVO<PostListVO> getPostListByTopic(PageRequest request, Integer userId, String name);
 
 }

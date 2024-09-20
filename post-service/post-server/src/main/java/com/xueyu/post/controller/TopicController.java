@@ -1,6 +1,7 @@
 package com.xueyu.post.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.common.core.result.RestResult;
 import com.xueyu.post.pojo.domain.Topic;
@@ -26,30 +27,18 @@ public class TopicController {
     @Resource
     PostService postService;
 
-    /**
-     * 查看所有话题
-     * todo 改为分页获取
-     *
-     * @return 所有话题详细信息
-     */
-    @GetMapping("all")
-    public RestResult<List> getAllTopic(){
-        List<Topic> list = topicService.list();
-        return RestResult.ok(list);
-    }
 
     /**
      * 模糊搜索话题
      *
+     * @param request req
      * @param name 话题名字
      * @return 话题信息
      */
-    @GetMapping("listByName")
-    public RestResult<List<Topic>> listByName(String name, @RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size) {
-        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(Topic::getName, name);
-        List<Topic> topicList = topicService.list(wrapper);
-        return RestResult.ok(topicList);
+    @GetMapping("list")
+    public RestResult<ListVO<Topic>> getPageTopicListByName(PageRequest request, String name) {
+        ListVO<Topic> pageTopic = topicService.getPageTopic(request, name);
+        return RestResult.ok(pageTopic);
     }
 
     /**
@@ -74,12 +63,9 @@ public class TopicController {
      * @param userId 用户id
      * @return 所有帖子详细信息
      */
-    @GetMapping("list")
-    public RestResult<ListVO<PostListVO>> getPostListByTopic(String name,
-                                                             @RequestHeader(required = false) Integer userId,
-                                                             @RequestParam(defaultValue = "1") Integer current,
-                                                             @RequestParam(defaultValue = "10") Integer size){
-        ListVO<PostListVO> postListInfo = postService.getPostListByTopicIds(name, userId, current, size);
+    @GetMapping("list/post")
+    public RestResult<ListVO<PostListVO>> getPostListByTopic(String name, @RequestHeader(required = false) Integer userId, PageRequest request){
+        ListVO<PostListVO> postListInfo = topicService.getPostListByTopic(request, userId, name);
         return RestResult.ok(postListInfo);
     }
 
