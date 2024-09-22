@@ -87,4 +87,9 @@ public class PostListVO {
 	 */
 	String reason;
 
+	/**
+	 * 是否点赞
+	 */
+	Boolean isLike = false;
+
 }

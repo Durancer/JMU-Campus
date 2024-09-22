@@ -320,6 +320,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		convertPostReq.setPostIds(postIds);
 		convertPostReq.setRecords(records);
 		convertPostReq.setAuthors(authors);
+		convertPostReq.setUserId(userId);
 		return convertPostListFacade.execBusiness(convertPostReq);
 	}
 

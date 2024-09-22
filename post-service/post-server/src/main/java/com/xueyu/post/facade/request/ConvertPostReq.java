@@ -32,4 +32,9 @@ public class ConvertPostReq {
      */
     List<PostView> records;
 
+    /**
+     * 请求用户id
+     */
+    Integer userId;
+
 }

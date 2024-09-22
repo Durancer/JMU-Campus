@@ -25,10 +25,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -83,6 +80,8 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
         LambdaQueryWrapper<LikePost> likeWrapper = new LambdaQueryWrapper<>();
         likeWrapper.in(LikePost::getPostId, postIds);
         List<LikePost> likePosts = likePostMapper.selectList(likeWrapper);
+        // 用户列表判断，用户是否点赞改帖子
+        Set<String> likeSet = likePosts.stream().map(likePost -> getPostIsLikeKey(likePost.getPostId(), likePost.getUserId())).collect(Collectors.toSet());
         for (LikePost likePost : likePosts) {
             if (likeUserIdsMap.containsKey(likePost.getPostId())) {
                 likeUserIdsMap.get(likePost.getPostId()).add(likePost.getUserId());
@@ -108,7 +107,7 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
                             Function.identity(),
                             (existsOne, replaceOne) -> replaceOne));
         }
-        return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap, commentMap);
+        return convertToPostListVO(records, userInfos, postListImgs, topicMap, likeUserIdsMap, commentMap, likeSet, convertPostReq.getUserId());
     }
 
     /**
@@ -119,6 +118,8 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
      * @param postListImgs 帖子图片
      * @param topicMap 话题
      * @param likeUserIdsMap 点赞用户
+     * @param likeSet 判断当前请求用户是否点赞
+     * @param userId 当前请求用户
      * @return List<PostListVO>
      */
     private List<PostListVO> convertToPostListVO(List<PostView> records,
@@ -126,7 +127,8 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
                                                  Map<Integer,List<ImageAnnexView>> postListImgs,
                                                  Map<Integer, List<Topic>> topicMap,
                                                  Map<Integer, List<Integer>> likeUserIdsMap,
-                                                 Map<Integer, CommentAnswerVO> commentMaps){
+                                                 Map<Integer, CommentAnswerVO> commentMaps,
+                                                 Set<String> likeSet, Integer userId){
         // 创建响应对象
         List<PostListVO> postData = new ArrayList<>();
         // todo 一次查询所有帖子的点赞用户信息，在循环中赋值
@@ -159,11 +161,24 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
             } else {
                 voteVO = voteService.getVoteDetail(record.getId(), null);
             }
+            // 设置当前请求用户是否点赞
+            if (likeSet.contains(getPostIsLikeKey(record.getId(), userId))){
+                postListVO.setIsLike(true);
+            }
             postListVO.setVoteMessage(voteVO);
             postData.add(postListVO);
         }
         return postData;
     }
 
+    /**
+     * 组合key
+     * @param postId 帖子id
+     * @param userId 用户id
+     * @return 组合key
+     */
+    private String getPostIsLikeKey(Integer postId, Integer userId){
+        return postId + "-" + userId;
+    }
 
 }
