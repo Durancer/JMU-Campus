@@ -14,6 +14,12 @@
       <View class="myicon" />
       <span>{{ viewNum }}</span>
     </div>
+    <div class="likeList">
+      <div class="likeList-item" v-for="user in userLikeList">
+        <img class="avatar" :src="user.avatarUrl" />
+        <span>{{ user.nickname }}</span>
+      </div>
+    </div>
   </div>
   <!-- TODO  根据首页和详情页信息进行变动(主要是内容是否完全展示出来) -->
   <template v-if="isDetailPage && voteMessage?.voteId">
@@ -22,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { like } from '@/api/posts/index.ts'
 import { failMessage, sucMessage } from '@/utils/common'
@@ -55,13 +61,13 @@ interface voteMessageInter {
 }
 interface Props {
   id: number
-  userInfo: postItemUserInfo
+  userInfo: postItemUserInfo[]
   title: string // 后期补一下title属性
   content: string
   viewNum: number
   imgList?: null | string[]
   voteMessage?: null | voteMessageInter
-  userLikeBOList?: null | postItemUserInfo[]
+  userLikeList?: null | postItemUserInfo[]
   postHotComment?: null | [] | object // 后面加的
   createTime: string
   commentNum?: number // detail
@@ -71,7 +77,10 @@ interface Props {
   isLike?: boolean
 }
 const props = defineProps<Props>()
-// const likeNum = computed(() => props.userLikeBOList?.length ?? 0)
+const likeNum = computed(() => props.userLikeList ? props.userLikeList?.length ?? 0 : props.likeNum ?? 0)
+const isLike = computed(() => props.isLike ?? false)
+const userLikeList = ref(props.userLikeList)
+
 
 const router = useRouter()
 const route = useRoute()
@@ -82,7 +91,7 @@ const isDetailPage = computed(() => {
   return route.name === 'detail'
 })
 
-const likeFn = async (postId) => {
+const likeFn = async (postId: number) => {
   const res = await like(postId)
   if (res.status) {
     sucMessage(res.message)
@@ -103,6 +112,7 @@ const likeFn = async (postId) => {
     text-overflow: ellipsis;
     cursor: pointer;
   }
+
   .content p {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -111,25 +121,44 @@ const likeFn = async (postId) => {
     // white-space: nowrap;
     cursor: pointer;
   }
+
   .content.detail p {
     overflow: visible;
     display: block;
     cursor: pointer;
   }
+
   .footer {
     display: flex;
     align-items: center;
+
     span {
       margin-right: 5px;
     }
+
     .myicon {
       width: 1em;
       height: 1em;
       margin-right: 8px;
       cursor: pointer;
     }
+
     .active {
       color: red;
+    }
+  }
+  .likeList{
+    display: flex;
+    .likeList-item{
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+      .avatar{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
     }
   }
 }

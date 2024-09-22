@@ -134,7 +134,7 @@ export function like(postId: number) {
 // 查看所有话题
 export function getAllTopic() {
   return http.request({
-    url: '/post/topic/all'
+    url: 'post/topic/list'
   })
 }
 

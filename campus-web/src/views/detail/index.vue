@@ -3,13 +3,7 @@
     <PostItem v-bind="post"></PostItem>
     <!-- TODO：增加评论  临时改变  其他不变   -->
     <div class="comment-root-wrapper">
-      <el-input
-        v-model="comment"
-        :rows="2"
-        type="textarea"
-        ref="commentTextarea"
-        placeholder="快来评论吧"
-      />
+      <el-input v-model="comment" :rows="2" type="textarea" ref="commentTextarea" placeholder="快来评论吧" />
       <el-button type="primary" @click="addCommentFn" style="margin-top: 10px">增加评论</el-button>
     </div>
     <div style="margin-left: 20px">
@@ -55,25 +49,14 @@
       <!-- 删除帖子 -->
       <template v-if="isDelete">
         <div class="delete-btn">
-          <el-popconfirm
-            width="220"
-            confirm-button-text="确定"
-            cancel-button-text="取消"
-            :icon="InfoFilled"
-            icon-color="#626AEF"
-            title="是否要删除这篇帖子?"
-            @confirm="deletePostFn(post.id)"
-          >
+          <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled"
+            icon-color="#626AEF" title="是否要删除这篇帖子?" @confirm="deletePostFn(post.id)">
             <template #reference>
               <el-button type="danger">删除这篇帖子</el-button>
             </template>
           </el-popconfirm>
-          <el-button
-            type="danger"
-            @click="deleteVoteFn(post.voteMessage?.voteId)"
-            v-if="post.voteMessage?.voteId"
-            >删除投票</el-button
-          >
+          <el-button type="danger" @click="deleteVoteFn(post.voteMessage?.voteId)"
+            v-if="post.voteMessage?.voteId">删除投票</el-button>
         </div>
       </template>
     </div>
@@ -156,27 +139,34 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
   flex-direction: column;
   padding: 20px;
 }
+
 .footer {
   display: flex;
   align-items: center;
+
   .reply {
     margin: 0 1em 0 0.5em;
   }
+
   .myicon {
     width: 1em;
     height: 1em;
     margin-right: 8px;
     cursor: pointer;
   }
+
   .active {
     color: red;
   }
 }
+
 .sub-comment {
   padding: 0 20px;
+
   .el-card {
     margin-left: 20px;
   }
+
   &:deep(.el-card) {
     background-color: #f8f8f8;
     border-radius: 12px;
@@ -184,30 +174,36 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
     border: none;
     // padding: 4px 0;
   }
+
   &:deep(.el-card__body) {
     padding: 0;
   }
+
   &:deep(.el-divider) {
     margin: 5px 0;
   }
 }
+
 .sub-comment-card {
   // margin-left: ; background: ;
   display: flex;
   padding-bottom: 12px;
   padding-left: 16px;
   padding-top: 12px;
+
   .sub-comment-content {
     display: flex;
     flex-direction: column;
     margin-left: 8px;
   }
+
   .sub-comment-content-title {
     display: flex;
     align-items: center;
     height: 20px;
     line-height: 20px;
     font-size: 1.2em;
+
     .reply_text {
       color: #888;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -217,28 +213,36 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
     }
   }
 }
+
 .comment-root-wrapper {
   padding: 20px 0 20px 20px;
+
   .el-input {
     width: 100%;
   }
 }
+
 .sub-comment-content-content {
   margin: 5px 0;
 }
+
 .sub-comment-content-footer {
   display: flex;
   align-items: center;
 }
+
 .comment-content {
   margin: 5px 0;
 }
+
 .comment-delete-btn {
   cursor: pointer;
 }
+
 .comment-delete-btn:hover {
   color: red;
 }
+
 .reply,
 .comment-delete-btn {
   cursor: pointer;
@@ -247,9 +251,11 @@ onMounted(() => getPostDetailFn(route.params.postId as string))
 .reply:hover {
   color: aqua;
 }
+
 .el-divider {
   margin: 20px 0 0;
 }
+
 .delete-btn {
   margin-top: 20px;
 }

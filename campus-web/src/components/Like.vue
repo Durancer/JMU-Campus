@@ -1,5 +1,5 @@
 <template>
-  <div class="like" @click="clickFn" :class="{ isLike: isLike || tmpIsLike }">
+  <div class="like" @click="clickFn" :class="{ isLike: tmpIsLike }">
     <SvgIcon name="like"></SvgIcon>
     <span class="likeNum">{{ tmpLikeNum }}</span>
   </div>
@@ -27,9 +27,7 @@ const tmpLikeNum = ref(props.likeNum)
 const tmpIsLike = ref(props.isLike)
 const emit = defineEmits(['like-click'])
 const emitClickFn = debounce(() => {
-  if (tmpIsLike.value !== props.isLike) {
     emit('like-click')
-  }
 }, 1000)
 
 const userStore = useUserStore()
@@ -59,16 +57,20 @@ const clickFn = () => {
   align-items: center;
   margin-right: 0.3em;
   cursor: pointer;
+
   :deep(svg:hover) {
     color: green;
   }
+
   &:hover {
     color: green;
   }
+
   .likeNum {
     margin-left: 0.3em;
   }
 }
+
 .isLike {
   color: green;
 }

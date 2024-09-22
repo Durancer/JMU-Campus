@@ -89,6 +89,8 @@ const isAddVote = ref(false)
 const voteRef = ref(null)
 const topic = ref<string[]>([])
 const topicList = useFetchTopic()
+console.log(topicList,'topicList');
+
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 const mode = 'defalut'
