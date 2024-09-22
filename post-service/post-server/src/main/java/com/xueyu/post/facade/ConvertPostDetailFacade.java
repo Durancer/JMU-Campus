@@ -19,6 +19,7 @@ import com.xueyu.post.pojo.vo.PostView;
 import com.xueyu.post.pojo.vo.VoteVO;
 import com.xueyu.post.service.VoteService;
 import com.xueyu.user.client.UserClient;
+import com.xueyu.user.sdk.pojo.utils.UserFactory;
 import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -54,6 +55,9 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
     @Resource
     PostGeneralMapper postGeneralMapper;
 
+    @Resource
+    UserFactory userFactory;
+
     @Override
     public PostDetailVO execBusiness(ConvertDetailReq convertDetailReq) {
         PostView postView = convertDetailReq.getPostView();
@@ -76,11 +80,10 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         // 查询并设置作者信息
         // 设置帖子用户信息
         if (PostIsAnonymousEnum.YES.getValue().equals(postView.getIsAnonymous())){
-            postDetailVO.setUserInfo(buildHideUserInfo());
+            postDetailVO.setUserInfo(userFactory.buildAnonymityUserInfo());
         }else{
             postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
         }
-        postDetailVO.setUserInfo(userClient.getUserInfo(postView.getUserId()).getData());
         // 查询评论信息
         PostCommentQueryRequest request = new PostCommentQueryRequest();
         request.setPostId(postId);
@@ -105,18 +108,6 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         postGeneralMapper.incrPostViewNum(postId);
         postDetailVO.setVoteMessage(voteVO);
         return postDetailVO;
-    }
-
-    /**
-     * 生成匿名用户
-     * @return ret
-     */
-    private UserSimpleVO buildHideUserInfo(){
-        UserSimpleVO userSimpleVO = new UserSimpleVO();
-        userSimpleVO.setAvatarUrl("http://image.jmucampus.top/image/default.jpg");
-        userSimpleVO.setSex(0);
-        userSimpleVO.setNickname("匿名用户");
-        return userSimpleVO;
     }
 
 }

@@ -144,7 +144,7 @@ public class ConvertPostListFacade implements FacadeStrategy<ConvertPostReq, Lis
             // 设置点赞用户信息
             if (likeUserIdsMap.get(record.getId()) != null) {
                 List<UserSimpleVO> userLikeInfos = userClient.getUserDeatilInfoList(likeUserIdsMap.get(record.getId())).getData();
-                postListVO.setUserLikeBOList(userLikeInfos);
+                postListVO.setUserLikeList(userLikeInfos);
             }
             // 设置最热评论
             postListVO.setPostHotComment(commentMaps.get(record.getId()));

@@ -31,7 +31,7 @@ public class PostViewController {
     }
 
     /**
-     * 获得帖子列表，// todo 缺少整合投票、话题信息
+     * 获得帖子列表
      *
      * @param userId userId
      */

@@ -60,7 +60,7 @@ public class PostListVO {
 	/**
 	 * 点赞用户列表
 	 */
-	List<UserSimpleVO> userLikeBOList;
+	List<UserSimpleVO> userLikeList;
 
 	/**
 	 * 帖子最热评论

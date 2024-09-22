@@ -24,10 +24,6 @@ public class TopicController {
     @Resource
     private TopicService topicService;
 
-    @Resource
-    PostService postService;
-
-
     /**
      * 模糊搜索话题
      *

@@ -122,6 +122,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			List<Comment> commentList = commentMapper.selectList(wrapper);
 			deleteNum = query().getBaseMapper().delete(wrapper);
 			List<Integer> ids = commentList.stream().map(Comment::getId).collect(Collectors.toList());
+			// 删除点赞信息
 			LambdaQueryWrapper<Like> lambdaQueryWrapper = new LambdaQueryWrapper<>();
 			lambdaQueryWrapper.in(Like::getCommentId, ids);
 			likeMapper.delete(lambdaQueryWrapper);
