@@ -9,7 +9,7 @@
     </div>
     <div class="footer">
       <!-- 点赞 -->
-      <Like :likeNum="likeNum" :isLike="isLike" @like-click="likeFn(id)"></Like>
+      <Like :likeNum="likeNum" :isLike="isLike" @like-click="likeFn"></Like>
       <!-- 浏览量 -->
       <View class="myicon" />
       <span>{{ viewNum }}</span>
@@ -35,6 +35,8 @@ import { failMessage, sucMessage } from '@/utils/common'
 import UserInfo from '@/components/UserInfo.vue'
 import Like from '@/components/Like.vue'
 import VoteCard from '@/components/VoteCard.vue'
+import { localCache } from '@/utils/cache'
+
 
 interface postItemUserInfo {
   id: number
@@ -61,7 +63,7 @@ interface voteMessageInter {
 }
 interface Props {
   id: number
-  userInfo: postItemUserInfo[]
+  userInfo: postItemUserInfo
   title: string // 后期补一下title属性
   content: string
   viewNum: number
@@ -91,10 +93,24 @@ const isDetailPage = computed(() => {
   return route.name === 'detail'
 })
 
-const likeFn = async (postId: number) => {
-  const res = await like(postId)
+const likeFn = async (isCancel: Boolean) => {
+  const res = await like(props.id)
   if (res.status) {
     sucMessage(res.message)
+  }
+  console.log(isCancel, 'isCancel');
+
+  if (isCancel) {
+    const userId = localCache.getCache('login')?.userInfo.id
+    userLikeList.value?.forEach((item, index) => {
+      if (item.id === userId) {
+        userLikeList.value?.splice(index, 1)
+      }
+    })
+  } else {
+    const user = localCache.getCache('login')?.userInfo
+    const { id, nickname, avatarUrl, sex } = user
+    userLikeList.value?.push({ id, nickname, avatarUrl, sex })
   }
 }
 </script>
@@ -147,13 +163,16 @@ const likeFn = async (postId: number) => {
       color: red;
     }
   }
-  .likeList{
+
+  .likeList {
     display: flex;
-    .likeList-item{
+
+    .likeList-item {
       display: flex;
       align-items: center;
       margin-right: 10px;
-      .avatar{
+
+      .avatar {
         width: 30px;
         height: 30px;
         border-radius: 50%;

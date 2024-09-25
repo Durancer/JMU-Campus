@@ -23,12 +23,13 @@ const props = defineProps({
     default: false
   }
 })
+const isCancel = ref(false)
 const tmpLikeNum = ref(props.likeNum)
 const tmpIsLike = ref(props.isLike)
 const emit = defineEmits(['like-click'])
 const emitClickFn = debounce(() => {
-    emit('like-click')
-}, 1000)
+  emit('like-click', isCancel.value)
+}, 10)
 
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.token)
@@ -43,8 +44,10 @@ const clickFn = () => {
   // 之前点过赞
   if (tmpIsLike.value) {
     tmpLikeNum.value -= 1
+    isCancel.value = true
   } else {
     tmpLikeNum.value += 1
+    isCancel.value = false
   }
   tmpIsLike.value = !tmpIsLike.value
   emitClickFn()
