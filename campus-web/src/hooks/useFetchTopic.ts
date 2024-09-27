@@ -12,7 +12,5 @@ export const useFetchTopic = () => {
     }
   }
   onMounted(() => getAllTopicFn())
-  console.log(topicList,'topicList90');
-  
   return topicList
 }

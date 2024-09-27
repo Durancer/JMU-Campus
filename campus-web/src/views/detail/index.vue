@@ -9,9 +9,9 @@
     <div style="margin-left: 20px">
       <el-divider content-position="center">评论</el-divider>
       <!-- 评论 -->
-      <template v-if="post.commentList?.length >= 1">
+      <template v-if="commentList?.length >= 1">
         <!-- 评论列表 -->
-        <template v-for="comment in post.commentList" :key="comment.id">
+        <template v-for="comment in commentList" :key="comment.id">
           <!-- 根评论 -->
           <div class="comment-item">
             <UserInfo v-bind="comment.userInfo" :create-time="comment.createTime"></UserInfo>
@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { getPostDetail, deletePost, deleteVote } from '@/api/posts/index.ts'
-import { addComment, likeComment, deleteComment } from '@/api/comments/index.ts'
+import { addComment, likeComment, deleteComment, getUserComments } from '@/api/comments/index.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PostItem from '@/components/PostItem.vue'
@@ -76,14 +76,42 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
 import { InfoFilled } from '@element-plus/icons-vue'
 
-const post = ref({})
+interface UserInfo {
+  id: number
+  nickname: string
+  avatarUrl: string
+  sex:number
+}
+
+interface CommentList {
+  userInfo: UserInfo
+  createTime: string
+  content: string
+  id: number
+  postId: number
+  answerCommentList: CommentList[]
+  answerUserInfo: UserInfo
+}
+
+interface Post {
+  voteMessage: any
+  id:string
+}
+
+const post = ref<Post>()
+const commentList = ref<CommentList[]>([])
 const route = useRoute()
 const getPostDetailFn = async (postId: string) => {
   const userId = userStore.userInfo?.id
   const res = await getPostDetail(postId, userId)
   post.value = res.data
 }
-const deleteVoteFn = async (voteId) => {
+const getCommentList = async (postId: number) => {
+  const res = await getUserComments(postId)
+  commentList.value = res.data.records
+}
+
+const deleteVoteFn = async (voteId: any) => {
   const res = await deleteVote(voteId)
   if (res.status) {
     sucMessage('删除投票成功')
@@ -112,7 +140,7 @@ const addCommentFn = async () => {
   }
   addCommentCommon(data)
 }
-const addCommentCommon = async (data) => {
+const addCommentCommon = async (data:any) => {
   // 判断是否登录
   if (!userStore.userInfo?.id) {
     failMessage('请先登录在进行评论')
@@ -130,7 +158,10 @@ const addCommentCommon = async (data) => {
     }
   }
 }
-onMounted(() => getPostDetailFn(route.params.postId as string))
+onMounted(() => {
+  getPostDetailFn(route.params.postId as string)
+  getCommentList(Number(route.params.postId))
+})
 </script>
 
 <style lang="less" scoped>

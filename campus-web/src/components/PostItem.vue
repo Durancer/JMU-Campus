@@ -110,7 +110,12 @@ const likeFn = async (isCancel: Boolean) => {
   } else {
     const user = localCache.getCache('login')?.userInfo
     const { id, nickname, avatarUrl, sex } = user
-    userLikeList.value?.push({ id, nickname, avatarUrl, sex })
+    if (userLikeList.value) {
+      userLikeList.value?.push({ id, nickname, avatarUrl, sex })
+      console.log(userLikeList.value);
+    }else {
+      userLikeList.value = [{ id, nickname, avatarUrl, sex }]
+    }
   }
 }
 </script>

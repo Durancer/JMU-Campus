@@ -39,3 +39,23 @@ export function deleteComment(commentId: number) {
     }
   })
 }
+// 查询帖子评论
+export function getComments(commentId: number) {
+  return http.request({
+    method: 'post',
+    url: '/comment/post/list',
+    data: {
+      commentId
+    }
+  })
+}
+// 获取用户的评论
+export function getUserComments(postId: number) {
+  return http.request({
+    method: 'get',
+    url: '/comment/post/list',
+    params: {
+      postId
+    }
+  })
+}
