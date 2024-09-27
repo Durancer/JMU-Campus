@@ -6,9 +6,9 @@ export const useFetchTopic = () => {
   async function getAllTopicFn() {
     const res = await getAllTopic()
     if (res.data && res.data.length > 10) {
-      topicList.value = res.data.slice(0, 10)
+      topicList.value = res.data.records.slice(0, 10)
     } else {
-      topicList.value = res.data // TODO：话题太多怎么展示话题
+      topicList.value = res.data.records // TODO：话题太多怎么展示话题
     }
   }
   onMounted(() => getAllTopicFn())

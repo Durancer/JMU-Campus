@@ -4,16 +4,10 @@
       <div class="pre-avatar">
         头像：<el-avatar :src="userStore.userInfo?.avatarUrl"></el-avatar>
       </div>
-      <el-upload
-        ref="upload"
-        :action="action"
-        :limit="1"
-        :on-exceed="handleExceed"
-        :on-success="handleAvatarSuccess"
+      <el-upload ref="upload" :action="action" :limit="1" :on-exceed="handleExceed" :on-success="handleAvatarSuccess"
         :headers="{
           token: userStore.token
-        }"
-      >
+        }">
         <el-button type="primary">点击上传图片</el-button>
         <template #tip>
           <div class="el-upload__tip">头像文件限jpg、jpeg、png、webp格式</div>
@@ -95,12 +89,15 @@ onMounted(() => {
   //   flex-shrink: 0;
   margin: 20px 0;
 }
+
 .el-input {
   width: 40%;
 }
+
 .avatar {
   display: flex;
   flex-direction: column;
+
   .pre-avatar {
     display: flex;
     align-items: center;

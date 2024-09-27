@@ -3,7 +3,7 @@
     <div class="main-container">
       <div class="main-content">
         <header-cpn />
-        <PostList :records="records" @to-bottom="handleToBottom" />
+        <PostList :records="records" :isDisabled="isDisabled" @to-bottom="handleToBottom" />
         <div :class="{ hidden: isHidden }">还在加载中....</div>
       </div>
     </div>
@@ -21,9 +21,11 @@ const current = ref<number>(1) // 当前是第几页
 const size = ref<number>(10) // 多少页
 const pages = ref<number>(1) // 总共有多少页
 const isHidden = ref(false)
-const getAllPostsFn = async ({ current, size }) => {
+const isDisabled = ref(true)
+const getAllPostsFn = async ({ current, size }: { current: number, size: number }) => {
   isHidden.value = false
   const res = await getAllPosts({ current, size })
+  isDisabled.value = false
   if (res.data) {
     console.log('现在是第几页', current)
     records.push(...res.data.records)

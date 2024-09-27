@@ -1,5 +1,5 @@
 <template>
-  <div class="like" @click="clickFn" :class="{ isLike: isLike || tmpIsLike }">
+  <div class="like" @click="clickFn" :class="{ isLike: tmpIsLike }">
     <SvgIcon name="like"></SvgIcon>
     <span class="likeNum">{{ tmpLikeNum }}</span>
   </div>
@@ -23,14 +23,13 @@ const props = defineProps({
     default: false
   }
 })
+const isCancel = ref(false)
 const tmpLikeNum = ref(props.likeNum)
 const tmpIsLike = ref(props.isLike)
 const emit = defineEmits(['like-click'])
 const emitClickFn = debounce(() => {
-  if (tmpIsLike.value !== props.isLike) {
-    emit('like-click')
-  }
-}, 1000)
+  emit('like-click', isCancel.value)
+}, 10)
 
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.token)
@@ -45,8 +44,10 @@ const clickFn = () => {
   // 之前点过赞
   if (tmpIsLike.value) {
     tmpLikeNum.value -= 1
+    isCancel.value = true
   } else {
     tmpLikeNum.value += 1
+    isCancel.value = false
   }
   tmpIsLike.value = !tmpIsLike.value
   emitClickFn()
@@ -59,16 +60,20 @@ const clickFn = () => {
   align-items: center;
   margin-right: 0.3em;
   cursor: pointer;
+
   :deep(svg:hover) {
     color: green;
   }
+
   &:hover {
     color: green;
   }
+
   .likeNum {
     margin-left: 0.3em;
   }
 }
+
 .isLike {
   color: green;
 }

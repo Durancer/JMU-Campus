@@ -17,22 +17,9 @@
     <div v-show="isAddTopic">
       <div>
         <span style="margin-right: 10px">请输入增加的话题(最多三个)</span>
-        <el-select
-          v-model="topic"
-          multiple
-          filterable
-          allow-create
-          default-first-option
-          :reserve-keyword="false"
-          placeholder="请输入话题"
-          size="large"
-        >
-          <el-option
-            v-for="topic in topicList"
-            :key="topic.id"
-            :label="topic.name"
-            :value="topic.name"
-          />
+        <el-select v-model="topic" multiple filterable :multiple-limit="3" allow-create default-first-option
+          :reserve-keyword="false" placeholder="请输入话题" size="large">
+          <el-option v-for="topic in topicList" :key="topic.id" :label="topic.name" :value="topic.name" />
         </el-select>
       </div>
     </div>
@@ -61,7 +48,7 @@ const post = reactive({
 })
 const { createEditor, createToolbar } = window.wangEditor
 // 富文本相关
-let editor = null
+let editor: any = null
 let toolbarConfig = {}
 let toolbar = null
 onMounted(() => {
@@ -77,10 +64,12 @@ onMounted(() => {
     config: toolbarConfig,
     mode: 'default' // or 'simple'
   })
+
+
 })
 let editorConfig = {
   placeholder: 'Type here...',
-  onChange(editor) {
+  onChange(editor: any) {
     post.content = editor.getText() ? editor.getHtml() : ''
   }
 }
@@ -88,7 +77,8 @@ const isAddTopic = ref(false)
 const isAddVote = ref(false)
 const voteRef = ref(null)
 const topic = ref<string[]>([])
-const topicList = useFetchTopic()
+let topicList: any = useFetchTopic()
+
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 const mode = 'defalut'
@@ -144,6 +134,7 @@ const publish = () => {
   box-sizing: border-box;
   max-width: 930px;
   margin: 20px auto;
+
   .edit-input {
     color: rgba(51, 51, 51, 1);
     font-size: 16px;
@@ -156,10 +147,12 @@ const publish = () => {
     margin-bottom: 20px;
   }
 }
+
 .wrapper {
   max-width: 930px;
   margin: 20px auto;
 }
+
 .el-select {
   width: 320px;
 }

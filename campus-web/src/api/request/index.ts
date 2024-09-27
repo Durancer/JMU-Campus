@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ElMessage, ElLoading } from 'element-plus'
 import { localCache } from '@/utils/cache'
 
-let loadingInstance = null
+let loadingInstance:any = null
 let requestNum = 0
 
 const addLoading = () => {
@@ -23,7 +23,7 @@ const cancelLoading = () => {
   if (requestNum === 0) loadingInstance?.close()
 }
 
-;(function () {
+(function () {
   // 环境的切换  todo: 类型问题
   if (process.env.NODE_ENV == 'development') {
     axios.defaults.baseURL = '/Apis'

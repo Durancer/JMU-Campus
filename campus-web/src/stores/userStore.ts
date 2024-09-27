@@ -5,6 +5,7 @@ import 'element-plus/es/components/message/style/css'
 import { failMessage, sucMessage } from '@/utils/common.ts'
 import { login, updateUserinfo, getUserDetail } from '@/api/user/index.ts'
 
+
 export const useUserStore = defineStore(
   'login',
   () => {

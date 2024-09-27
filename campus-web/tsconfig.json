@@ -1,22 +1,14 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": [
-    "env.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
-  ],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "lib": [
-      "ES2021",
-      "dom"
-    ]
+    "lib": ["ES2021", "dom"],
     // "types": ["element-plus/global"]
+    "allowImportingTsExtensions": true
   },
   "references": [
     {

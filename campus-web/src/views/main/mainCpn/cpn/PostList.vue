@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="enty-list-wrap">
-      <ul class="entry-list" v-infinite-scroll="toBottom">
+      <ul class="entry-list" v-infinite-scroll="toBottom" :infinite-scroll-disabled="isDisabled">
         <li class="item" v-for="item in records" :key="item.id">
           <PostItem v-bind="item" />
         </li>
@@ -13,9 +13,11 @@
 <script setup lang="ts">
 import PostItem from '@/components/PostItem.vue'
 import debounce from 'lodash.debounce'
-const props = defineProps(['records'])
+const props = defineProps(['records','isDisabled'])
 const emit = defineEmits(['to-bottom'])
-// TODO：bug一开始就会翻到第二页
+
+
+// TODO：bug一开始就会翻到第二页---已修复
 const toBottom = debounce(() => {
   console.log('emit-to-bottom')
   emit('to-bottom')
