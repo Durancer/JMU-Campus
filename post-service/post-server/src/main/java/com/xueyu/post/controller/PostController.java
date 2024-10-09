@@ -80,7 +80,7 @@ public class PostController {
 	 * @return 删除结果
 	 */
 	@PostMapping("delete")
-	public RestResult<?> deletePost(@NotNull Integer postId, Integer userId) {
+	public RestResult<?> deletePost(@NotNull Integer postId, @RequestHeader Integer userId) {
 		if (!postService.deletePost(postId, userId)) {
 			return RestResult.fail("删除失败");
 		}
@@ -136,7 +136,6 @@ public class PostController {
 	@GetMapping("detail")
 	public RestResult<PostDetailVO> getPostDetailInfo(@NotNull Integer postId, @RequestHeader(required = false) Integer userId) {
 		return RestResult.ok(postService.getPostDetailInfo(postId, userId));
-
 	}
 
 	/**

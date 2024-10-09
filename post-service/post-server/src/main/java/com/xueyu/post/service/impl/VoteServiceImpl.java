@@ -73,8 +73,8 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
         voteQueryWrapper.eq(Vote::getPostId,postId);
         Vote vote = voteMapper.selectOne(voteQueryWrapper);
-        if(vote==null){
-            throw new PostException("该投票不存在");
+        if(vote == null){
+            return true;
         }
         //删除投票选项
         LambdaQueryWrapper<VoteOption> optionQueryWrapper = new LambdaQueryWrapper<>();

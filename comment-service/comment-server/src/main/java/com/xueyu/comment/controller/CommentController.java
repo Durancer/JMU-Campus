@@ -38,7 +38,8 @@ public class CommentController {
 	 * @return 评论集合
 	 */
 	@GetMapping("post/list")
-	public RestResult<ListVO<CommentPostVO>> getPostCommentList(@Validated PostCommentQueryRequest request) {
+	public RestResult<ListVO<CommentPostVO>> getPostCommentList(@Validated PostCommentQueryRequest request, @RequestHeader(required = false) Integer userId) {
+		request.setUserId(userId);
 		return RestResult.ok(commentService.getPostComments(request));
 	}
 

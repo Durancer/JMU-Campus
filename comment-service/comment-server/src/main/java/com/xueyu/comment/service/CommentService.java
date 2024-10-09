@@ -95,7 +95,7 @@ public interface CommentService extends IService<Comment> {
 	 * 管理站获取评论列表
 	 *
 	 * @param request req
-	 * @return
+	 * @return 评论列表
 	 */
 	ListVO<Comment> getManageCommentListPage(CommentQueryRequest request);
 

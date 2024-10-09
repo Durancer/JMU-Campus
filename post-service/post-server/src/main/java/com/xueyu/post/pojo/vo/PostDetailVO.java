@@ -60,11 +60,6 @@ public class PostDetailVO {
 	VoteVO voteMessage;
 
 	/**
-	 * 评论列表
-	 */
-	Object commentList;
-
-	/**
 	 * 帖子话题
 	 */
 	List<Topic> topics;
