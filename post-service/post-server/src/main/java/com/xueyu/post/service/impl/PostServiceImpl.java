@@ -145,7 +145,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 删除帖子图片
 		imageAnnexService.deletePostImage(postId);
 		// 删除投票
-		voteService.deletePostVote(postId);
+		voteService.deletePostVoteByPostId(postId, userId);
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {

@@ -165,5 +165,24 @@ public class CommentController {
 		return RestResult.ok(null, "提交成功");
 	}
 
+	/**
+	 * 查询评论开关
+	 *
+	 * @return 开关状态
+	 */
+	@GetMapping("check/get")
+	public RestResult<?> getCommentApprovalConfig() {
+		return RestResult.ok(commentService.getCommentApprovalConfig(), "查询成功");
+	}
+
+	/**
+	 * 切换评论开关
+	 *
+	 * @return 开关状态
+	 */
+	@PostMapping("check/change")
+	public RestResult<?> changeCommentApprovalConfig() {
+		return RestResult.ok(commentService.changeCommentApprovalConfig(), "切换成功");
+	}
 
 }

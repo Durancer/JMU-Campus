@@ -65,6 +65,7 @@ public class PostController {
 			}
 		}
 		post.setUserId(userId);
+		vote.setUserId(userId);
 		Boolean sendStatus = postService.publishPost(post, files, vote, options, names);
 		if (!sendStatus) {
 			return RestResult.fail("发布失败");

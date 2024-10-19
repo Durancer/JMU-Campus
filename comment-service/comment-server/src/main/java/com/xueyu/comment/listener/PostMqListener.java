@@ -1,6 +1,7 @@
 package com.xueyu.comment.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.xueyu.comment.mapper.CommentMapper;
 import com.xueyu.comment.mapper.LikeMapper;
 import com.xueyu.comment.pojo.domain.Comment;
@@ -62,9 +63,11 @@ public class PostMqListener {
 		List<Comment> list = commentMapper.selectList(wrapper);
 		// 拿到所有评论的id
 		List<Integer> commentId = list.stream().map(Comment::getId).collect(Collectors.toList());
-		LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.in(Like::getCommentId, commentId);
-		likeMapper.delete(queryWrapper);
+		if (CollectionUtils.isNotEmpty(commentId) ){
+			LambdaQueryWrapper<Like> queryWrapper = new LambdaQueryWrapper<>();
+			queryWrapper.in(Like::getCommentId, commentId);
+			likeMapper.delete(queryWrapper);
+		}
 		// 删除的数量，发送mq
 		CommentDTO commentDTO = new CommentDTO();
 		commentDTO.setAuthorId(postOperateDTO.getAuthorId());

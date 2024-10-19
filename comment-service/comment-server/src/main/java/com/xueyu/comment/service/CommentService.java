@@ -108,4 +108,16 @@ public interface CommentService extends IService<Comment> {
 	 */
 	void passCommentContent(Integer commentId, Integer decision, String reason);
 
+	/**
+	 * 获取评论开关 true 开启状态 false 关闭
+	 * @return 开关状态
+	 */
+	Boolean getCommentApprovalConfig();
+
+	/**
+	 * 切换评论开关
+	 * @return 开关状态
+	 */
+	Boolean changeCommentApprovalConfig();
+
 }

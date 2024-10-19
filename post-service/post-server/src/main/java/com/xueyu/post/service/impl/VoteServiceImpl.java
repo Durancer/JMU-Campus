@@ -3,6 +3,7 @@ package com.xueyu.post.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.post.exception.PostException;
+import com.xueyu.post.mapper.PostMapper;
 import com.xueyu.post.mapper.VoteMapper;
 import com.xueyu.post.mapper.VoteOptionMapper;
 import com.xueyu.post.mapper.VoteRecordMapper;
@@ -15,11 +16,13 @@ import com.xueyu.post.service.VoteRecordService;
 import com.xueyu.post.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author fj
@@ -69,28 +72,39 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deletePostVote(Integer postId) {
-        LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
-        voteQueryWrapper.eq(Vote::getPostId,postId);
-        Vote vote = voteMapper.selectOne(voteQueryWrapper);
+    public boolean deletePostVote(Integer voteId, Integer userId) {
+        Vote vote = voteMapper.selectById(voteId);
         if(vote == null){
             return true;
         }
+        if (!vote.getUserId().equals(userId)){
+            throw new PostException("用户id不匹配");
+        }
         //删除投票选项
         LambdaQueryWrapper<VoteOption> optionQueryWrapper = new LambdaQueryWrapper<>();
-        optionQueryWrapper.eq(VoteOption::getVoteId, postId);
-        voteOptionMapper.delete(optionQueryWrapper);
+        optionQueryWrapper.eq(VoteOption::getVoteId, vote.getVoteId());
+        int optionNum = voteOptionMapper.delete(optionQueryWrapper);
         //删除投票记录
         LambdaQueryWrapper<VoteRecord> recordQueryWrapper = new LambdaQueryWrapper<>();
-        recordQueryWrapper.in(VoteRecord::getVoteId, postId);
-        voteRecordMapper.delete(recordQueryWrapper);
+        recordQueryWrapper.in(VoteRecord::getVoteId, vote.getVoteId());
+        int recordNum = voteRecordMapper.delete(recordQueryWrapper);
         //删除投票数据
-        int row = voteMapper.deleteById(postId);
+        int row = voteMapper.deleteById(vote.getVoteId());
         if(row != 1){
-            log.error("投票删除异常, id -> {}", postId);
+            log.error("投票删除异常, id -> {}", voteId);
             throw new PostException("投票删除异常");
+        }else{
+            log.info("投票id ->{}, 删除了 {} 个投票选项, {} 个投票纪录", voteId, optionNum, recordNum);
         }
         return true;
+    }
+
+    @Override
+    public boolean deletePostVoteByPostId(Integer postId, Integer userId) {
+        LambdaQueryWrapper<Vote> voteQueryWrapper = new LambdaQueryWrapper<>();
+        voteQueryWrapper.eq(Vote::getPostId,postId);
+        Vote vote = voteMapper.selectOne(voteQueryWrapper);
+        return this.deletePostVote(vote.getVoteId(), userId);
     }
 
     @Override

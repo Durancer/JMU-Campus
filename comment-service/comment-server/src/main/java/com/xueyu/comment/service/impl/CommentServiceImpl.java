@@ -21,6 +21,7 @@ import com.xueyu.comment.request.CommentQueryRequest;
 import com.xueyu.comment.request.PostCommentQueryRequest;
 import com.xueyu.comment.sdk.dto.CommentDTO;
 import com.xueyu.comment.service.CommentService;
+import com.xueyu.common.core.constant.RedisKeyConstant;
 import com.xueyu.common.core.request.PageRequest;
 import com.xueyu.common.core.result.ListVO;
 import com.xueyu.post.client.PostClient;
@@ -30,6 +31,7 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.xueyu.comment.sdk.constant.CommentMqContants.*;
+import static com.xueyu.common.core.constant.RedisKeyConstant.COMMENT_APPROVAL_KEY;
 
 /**
  * @author durance
@@ -65,6 +68,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 	@Resource
 	PostCommentFacade postCommentFacade;
 
+	@Resource
+	RedisTemplate<String, Integer> redisTemplate;
+
 	@Override
 	public Boolean sendUserComment(Comment comment) {
 		log.info("发送评论报文 -> {}", comment);
@@ -77,6 +83,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 		Date time = new Date();
 		comment.setCreateTime(time);
 		comment.setUpdateTime(time);
+		try{
+			// 判断评论审核开关
+			Boolean isOpen = redisTemplate.hasKey(COMMENT_APPROVAL_KEY);
+			if (Boolean.FALSE.equals(isOpen)){
+				comment.setStatus(CommentStatusEnum.PUBLIC.getCode());
+			}
+		}catch (Exception e){
+			// 有任何异常不需要审核
+			log.error("评论开关获取异常", e);
+			comment.setStatus(CommentStatusEnum.PUBLIC.getCode());
+		}
 		query().getBaseMapper().insert(comment);
 		// 如果为根评论则设置rootId为本身id
 		if (comment.getType().equals(CommentType.ROOT.getValue())) {
@@ -313,6 +330,22 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 			commentMapper.updateById(comment);
 			log.info("评论 id -> {}, 审核未通过, 原因 -> {}", commentId, reason);
 		}
+	}
+
+	@Override
+	public Boolean getCommentApprovalConfig() {
+		return redisTemplate.hasKey(COMMENT_APPROVAL_KEY);
+	}
+
+	@Override
+	public Boolean changeCommentApprovalConfig() {
+		Boolean hasKey = redisTemplate.hasKey(COMMENT_APPROVAL_KEY);
+		if (hasKey){
+			redisTemplate.delete(COMMENT_APPROVAL_KEY);
+		}else {
+			redisTemplate.opsForValue().set(COMMENT_APPROVAL_KEY, 1);
+		}
+		return !hasKey;
 	}
 
 }
