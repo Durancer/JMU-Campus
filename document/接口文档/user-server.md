@@ -350,6 +350,91 @@
 
 
 
+#### 关注 | 取消关注用户
+
+```
+请求地址：/user/follow
+请求方法：POST
+```
+
+**入参字段**
+
+| 字段   | 类型    | 含义       | 必填 |
+| ------ | ------- | ---------- | ---- |
+| token  | String  | 请求头添加 | 是   |
+| userId | Integer | 用户id     | 是   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+#### 获取用户关注列表
+
+```
+请求地址：/user/follow/list
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段    | 类型    | 含义           | 必填 |
+| ------- | ------- | -------------- | ---- |
+| userId  | Integer | 用户id         | 是   |
+| current | Integer | 当前页 默认1   | 否   |
+| size    | Integer | 页大小 默认 10 | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+#### 获取用户粉丝列表
+
+```
+请求地址：/user/follow/fans/list
+请求方法：GET
+```
+
+**入参字段**
+
+| 字段    | 类型    | 含义          | 必填 |
+| ------- | ------- | ------------- | ---- |
+| userId  | Integer | 用户id        | 是   |
+| current | Integer | 当前页 默认 1 | 否   |
+| size    | Integer | 页大小 默认10 | 否   |
+
+**出参**
+
+```json
+{
+    "code": 200,
+    "message": "success",
+    "data": data,
+    "status": true
+}
+```
+
+
+
+
+
 ### 用户信息获取
 
 #### 获取用户信息
@@ -375,6 +460,8 @@
     "status": true
 }
 ```
+
+
 
 #### 获取用户相关统计数据
 

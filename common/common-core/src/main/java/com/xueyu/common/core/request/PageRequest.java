@@ -20,6 +20,6 @@ public class PageRequest {
     /**
      * 页大小
      */
-    Integer size = 2;
+    Integer size = 10;
 
 }
