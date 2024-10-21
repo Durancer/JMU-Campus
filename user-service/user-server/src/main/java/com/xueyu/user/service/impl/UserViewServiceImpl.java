@@ -2,6 +2,7 @@ package com.xueyu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,10 +17,10 @@ import com.xueyu.user.sdk.pojo.vo.UserSimpleVO;
 import com.xueyu.user.service.UserViewService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author durance
@@ -34,10 +35,12 @@ public class UserViewServiceImpl extends ServiceImpl<UserViewMapper, UserView> i
 	public List<UserSimpleVO> getUserInfoList(List<Integer> userIdList) {
 		List<UserView> userViews = query().getBaseMapper().selectBatchIds(userIdList);
 		List<UserSimpleVO> userSimpleVOList = new ArrayList<>();
-		for (UserView userView : userViews) {
-			UserSimpleVO userSimpleVO = new UserSimpleVO();
-			BeanUtils.copyProperties(userView, userSimpleVO);
-			userSimpleVOList.add(userSimpleVO);
+		if (CollectionUtils.isNotEmpty(userViews)){
+			userSimpleVOList = userViews.stream().map(userView -> {
+				UserSimpleVO userSimpleVO = new UserSimpleVO();
+				BeanUtils.copyProperties(userView, userSimpleVO);
+				return userSimpleVO;
+			}).collect(Collectors.toList());
 		}
 		return userSimpleVOList;
 	}

@@ -19,9 +19,19 @@ public interface VoteService extends IService<Vote> {
      * 删除投票
      *
      * @param postId 帖子id
+     * @param userId 用户id
      * @return boolean
      */
-    boolean deletePostVote(Integer postId);
+    boolean deletePostVote(Integer postId, Integer userId);
+
+    /**
+     * 删除投票
+     *
+     * @param postId 帖子id
+     * @param userId 用户id
+     * @return boolean
+     */
+    boolean deletePostVoteByPostId(Integer postId, Integer userId);
 
     /**
      * 获得投票信息

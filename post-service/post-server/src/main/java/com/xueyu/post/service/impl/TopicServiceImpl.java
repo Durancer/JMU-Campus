@@ -2,6 +2,7 @@ package com.xueyu.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,11 +15,12 @@ import com.xueyu.post.pojo.domain.PostTopic;
 import com.xueyu.post.pojo.domain.Topic;
 import com.xueyu.post.pojo.vo.PostListVO;
 import com.xueyu.post.pojo.vo.PostView;
+import com.xueyu.post.service.PostService;
 import com.xueyu.post.service.TopicService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
@@ -35,6 +37,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     PostTopicMapper postTopicMapper;
+
+    @Lazy
+    @Resource
+    PostService postService;
 
     @Override
     public int listByNamenumber(String name) {
@@ -145,8 +151,31 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Override
     public ListVO<PostListVO> getPostListByTopic(PageRequest request, Integer userId, String name) {
-
-        return null;
+        ListVO<PostListVO> res = new ListVO<>();
+        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(Topic::getName, name);
+        List<Topic> topics = query().getBaseMapper().selectList(wrapper);
+        List<Integer> topicIds = new ArrayList<>();
+        List<PostTopic> postTopics =  new ArrayList<>();
+        Set<Integer> postIds;
+        if (CollectionUtils.isNotEmpty(topics)){
+            topicIds = topics.stream().map(Topic::getId).collect(Collectors.toList());
+        }
+        if (CollectionUtils.isNotEmpty(topics)){
+            LambdaQueryWrapper<PostTopic> relateWrapper = new LambdaQueryWrapper<>();
+            IPage<PostTopic> page = new Page<>(request.getCurrent(), request.getSize());
+            relateWrapper.in(PostTopic::getTopicId, topicIds);
+            postTopicMapper.selectPage(page, relateWrapper);
+            BeanUtils.copyProperties(page, res);
+            postTopics = page.getRecords();
+        }
+        if (CollectionUtils.isNotEmpty(postTopics)){
+            postIds = postTopics.stream().map(PostTopic::getPostId).collect(Collectors.toSet());
+            List<PostListVO> postList = postService.dealPostListInfoByPostIds(new ArrayList<>(postIds), userId);
+            res.setRecords(postList);
+            return res;
+        }
+        return ListVO.buildNonDataRes(request.getCurrent(), request.getSize());
     }
 
 }

@@ -95,7 +95,7 @@ public interface CommentService extends IService<Comment> {
 	 * 管理站获取评论列表
 	 *
 	 * @param request req
-	 * @return
+	 * @return 评论列表
 	 */
 	ListVO<Comment> getManageCommentListPage(CommentQueryRequest request);
 
@@ -107,5 +107,17 @@ public interface CommentService extends IService<Comment> {
 	 * @param reason 如审核未通过，给个未通过理由，反馈给用户
 	 */
 	void passCommentContent(Integer commentId, Integer decision, String reason);
+
+	/**
+	 * 获取评论开关 true 开启状态 false 关闭
+	 * @return 开关状态
+	 */
+	Boolean getCommentApprovalConfig();
+
+	/**
+	 * 切换评论开关
+	 * @return 开关状态
+	 */
+	Boolean changeCommentApprovalConfig();
 
 }

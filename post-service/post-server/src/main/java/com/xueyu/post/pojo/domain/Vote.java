@@ -32,6 +32,11 @@ public class Vote {
     Integer postId;
 
     /**
+     * 用户id
+     */
+    Integer userId;
+
+    /**
      * 投票主题
      */
     String topic;

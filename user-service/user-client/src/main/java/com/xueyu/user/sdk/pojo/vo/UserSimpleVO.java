@@ -31,4 +31,9 @@ public class UserSimpleVO {
 	 */
 	Integer sex;
 
+	/**
+	 * 互相关注  0 否 1 是
+	 */
+	Integer isMutual;
+
 }

@@ -89,6 +89,15 @@ public interface PostService extends IService<Post> {
 	/**
 	 * 帖子列表查询最后一层，封装 帖子列表信息，处理帖子额外的信息查询，如 用户信息设置等
 	 *
+	 * @param postIds 帖子id列表
+	 * @param userId 用户id
+	 * @return {@link List}<{@link PostListVO}>
+	 */
+	List<PostListVO> dealPostListInfoByPostIds(List<Integer> postIds, Integer userId);
+
+	/**
+	 * 帖子列表查询最后一层，封装 帖子列表信息，处理帖子额外的信息查询，如 用户信息设置等
+	 *
 	 * @param list   列表
 	 * @param userId 用户id
 	 * @return {@link List}<{@link PostListVO}>

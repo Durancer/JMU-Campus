@@ -2,6 +2,7 @@ package com.xueyu.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xueyu.common.core.result.ListVO;
@@ -29,7 +30,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
@@ -112,7 +112,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 			voteService.launchVote(vote,options);
 		}
 		// 绑定帖子和话题
-		if(!CollectionUtils.isEmpty(names)){
+		if(CollectionUtils.isNotEmpty(names)){
 			// 添加话题数据
 			topicService.createTopic(names, post.getId());
 
@@ -132,8 +132,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Boolean deletePost(Integer postId, Integer userId) {
-		log.info("用户 id -> {}, 删除 帖子 id -> {}", userId, postId);
 		LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(Post::getId, postId).eq(Post::getUserId, userId);
 		Post post = query().getBaseMapper().selectOne(wrapper);
@@ -145,12 +145,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 删除帖子图片
 		imageAnnexService.deletePostImage(postId);
 		// 删除投票
-		voteService.deletePostVote(postId);
+		voteService.deletePostVoteByPostId(postId, userId);
 		// 删除帖子
 		int delete = query().getBaseMapper().delete(wrapper);
 		if (delete != 1) {
 			throw new PostException("帖子删除异常");
 		}
+		// 删除统计数据
+		int i = postGeneralMapper.deleteById(postId);
+		if (i != 1) {
+			throw new PostException("帖子删除异常");
+		}
+		log.info("用户 id -> {}, 删除 帖子 id -> {}", userId, postId);
 		// 发送mq消息
 		PostOperateDTO postOperateDTO = new PostOperateDTO();
 		postOperateDTO.setUserId(userId);
@@ -297,6 +303,23 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		List<PostView> records = page.getRecords();
 		result.setRecords(dealPostListInfo(records, userId));
 		return result;
+	}
+
+	/**
+	 * 帖子列表查询最后一层，封装 帖子列表信息，处理帖子额外的信息查询，如 用户信息设置等
+	 *
+	 * @param postIds 帖子id列表
+	 * @param userId 用户id
+	 * @return 帖子列表信息
+	 */
+	@Override
+	public List<PostListVO> dealPostListInfoByPostIds(List<Integer> postIds, Integer userId) {
+		if (CollectionUtils.isNotEmpty(postIds)){
+			LambdaQueryWrapper<PostView> wrapper = new LambdaQueryWrapper<>();
+			List<PostView> postViews = postViewMapper.selectList(wrapper);
+			return dealPostListInfo(postViews, userId);
+		}
+		return new ArrayList<>();
 	}
 
 	/**

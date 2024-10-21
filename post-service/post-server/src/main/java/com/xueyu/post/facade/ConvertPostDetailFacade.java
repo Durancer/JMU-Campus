@@ -101,13 +101,6 @@ public class ConvertPostDetailFacade implements FacadeStrategy<ConvertDetailReq,
         PostCommentQueryRequest request = new PostCommentQueryRequest();
         request.setPostId(postId);
         request.setUserId(userId);
-        // todo 后期抽离，前端单独查询评论
-        RestResult<ListVO<CommentPostVO>> postCommentList = commentClient.getPostCommentList(request);
-        if (postCommentList.getStatus()){
-            postDetailVO.setCommentList(postCommentList.getData().getRecords());
-        }else {
-            log.error("postId ->{}, 评论获取异常", postId);
-        }
         // 查询携带的话题
         postDetailVO.setTopics(topicMapper.selectByPostId(postId));
         // 设置投票信息

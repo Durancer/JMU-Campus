@@ -1,5 +1,6 @@
 package com.xueyu.common.core.result;
 
+import com.xueyu.common.core.request.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,7 +55,22 @@ public class ListVO<T> {
 		listVO.setTotal(0L);
 		listVO.setPages(0L);
 		listVO.setCurrent(current.longValue());
-		listVO.setCurrent(size.longValue());
+		listVO.setSize(size.longValue());
+		return listVO;
+	}
+
+	/**
+	 * 构建空列表分页返回
+	 * @param request req
+	 * @return 空列表
+	 */
+	public static ListVO buildNonDataRes(PageRequest request){
+		ListVO listVO = new ListVO<>();
+		listVO.setRecords(new ArrayList<>());
+		listVO.setTotal(0L);
+		listVO.setPages(0L);
+		listVO.setCurrent(request.getCurrent().longValue());
+		listVO.setSize(request.getSize().longValue());
 		return listVO;
 	}
 
