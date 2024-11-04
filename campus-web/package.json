@@ -1,49 +1,70 @@
-{
-  "name": "myvue3demo",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "run-p build-only",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
-  },
-  "dependencies": {
-    "@vueuse/core": "^10.2.1",
-    "@wangeditor/editor": "^5.1.23",
-    "@wangeditor/editor-for-vue": "^5.1.12",
-    "axios": "^1.4.0",
-    "element-plus": "^2.3.8",
-    "lodash.debounce": "^4.0.8",
-    "normalize.css": "^8.0.1",
-    "pinia": "^2.0.32",
-    "pinia-plugin-persistedstate": "^3.2.0",
-    "rollup-plugin-visualizer": "^5.9.2",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
-  },
-  "devDependencies": {
-    "@rushstack/eslint-patch": "^1.2.0",
-    "@types/node": "^18.14.2",
-    "@vitejs/plugin-vue": "^4.0.0",
-    "@vue/eslint-config-prettier": "^7.1.0",
-    "@vue/eslint-config-typescript": "^11.0.2",
-    "@vue/tsconfig": "^0.1.3",
-    "eslint": "^8.34.0",
-    "eslint-plugin-vue": "^9.9.0",
-    "less": "^4.1.3",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.4",
-    "terser": "^5.19.4",
-    "typescript": "~4.8.4",
-    "unplugin-auto-import": "^0.16.6",
-    "unplugin-vue-components": "^0.25.1",
-    "vite": "^4.1.4",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.2.0"
-  }
+<template>
+<div>
+<h1>Post Management</h1>
+<div v-for="post in posts" :key="post.id">
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<p>{{ post.createdAt }}</p>
+<button @click="editPost(post)">Edit</button>
+<button @click="deletePost(post.id)">Delete</button>
+</div>
+<form @submit.prevent="createPost">
+<input v-model="newPost.title" placeholder="Title" required />
+<textarea v-model="newPost.content" placeholder="Content" required></textarea>
+<button type="submit">Create Post</button>
+</form>
+</div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+data() {
+return {
+posts: [],
+newPost: {
+title: '',
+content: ''
 }
+};
+},
+methods: {
+fetchPosts() {
+axios.get('/api/posts')
+.then(response => {
+this.posts = response.data;
+})
+.catch(error => {
+console.error('Error fetching posts:', error);
+});
+},
+createPost() {
+axios.post('/api/posts', this.newPost)
+.then(() => {
+this.fetchPosts();
+this.newPost.title = '';
+this.newPost.content = '';
+})
+.catch(error => {
+console.error('Error creating post:', error);
+});
+},
+editPost(post) {
+this.$router.push({ name: 'EditPost', params: { id: post.id } });
+},
+deletePost(id) {
+axios.delete(`/api/posts/${id}`)
+.then(() => {
+this.fetchPosts();
+})
+.catch(error => {
+console.error('Error deleting post:', error);
+});
+}
+},
+created() {
+this.fetchPosts();
+}
+};
+</script>

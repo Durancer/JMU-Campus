@@ -4,6 +4,16 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
+      path: '/posts',
+      name: 'PostManagement',
+      component: PostManagement
+    },
+    {
+      path: '/posts/:id/edit',
+      name: 'EditPost',
+      component: EditPost
+    },
+    {
       path: '/',
       redirect: '/index',
       component: () => import('../views/index.vue'),
