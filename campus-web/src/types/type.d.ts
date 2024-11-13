@@ -21,3 +21,16 @@ declare namespace API {
     children?: menuForm[]
   }
 }
+
+interface userinfo {
+  avatarUrl:string
+  createTime:string
+  email:string
+  id:number
+  introduce:string  
+  phone:string
+  sex:number
+  updateTime:string
+  username: string
+  nickname: string
+}

@@ -29,6 +29,29 @@ const router = createRouter({
           component: () => import('@/views/account/index.vue')
         },
         {
+          path: '/personalHomepage',
+          name: 'personalHomepage',
+          redirect: '/personalHomepage/personalInformation',
+          component: () => import('@/views/personalHomepage/index.vue'),
+          children: [
+            {
+              path: '/personalHomepage/personalInformation',
+              name: 'personalInformation',
+              component: () => import('@/views/personalHomepage/personalInformation.vue')
+            },
+            {
+              path: '/personalHomepage/myAttention',
+              name: 'myAttention',
+              component: () => import('@/views/personalHomepage/myAttention.vue')
+            },
+            {
+              path: '/personalHomepage/myFans',
+              name: 'myFans',
+              component: () => import('@/views/personalHomepage/myFans.vue')
+            },
+          ]
+        },
+        {
           path: '/history/:userId',
           name: 'history',
           component: () => import('@/views/history/index.vue')

@@ -25,14 +25,19 @@ import { handleTime } from '@/utils/common.ts'
 const data = ref([])
 const current = ref<number>(1) // 当前是第几页
 const size = ref<number>(20) // 多少页
-const getNotCheckedPostsFn = async ({ current, size }) => {
+
+type PaginationParams = {
+  current: number;
+  size: number;
+};
+const getNotCheckedPostsFn = async ({ current, size }: PaginationParams) => {
   const res = await getNotCheckedPosts({ current, size })
   if (res.data) {
     data.value = res.data.records
     console.log(res.data.records, data.value)
   }
 }
-const checkPostFn = async (postId, type) => {
+const checkPostFn = async (postId: number, type: number) => {
   const res = await checkPost(postId, type)
   if (res.status) {
     sucMessage('操作成功')

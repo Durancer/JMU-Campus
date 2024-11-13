@@ -80,7 +80,7 @@ interface UserInfo {
   id: number
   nickname: string
   avatarUrl: string
-  sex:number
+  sex: number
 }
 
 interface CommentList {
@@ -95,7 +95,12 @@ interface CommentList {
 
 interface Post {
   voteMessage: any
-  id:string
+  id: number
+  userInfo: UserInfo
+  createTime: string
+  content: string
+  title: string
+  viewNum: number
 }
 
 const post = ref<Post>()
@@ -124,7 +129,7 @@ let isDelete = ref(false)
 watch(post, (newPost) => {
   isDelete.value = userStore?.userInfo?.id === newPost?.userInfo?.id
 })
-const deletePostFn = async (postId: string) => {
+const deletePostFn = async (postId: number) => {
   const res = await deletePost(postId)
   if (res.status) {
     sucMessage('删除成功')
@@ -140,7 +145,7 @@ const addCommentFn = async () => {
   }
   addCommentCommon(data)
 }
-const addCommentCommon = async (data:any) => {
+const addCommentCommon = async (data: any) => {
   // 判断是否登录
   if (!userStore.userInfo?.id) {
     failMessage('请先登录在进行评论')

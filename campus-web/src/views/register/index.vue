@@ -1,29 +1,15 @@
 <template>
   <el-card class="register-card">
     <template #header>
-      <h1 style="text-align: center">注册</h1>
+      <h1 style="text-align: center">i集大校园注册</h1>
     </template>
-    <el-form
-      ref="registerFormRef"
-      :model="registerForm"
-      :rules="registerRules"
-      label-width="auto"
-      label-position="right"
-    >
-      <el-form-item
-        class="form-item"
-        v-for="item in registerFromSetting"
-        :key="item.label"
-        :label="item.label"
-        :prop="item.prop"
-      >
+    <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" label-width="auto"
+      label-position="right">
+      <el-form-item class="form-item" v-for="item in registerFromSetting" :key="item.label" :label="item.label"
+        :prop="item.prop">
         <template v-if="item.prop === 'email'">
           <div style="display: flex">
-            <el-input
-              class="input-width"
-              v-model="registerForm[item.prop]"
-              v-bind="item.inputArr"
-            />
+            <el-input class="input-width" v-model="registerForm[item.prop]" v-bind="item.inputArr" />
             <i style="font-size: 3rem">&nbsp;</i>
             <template v-if="registerEmailFlag">
               <el-button @click="requestCodeFn" disabled> 已发送({{ timeCount }}s) </el-button>
@@ -38,12 +24,8 @@
           <el-input v-model="registerForm[item.prop]" v-bind="item.inputArr" />
         </template>
       </el-form-item>
-      <div style="border: none; background: none; display: flex; justify-content: center">
-        <el-form-item class="form-item" style="border: none; background: none">
-          <el-button type="primary" style="width: 100%" @click="handleRegister(registerFormRef)"
-            >注册</el-button
-          >
-        </el-form-item>
+      <div style="display: flex; justify-content: center">
+          <el-button type="primary" @click="handleRegister(registerFormRef)">注册</el-button>
       </div>
     </el-form>
   </el-card>
@@ -51,7 +33,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { register, requestCode } from '@/api/user/index.ts'
 import type { userinfo } from '@/api/user/type.ts'
 import { useCountDown } from '@/hooks/useCountDown .ts'
@@ -128,7 +110,7 @@ const registerFromSetting = reactive([
     }
   },
   {
-    label: '用户账号',
+    label: '登录账号',
     prop: 'username',
     inputArr: {
       type: 'text',
@@ -174,15 +156,17 @@ const registerFromSetting = reactive([
 .form-item {
   width: 480px;
   margin: 20px auto;
+
   .el-input {
     width: 300px;
   }
 }
+
 .register-card {
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 40%;
+  width: 30%;
   transform: translate(-50%, -50%);
 }
 </style>

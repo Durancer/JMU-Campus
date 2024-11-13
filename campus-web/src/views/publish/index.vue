@@ -1,12 +1,12 @@
 <template>
   <div class="editor">
-    <el-input placeholder="请输入帖子标题" class="edit-input" v-model="post.title" />
-    <div style="border: 1px solid #ccc">
+    <el-input placeholder="今天想分享点什么呢?" class="edit-input" v-model="post.content" type="textarea" />
+    <!-- <div style="border: 1px solid #ccc">
       <div id="editor—wrapper">
-        <div id="toolbar-container"><!-- 工具栏 --></div>
-        <div id="editor-container"><!-- 编辑器 --></div>
+        <div id="toolbar-container"> 工具栏</div>
+        <div id="editor-container"> 编辑器</div>
       </div>
-    </div>
+    </div> -->
   </div>
 
   <div class="wrapper">
@@ -30,6 +30,14 @@
     <div class="wrapper" v-show="isAddVote">
       <Vote ref="voteRef"></Vote>
     </div>
+    <div>
+      是否匿名
+      <el-switch v-model="post.isAnonymous" :active-value="1" :inactive-value="0" />
+    </div>
+    <div>
+      是否置顶
+      <el-switch v-model="post.isTop" :active-value="1" :inactive-value="0" />
+    </div>
     <el-button type="success" @click="publish">发布</el-button>
   </div>
 </template>
@@ -43,57 +51,55 @@ import Vote from '@/components/Vote.vue'
 import { useFetchTopic } from '@/hooks/useFetchTopic.ts'
 
 const post = reactive({
-  title: '',
-  content: ''
+  content: '',
+  isAnonymous: 0,//是否匿名
+  isTop: 0//是否置顶
 })
-const { createEditor, createToolbar } = window.wangEditor
+// const { createEditor, createToolbar } = window.wangEditor
 // 富文本相关
-let editor: any = null
-let toolbarConfig = {}
-let toolbar = null
+// let editor: any = null
+// let toolbarConfig = {}
+// let toolbar = null
 onMounted(() => {
-  editor = createEditor({
-    selector: '#editor-container',
-    html: '<p><br></p>',
-    config: editorConfig,
-    mode: 'default' // or 'simple'
-  })
-  toolbar = createToolbar({
-    editor,
-    selector: '#toolbar-container',
-    config: toolbarConfig,
-    mode: 'default' // or 'simple'
-  })
+  // editor = createEditor({
+  //   selector: '#editor-container',
+  //   html: '<p><br></p>',
+  //   config: editorConfig,
+  //   mode: 'default' // or 'simple'
+  // })
+  // toolbar = createToolbar({
+  //   editor,
+  //   selector: '#toolbar-container',
+  //   config: toolbarConfig,
+  //   mode: 'default' // or 'simple'
+  // })
 
 
 })
-let editorConfig = {
-  placeholder: 'Type here...',
-  onChange(editor: any) {
-    post.content = editor.getText() ? editor.getHtml() : ''
-  }
-}
+// let editorConfig = {
+//   placeholder: 'Type here...',
+//   onChange(editor: any) {
+//     post.content = editor.getText() ? editor.getHtml() : ''
+//   }
+// }
 const isAddTopic = ref(false)
 const isAddVote = ref(false)
 const voteRef = ref(null)
 const topic = ref<string[]>([])
 let topicList: any = useFetchTopic()
 
+
 // 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
-const mode = 'defalut'
+// const editorRef = shallowRef()
+// const mode = 'defalut'
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
-  if (editor == null) return
-  editor.destroy()
+  // if (editor == null) return
+  // editor.destroy()
 })
 
 const valid = () => {
-  if (!post.title) {
-    failMessage('请输入标题')
-    return false
-  }
   if (!post.content) {
     sucMessage('请输入内容')
     return false

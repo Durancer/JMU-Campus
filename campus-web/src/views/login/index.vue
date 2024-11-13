@@ -2,22 +2,15 @@
   <div class="login-card">
     <el-card shadow="always">
       <template #header>
-        <h1 style="text-align: center">登录页面</h1>
+        <h1 style="text-align: center">i集大校园登录</h1>
       </template>
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="loginRules"
-        label-width="auto"
-        label-position="right"
-      >
+      <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-width="auto" label-position="right">
         <el-form-item v-for="item in loginFromSetting" :key="item.label" v-bind="item">
           <el-input v-model="loginForm[item.prop]" v-bind="item.inputArr" />
         </el-form-item>
-        <div style="border: none; background: none; display: flex; justify-content: center">
-          <el-form-item style="border: none; background: none">
-            <el-button type="primary" style="width: 100%" @click="login">登录</el-button>
-          </el-form-item>
+        <div style="display: flex; justify-content: center">
+          <el-button type="primary" @click="login">登录</el-button>
+          <el-button plain type="primary" @click="goRegister">注册</el-button>
         </div>
       </el-form>
     </el-card>
@@ -29,6 +22,7 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 
 import { useUserStore } from '@/stores/userStore.ts'
+import router from '@/router'
 
 const userStore = useUserStore()
 
@@ -50,10 +44,14 @@ const loginRules = reactive<FormRules<APILoginForm>>({
   password: [{ required: true, message: '请输入账号密码', trigger: 'blur' }]
 })
 
+const goRegister = () => {
+  router.push('/register')
+}
+
 const login = async () => {
   try {
     userStore.loginFn(loginForm)
-  } catch (err) {}
+  } catch (err) { }
 }
 
 const loginFromSetting = reactive([
@@ -84,7 +82,8 @@ const loginFromSetting = reactive([
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 40%;
+  width: 30%;
   transform: translate(-50%, -50%);
+
 }
 </style>

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ElMessage, ElLoading } from 'element-plus'
+import { ElMessage, ElLoading, ElMessageBox } from 'element-plus'
 import { localCache } from '@/utils/cache'
-
-let loadingInstance:any = null
+import { useUserStore } from '@/stores/userStore.ts'
+let loadingInstance: any = null
 let requestNum = 0
-
+// const userStore = useUserStore()
 const addLoading = () => {
   // 增加loading 如果pending请求数量等于1，弹出loading, 防止重复弹出
   requestNum++
@@ -70,7 +70,7 @@ export const createAxiosByinterceptors = (config?: AxiosRequestConfig): AxiosIns
     function (response) {
       // 对响应数据做点什么
       console.log('response:', response)
-      const { loading = true, method } = response.config
+      const loading = true
       if (loading) cancelLoading()
       const { code, message } = response.data
       // config设置responseType为blob 处理文件下载
@@ -78,15 +78,13 @@ export const createAxiosByinterceptors = (config?: AxiosRequestConfig): AxiosIns
         // return downloadFile(response)
       } else {
         if (code <= 299 && code >= 200) {
-          // if (method === 'post' && loading) {
-          //   ElMessage({ message, type: 'success', duration: 1000 }) // post弹出消息提示
-          // }
           return response.data
         } else {
           ElMessage.error(message)
           return Promise.reject(response.data)
         }
       }
+
     },
     function (error) {
       // 对响应错误做点什么
@@ -95,7 +93,12 @@ export const createAxiosByinterceptors = (config?: AxiosRequestConfig): AxiosIns
       console.log('error-request:', error.request)
       const { loading = true } = error.config
       if (loading) cancelLoading()
-      ElMessage.error(error?.response?.data?.message || '服务端异常')
+      if (error.response.status === 511) {
+        ElMessage.error('登录状态已过期，请重新登录')
+        useUserStore().logoutFn()
+      } else {
+        ElMessage.error(error?.response?.data?.message || '服务端异常')
+      }
       return Promise.reject(error)
     }
   )

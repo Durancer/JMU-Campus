@@ -17,5 +17,9 @@ import JCImg from '@/assets/img/jc.png'
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

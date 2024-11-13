@@ -7,6 +7,11 @@ interface commentParams {
   rootId?: number
   toUserId?: number
 }
+interface UserFollowList {
+  userId: number
+  current?: number
+  size?: number
+}
 // 添加评论
 export function addComment(data: commentParams) {
   return http.request({
@@ -57,5 +62,31 @@ export function getUserComments(postId: number) {
     params: {
       postId
     }
+  })
+}
+// 关注 | 取消关注用户
+export function postUserFollow(followId: number) {
+  return http.request({
+    method: 'post',
+    url: '/user/follow',
+    data: {
+      followId
+    }
+  })
+}
+// 获取用户关注列表
+export function getUserFollowList(params: UserFollowList) {
+  return http.request({
+    method: 'get',
+    url: '/user/follow/list',
+    params
+  })
+}
+// 获取用户关注列表
+export function getUserFollowGansList(params: UserFollowList) {
+  return http.request({
+    method: 'get',
+    url: '/user/follow/fans/list',
+    params
   })
 }

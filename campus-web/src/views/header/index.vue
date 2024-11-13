@@ -29,15 +29,10 @@
                 <el-icon><arrow-down /></el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="$router.push({ name: 'account' })"
-                      >修改信息</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      @click="
-                        $router.push({ name: 'history', params: { userId: userStore.userInfo.id } })
-                      "
-                      >我的历史记录</el-dropdown-item
-                    >
+                    <el-dropdown-item @click="$router.push({ name: 'account' })">修改信息</el-dropdown-item>
+                    <el-dropdown-item @click="
+                      $router.push({ name: 'history', params: { userId: userStore.userInfo.id } })
+                      ">我的历史记录</el-dropdown-item>
                     <el-dropdown-item @click="userStore.logoutFn">退出登录</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -49,6 +44,12 @@
             </div>
           </template>
           <div class="publish" @click="handlePublish">发布</div>
+          <el-dialog v-model="publishDialog" title="快捷发布" width="640">
+            <div class="publishContent">
+              <el-input v-model="textarea2" :autosize="{ minRows: 2 }" type="textarea" autofocus show-word-limit
+                placeholder="有什么新鲜事分享给大家?" :maxlength="maxLength" />
+            </div>
+          </el-dialog>
         </div>
       </div>
     </header>
@@ -60,12 +61,19 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
 import { ArrowDown } from '@element-plus/icons-vue'
 import SvgIcon from '@/components/SvgIcon.vue'
+import { ref } from 'vue'
 
 const userStore = useUserStore()
 
 const router = useRouter()
+
+
+const publishDialog = ref(false)
+const textarea2 = ref('')
+const maxLength = ref(1000)
 const handlePublish = () => {
   router.push({ name: 'publish' })
+  // publishDialog.value = true
 }
 </script>
 
@@ -74,6 +82,7 @@ const handlePublish = () => {
   background-color: #fff;
   box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent, 0 1px 4px 0 rgba(0, 0, 0, 0.02),
     0 2px 12px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.02);
+
   .header_nav {
     max-width: 1122px;
     height: 56px;
@@ -81,6 +90,15 @@ const handlePublish = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .header-right {
+      display: flex;
+      align-items: center;
+
+      div {
+        margin-right: 30px;
+      }
+    }
 
     .logo-img {
       padding: 10px;
@@ -92,6 +110,7 @@ const handlePublish = () => {
       flex-direction: column;
       margin-left: 10px;
     }
+
     .publish {
       background: linear-gradient(135deg, #00dcc2, #00dc93);
       border: none;
@@ -107,13 +126,30 @@ const handlePublish = () => {
       line-height: 14px;
       width: 60px;
     }
-    .header-right {
-      display: flex;
-      align-items: center;
-      div {
-        margin-right: 30px;
-      }
+
+
+    /deep/ .el-dialog__body {
+      border-top: 1px solid rgb(249, 249, 249);
     }
+
+    /deep/ .el-dialog {
+      border-radius: 12px;
+    }
+
+    /deep/ .el-dialog__title {
+      font-size: 16px;
+      color: rgb(51, 51, 51);
+      font-weight: 700;
+    }
+
+    .publishContent {
+      margin: 0;
+    }
+
+    /deep/ .el-textarea__inner {
+      resize: none;
+    }
+
   }
 }
 </style>

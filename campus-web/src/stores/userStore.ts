@@ -6,10 +6,12 @@ import { failMessage, sucMessage } from '@/utils/common.ts'
 import { login, updateUserinfo, getUserDetail } from '@/api/user/index.ts'
 
 
+
+
 export const useUserStore = defineStore(
   'login',
   () => {
-    const userInfo = ref({})
+    const userInfo = ref()
     const token = ref('')
     async function loginFn(data: any) {
       const res = await login(data)

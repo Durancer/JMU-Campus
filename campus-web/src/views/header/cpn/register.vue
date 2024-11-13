@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { register, requestCode } from '@/api/user/index.ts'
 import type { userinfo } from '@/api/user/type.ts'
 

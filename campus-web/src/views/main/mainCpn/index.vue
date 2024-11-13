@@ -15,7 +15,11 @@ import { onMounted, ref, reactive, watch, watchEffect } from 'vue'
 import headerCpn from './cpn/headerCpn.vue'
 import PostList from './cpn/PostList.vue'
 // import asideCpn from './cpn/asideCpn.vue'
-import { getAllPosts } from '@/api/posts/index.ts'
+import { getAllPosts,getTopTopic } from '@/api/posts/index.ts'
+import { useUserStore } from '@/stores/userStore.ts'
+
+
+const userStore = useUserStore()
 const records = reactive([])
 const current = ref<number>(1) // 当前是第几页
 const size = ref<number>(10) // 多少页
@@ -33,6 +37,12 @@ const getAllPostsFn = async ({ current, size }: { current: number, size: number 
     isHidden.value = true
   }
 }
+
+const getTopTopics = async () => {
+  const res = await getTopTopic(userStore.userInfo.id)
+  console.log(res)
+}
+getTopTopics()
 const handleToBottom = () => {
   if (current.value < pages.value) {
     current.value += 1
